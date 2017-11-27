@@ -1,4 +1,4 @@
-# FilterChili
+﻿# FilterChili
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
 Aims to provide an easy way to create a **collection of filters** inside **.NET Core** for a set of entities, and to provide **context-sensitive** information when **data-constraints** are being applied.
