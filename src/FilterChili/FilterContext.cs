@@ -39,6 +39,11 @@ namespace GravityCTRL.FilterChili
             return _contextOptions.Domains();
         }
 
+        public bool TrySet<TSelector>(string name, TSelector min, TSelector max)
+        {
+            return _contextOptions.TrySet(name, min, max);
+        }
+
         protected abstract void Configure(ContextOptions<TSource> options);
     }
 }

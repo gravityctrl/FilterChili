@@ -50,6 +50,11 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        public bool TrySet<TSelector>(string name, TSelector min, TSelector max)
+        {
+            return _filters.Any(filter => filter.TrySet(name, min, max));
+        }
+
         #region Internal Methods
 
         internal IQueryable<TSource> ApplyFilters()
