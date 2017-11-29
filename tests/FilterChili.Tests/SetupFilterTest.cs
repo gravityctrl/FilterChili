@@ -16,6 +16,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using GravityCTRL.FilterChili.Tests.Models;
 using GravityCTRL.FilterChili.Tests.Utils;
 using Xunit;
@@ -33,7 +34,7 @@ namespace GravityCTRL.FilterChili.Tests
         }
 
         [Fact]
-        public void TestFilter()
+        public void Should_Set_Filter_With_Resolver_Instance()
         {
             var products = new List<Product>
             {
@@ -59,6 +60,46 @@ namespace GravityCTRL.FilterChili.Tests
 
             var queryable = products.AsQueryable();
             var context = new ProductFilterContext(queryable);
+
+            context.RatingFilter.Set(1, 7);
+            context.NameFilter.Set("Test2");
+
+            var filterResults = context.ApplyFilters();
+            var evaluatedFilterResults = filterResults.ToList();
+
+            _output.WriteLine(JsonUtils.Convert(context.Domains()));
+            _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
+        }
+
+        [Fact]
+        public void Should_Set_Filter_With_TrySet()
+        {
+            var products = new List<Product>
+            {
+                new Product
+                {
+                    Sold = 1,
+                    Rating = 2,
+                    Name = "Test1"
+                },
+                new Product
+                {
+                    Sold = 2,
+                    Rating = 6,
+                    Name = "Test2"
+                },
+                new Product
+                {
+                    Sold = 5,
+                    Rating = 9,
+                    Name = "Test2"
+                }
+            };
+
+            var queryable = products.AsQueryable();
+            var context = new ProductFilterContext(queryable);
+
+            context.TrySet("Rating", 1, 7).Should().BeTrue();
 
             context.RatingFilter.Set(1, 7);
             context.NameFilter.Set("Test2");
