@@ -100,6 +100,7 @@ namespace GravityCTRL.FilterChili.Tests
             var context = new ProductFilterContext(queryable);
 
             context.TrySet("Rating", 1, 7).Should().BeTrue();
+            context.TrySet("Name", "Test2");
 
             context.RatingFilter.Set(1, 7);
             context.NameFilter.Set("Test2");

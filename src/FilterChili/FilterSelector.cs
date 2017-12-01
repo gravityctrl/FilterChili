@@ -15,6 +15,7 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -35,7 +36,7 @@ namespace GravityCTRL.FilterChili
 
         internal abstract bool TrySet<TSelector>(string name, TSelector min, TSelector max);
 
-        internal abstract bool TrySet<TSelector>(string name, params TSelector[] values);
+        internal abstract bool TrySet<TSelector>(string name, IEnumerable<TSelector> values);
 
         #endregion
     }
@@ -85,9 +86,9 @@ namespace GravityCTRL.FilterChili
             return false;
         }
 
-        internal override bool TrySet<TSelectorTarget>(string name, params TSelectorTarget[] values)
+        internal override bool TrySet<TSelectorTarget>(string name, IEnumerable<TSelectorTarget> values)
         {
-            if (_domainResolver.Name == name && values is TSelector[] targetValues)
+            if (_domainResolver.Name == name && values is IEnumerable<TSelector> targetValues)
             {
                 return TrySetList(targetValues);
             }
@@ -110,7 +111,7 @@ namespace GravityCTRL.FilterChili
             return false;
         }
 
-        private bool TrySetList(TSelector[] values)
+        private bool TrySetList(IEnumerable<TSelector> values)
         {
             if (_domainResolver is ListResolver<TSource, TSelector> target)
             {
