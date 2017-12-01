@@ -34,9 +34,11 @@ namespace GravityCTRL.FilterChili
 
         internal abstract DomainResolver<TSource> Domain();
 
-        internal abstract bool TrySet<TSelector>(string name, TSelector min, TSelector max);
+        internal abstract bool HasName(string name);
 
-        internal abstract bool TrySet<TSelector>(string name, IEnumerable<TSelector> values);
+        internal abstract bool TrySet<TSelector>(TSelector min, TSelector max);
+
+        internal abstract bool TrySet<TSelector>(IEnumerable<TSelector> values);
 
         #endregion
     }
@@ -76,21 +78,26 @@ namespace GravityCTRL.FilterChili
             return _domainResolver;
         }
 
-        internal override bool TrySet<TSelectorTarget>(string name, TSelectorTarget min, TSelectorTarget max)
+        internal override bool HasName(string name)
         {
-            if (_domainResolver.Name == name && min is TSelector minTarget && max is TSelector maxTarget)
+            return _domainResolver.Name == name;
+        }
+
+        internal override bool TrySet<TSelectorTarget>(TSelectorTarget min, TSelectorTarget max)
+        {
+            if (min is TSelector minTarget && max is TSelector maxTarget)
             {
-                return TrySetRange(minTarget, maxTarget);
+                return TrySet(minTarget, maxTarget);
             }
 
             return false;
         }
 
-        internal override bool TrySet<TSelectorTarget>(string name, IEnumerable<TSelectorTarget> values)
+        internal override bool TrySet<TSelectorTarget>(IEnumerable<TSelectorTarget> values)
         {
-            if (_domainResolver.Name == name && values is IEnumerable<TSelector> targetValues)
+            if (values is IEnumerable<TSelector> targetValues)
             {
-                return TrySetList(targetValues);
+                return TrySet(targetValues);
             }
 
             return false;
@@ -100,7 +107,7 @@ namespace GravityCTRL.FilterChili
 
         #region Private Methods
 
-        private bool TrySetRange(TSelector min, TSelector max)
+        private bool TrySet(TSelector min, TSelector max)
         {
             if (_domainResolver is RangeResolver<TSource, TSelector> target)
             {
@@ -111,7 +118,7 @@ namespace GravityCTRL.FilterChili
             return false;
         }
 
-        private bool TrySetList(IEnumerable<TSelector> values)
+        private bool TrySet(IEnumerable<TSelector> values)
         {
             if (_domainResolver is ListResolver<TSource, TSelector> target)
             {

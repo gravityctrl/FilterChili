@@ -50,14 +50,9 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
-        public bool TrySet<TSelector>(string name, TSelector min, TSelector max)
+        public FilterSelector<TSource> GetFilter(string name)
         {
-            return _filters.Any(filter => filter.TrySet(name, min, max));
-        }
-
-        public bool TrySet<TSelector>(string name, IEnumerable<TSelector> values)
-        {
-            return _filters.Any(filter => filter.TrySet(name, values));
+            return _filters.SingleOrDefault(filter => filter.HasName(name));
         }
 
         #region Internal Methods
