@@ -145,6 +145,7 @@ namespace GravityCTRL.FilterChili
 
         private bool TrySet(TSelector min, TSelector max)
         {
+            // ReSharper disable once InvertIf
             if (_domainResolver is RangeResolver<TSource, TSelector> target)
             {
                 target.Set(min, max);
@@ -156,6 +157,7 @@ namespace GravityCTRL.FilterChili
 
         private bool TrySet(IEnumerable<TSelector> values)
         {
+            // ReSharper disable once InvertIf
             if (_domainResolver is ListResolver<TSource, TSelector> target)
             {
                 target.Set(values);

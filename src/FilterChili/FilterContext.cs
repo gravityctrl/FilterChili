@@ -60,12 +60,7 @@ namespace GravityCTRL.FilterChili
             }
 
             var domain = filterToken.SelectToken("domain");
-            if (domain == null)
-            {
-                return false;
-            }
-
-            return filter.TrySet(domain);
+            return domain != null && filter.TrySet(domain);
         }
 
         public bool TrySet<TSelector>(string name, TSelector min, TSelector max)

@@ -16,7 +16,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using GravityCTRL.FilterChili.Tests.Models;
 using GravityCTRL.FilterChili.Tests.Utils;
 using Newtonsoft.Json.Linq;
@@ -28,9 +27,8 @@ namespace GravityCTRL.FilterChili.Tests
     public class SetupFilterTest
     {
         private readonly ITestOutputHelper _output;
-        private readonly ProductFilterContext _testInstance;
         private readonly JObject _rangeObject;
-        private JObject _listObject;
+        private readonly JObject _listObject;
 
         public SetupFilterTest(ITestOutputHelper output)
         {
@@ -85,7 +83,7 @@ namespace GravityCTRL.FilterChili.Tests
             _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
         }
 
-        private ProductFilterContext CreateContext()
+        private static ProductFilterContext CreateContext()
         {
             var products = new List<Product>
             {
