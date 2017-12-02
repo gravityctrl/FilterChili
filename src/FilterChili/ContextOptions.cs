@@ -50,12 +50,12 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
-        public FilterSelector<TSource> GetFilter(string name)
+        #region Internal Methods
+
+        internal FilterSelector<TSource> GetFilter(string name)
         {
             return _filters.SingleOrDefault(filter => filter.HasName(name));
         }
-
-        #region Internal Methods
 
         internal IQueryable<TSource> ApplyFilters()
         {
