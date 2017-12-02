@@ -1,0 +1,7 @@
+﻿{
+  "name": "Rating",
+  "domain": {
+    "min": 1,
+    "max": 7 
+  } 
+}

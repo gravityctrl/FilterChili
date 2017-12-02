@@ -19,6 +19,7 @@ using System.Linq;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Tests.Models;
 using GravityCTRL.FilterChili.Tests.Utils;
+using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -27,40 +28,25 @@ namespace GravityCTRL.FilterChili.Tests
     public class SetupFilterTest
     {
         private readonly ITestOutputHelper _output;
+        private readonly ProductFilterContext _testInstance;
+        private readonly JObject _rangeObject;
+        private JObject _listObject;
 
         public SetupFilterTest(ITestOutputHelper output)
         {
             _output = output;
+
+            var rangeJson = ResourceHelper.Load("rangefilter.json");
+            _rangeObject = JObject.Parse(rangeJson);
+
+            var listJson = ResourceHelper.Load("listfilter.json");
+            _listObject = JObject.Parse(listJson);
         }
 
         [Fact]
         public void Should_Set_Filter_With_Resolver_Instance()
         {
-            var products = new List<Product>
-            {
-                new Product
-                {
-                    Sold = 1,
-                    Rating = 2,
-                    Name = "Test1"
-                },
-                new Product
-                {
-                    Sold = 2,
-                    Rating = 6,
-                    Name = "Test2"
-                },
-                new Product
-                {
-                    Sold = 5,
-                    Rating = 9,
-                    Name = "Test2"
-                }
-            };
-
-            var queryable = products.AsQueryable();
-            var context = new ProductFilterContext(queryable);
-
+            var context = CreateContext();
             context.RatingFilter.Set(1, 7);
             context.NameFilter.Set("Test2");
 
@@ -74,6 +60,33 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public void Should_Set_Filter_With_TrySet()
         {
+            var context = CreateContext();
+            context.TrySet("Rating", 1, 7);
+            context.TrySet("Name", new [] { "Test2" });
+
+            var filterResults = context.ApplyFilters();
+            var evaluatedFilterResults = filterResults.ToList();
+
+            _output.WriteLine(JsonUtils.Convert(context.Domains()));
+            _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
+        }
+
+        [Fact]
+        public void Should_Set_Filter_With_TrySet_Json()
+        {
+            var context = CreateContext();
+            context.TrySet(_rangeObject);
+            context.TrySet(_listObject);
+
+            var filterResults = context.ApplyFilters();
+            var evaluatedFilterResults = filterResults.ToList();
+
+            _output.WriteLine(JsonUtils.Convert(context.Domains()));
+            _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
+        }
+
+        private ProductFilterContext CreateContext()
+        {
             var products = new List<Product>
             {
                 new Product
@@ -97,16 +110,7 @@ namespace GravityCTRL.FilterChili.Tests
             };
 
             var queryable = products.AsQueryable();
-            var context = new ProductFilterContext(queryable);
-
-            context.TrySet("Rating", 1, 7);
-            context.TrySet("Name", "Test2");
-
-            var filterResults = context.ApplyFilters();
-            var evaluatedFilterResults = filterResults.ToList();
-
-            _output.WriteLine(JsonUtils.Convert(context.Domains()));
-            _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
+            return new ProductFilterContext(queryable);
         }
     }
 }
