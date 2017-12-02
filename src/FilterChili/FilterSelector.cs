@@ -19,8 +19,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers;
+using GravityCTRL.FilterChili.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
 {
@@ -39,6 +43,8 @@ namespace GravityCTRL.FilterChili
         internal abstract bool TrySet<TSelector>(TSelector min, TSelector max);
 
         internal abstract bool TrySet<TSelector>(IEnumerable<TSelector> values);
+
+        internal abstract bool TrySet(JToken domainToken);
 
         #endregion
     }
@@ -81,6 +87,36 @@ namespace GravityCTRL.FilterChili
         internal override bool HasName(string name)
         {
             return _domainResolver.Name == name;
+        }
+
+        internal override bool TrySet(JToken domainToken)
+        {
+            try
+            {
+                switch (_domainResolver)
+                {
+                    case RangeResolver<TSource, TSelector> range:
+                    {
+                        var domain = domainToken.ToObject<Range<TSelector>>(JsonUtils.Serializer);
+                        range.Set(domain.Min, domain.Max);
+                        return true;
+                    }
+                    case ListResolver<TSource, TSelector> list:
+                    {
+                        var domain = domainToken.ToObject<Set<TSelector>>(JsonUtils.Serializer);
+                        list.Set(domain.Values);
+                        return true;
+                    }
+                    default:
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (JsonSerializationException)
+            {
+                return false;
+            }
         }
 
         internal override bool TrySet<TSelectorTarget>(TSelectorTarget min, TSelectorTarget max)

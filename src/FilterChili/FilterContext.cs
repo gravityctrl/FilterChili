@@ -17,6 +17,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GravityCTRL.FilterChili.Resolvers;
+using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
 {
@@ -37,6 +38,34 @@ namespace GravityCTRL.FilterChili
         public IEnumerable<DomainResolver<TSource>> Domains()
         {
             return _contextOptions.Domains();
+        }
+
+        public bool TrySet(JArray filterTokens)
+        {
+            return filterTokens.All(TrySet);
+        }
+
+        public bool TrySet(JToken filterToken)
+        {
+            var name = filterToken.Value<string>("name");
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false;
+            }
+
+            var filter = _contextOptions.GetFilter(name);
+            if (filter == null)
+            {
+                return false;
+            }
+
+            var domain = filterToken.SelectToken("domain");
+            if (domain == null)
+            {
+                return false;
+            }
+
+            return filter.TrySet(domain);
         }
 
         public bool TrySet<TSelector>(string name, TSelector min, TSelector max)
