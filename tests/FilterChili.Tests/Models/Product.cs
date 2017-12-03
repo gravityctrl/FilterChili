@@ -14,13 +14,15 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using JetBrains.Annotations;
+
 namespace GravityCTRL.FilterChili.Tests.Models
 {
     public class Product
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Rating { get; set; }
-        public int Sold { get; set; }
+        public int Id { get; [UsedImplicitly] set; }
+        public string Name { get; [UsedImplicitly] set; }
+        public int Rating { get; [UsedImplicitly] set; }
+        public int Sold { get; [UsedImplicitly] set; }
     }
 }

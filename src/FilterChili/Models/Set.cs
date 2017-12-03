@@ -15,11 +15,12 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Models
 {
     public class Set<TValue>
     {
-        public IEnumerable<TValue> Values;
+        public IEnumerable<TValue> Values { get; [UsedImplicitly] set; }
     }
 }

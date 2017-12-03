@@ -16,13 +16,19 @@
 
 using System.Linq;
 using GravityCTRL.FilterChili.Resolvers;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Tests.Models
 {
     public class ProductFilterContext : FilterContext<Product>
     {
+        [UsedImplicitly]
         public StringListResolver<Product> NameFilter { get; set; }
+
+        [UsedImplicitly]
         public IntRangeResolver<Product> SoldFilter { get; set; }
+
+        [UsedImplicitly]
         public IntRangeResolver<Product> RatingFilter { get; set; }
 
         public ProductFilterContext(IQueryable<Product> queryable) : base(queryable) {}

@@ -21,6 +21,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Serialization;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -37,6 +38,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         private IReadOnlyList<TSelector> _selectableValues;
         private IReadOnlyList<TSelector> _allValues;
 
+        [UsedImplicitly]
         public IReadOnlyList<Selectable<TSelector>> Values => CombineLists();
 
         protected internal ListResolver(string name, Expression<Func<TSource, TSelector>> selector) : base(name, selector)
@@ -76,7 +78,7 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         #region Internal Methods
 
-        internal override async Task Resolve(IQueryable<TSelector> allItems, IQueryable<TSelector> selectableItems)
+        protected override async Task Resolve(IQueryable<TSelector> allItems, IQueryable<TSelector> selectableItems)
         {
             _allValues = allItems is IAsyncEnumerable<TSelector>
                 ? await allItems.Distinct().ToListAsync()
@@ -89,7 +91,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             _needsToBeResolved = false;
         }
 
-        internal override Expression<Func<IGrouping<TSelector, TSource>, bool>> FilterExpression()
+        protected override Expression<Func<IGrouping<TSelector, TSource>, bool>> FilterExpression()
         {
             if (_selectedValues.Any())
             {

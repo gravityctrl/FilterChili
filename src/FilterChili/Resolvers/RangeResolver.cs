@@ -21,6 +21,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Serialization;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -33,8 +34,13 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         internal override bool NeedsToBeResolved => _needsToBeResolved;
 
+        [UsedImplicitly]
         public Range<TSelector> TotalRange { get; }
+
+        [UsedImplicitly]
         public Range<TSelector> SelectableRange { get; }
+
+        [UsedImplicitly]
         public Range<TSelector> SelectedRange { get; }
 
         protected internal RangeResolver(string name, Expression<Func<TSource, TSelector>> selector, TSelector min, TSelector max) : base(name, selector)
@@ -69,7 +75,7 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         #region Internal Methods
 
-        internal override async Task Resolve(IQueryable<TSelector> allItems, IQueryable<TSelector> selectableItems)
+        protected override async Task Resolve(IQueryable<TSelector> allItems, IQueryable<TSelector> selectableItems)
         {
             if (allItems is IAsyncEnumerable<TSelector>)
             {
@@ -103,7 +109,7 @@ namespace GravityCTRL.FilterChili.Resolvers
     {
         internal IntRangeResolver(string name, Expression<Func<TSource, int>> selector) : base(name, selector, int.MinValue, int.MaxValue) { }
 
-        internal override Expression<Func<IGrouping<int, TSource>, bool>> FilterExpression()
+        protected override Expression<Func<IGrouping<int, TSource>, bool>> FilterExpression()
         {
             if (SelectedRange.Min != int.MinValue && SelectedRange.Max != int.MaxValue)
             {

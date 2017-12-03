@@ -18,6 +18,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Resolvers
@@ -27,14 +28,15 @@ namespace GravityCTRL.FilterChili.Resolvers
         private readonly Type _sourceType;
         private readonly Type _selectorType;
 
-        public string Name { get; }
-        public string SourceType => _sourceType.Name;
-        public string TargetType => _selectorType.Name;
-        public abstract bool TrySet(JToken domainToken);
-
         internal abstract bool NeedsToBeResolved { get; }
-        internal abstract Task Resolve(IQueryable<TSource> queryable, IQueryable<TSource> selectableItems);
-        internal abstract IQueryable<TSource> ExecuteFilter(IQueryable<TSource> queryable);
+
+        public string Name { get; }
+
+        [UsedImplicitly]
+        public string SourceType => _sourceType.Name;
+
+        [UsedImplicitly]
+        public string TargetType => _selectorType.Name;
 
         protected DomainResolver(string name, Type type)
         {
@@ -42,35 +44,37 @@ namespace GravityCTRL.FilterChili.Resolvers
             _selectorType = type;
             Name = name;
         }
+
+        public abstract bool TrySet(JToken domainToken);
     }
 
     public abstract class DomainResolver<TSource, TSelector> : DomainResolver<TSource>
     {
-        protected internal readonly Expression<Func<TSource, TSelector>> Selector;
+        private readonly Expression<Func<TSource, TSelector>> _selector;
 
         protected internal DomainResolver(string name, Expression<Func<TSource, TSelector>> selector) : base(name, typeof(TSelector))
         {
-            Selector = selector;
+            _selector = selector;
         }
 
-        internal override async Task Resolve(IQueryable<TSource> queryable, IQueryable<TSource> selectableItems)
+        internal async Task Resolve(IQueryable<TSource> queryable, IQueryable<TSource> selectableItems)
         {
-            await Resolve(queryable.Select(Selector), selectableItems.Select(Selector));
+            await Resolve(queryable.Select(_selector), selectableItems.Select(_selector));
         }
 
-        internal override IQueryable<TSource> ExecuteFilter(IQueryable<TSource> queryable)
+        internal IQueryable<TSource> ExecuteFilter(IQueryable<TSource> queryable)
         {
             var expression = FilterExpression();
             return expression == null 
                 ? queryable 
                 : queryable
-                    .GroupBy(Selector)
+                    .GroupBy(_selector)
                     .Where(FilterExpression())
                     .SelectMany(group => group);
         }
 
-        internal abstract Task Resolve(IQueryable<TSelector> allItems, IQueryable<TSelector> selectableItems);
+        protected abstract Task Resolve(IQueryable<TSelector> allItems, IQueryable<TSelector> selectableItems);
 
-        internal abstract Expression<Func<IGrouping<TSelector, TSource>, bool>> FilterExpression();
+        protected abstract Expression<Func<IGrouping<TSelector, TSource>, bool>> FilterExpression();
     }
 }

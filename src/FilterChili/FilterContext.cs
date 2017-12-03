@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Resolvers;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
@@ -31,21 +32,25 @@ namespace GravityCTRL.FilterChili
             _contextOptions = new ContextOptions<TSource>(queryable, Configure);
         }
 
+        [UsedImplicitly]
         public IQueryable<TSource> ApplyFilters()
         {
             return _contextOptions.ApplyFilters();
         }
 
+        [UsedImplicitly]
         public async Task<IEnumerable<DomainResolver<TSource>>> Domains()
         {
             return await _contextOptions.Domains();
         }
 
+        [UsedImplicitly]
         public bool TrySet(JArray filterTokens)
         {
             return filterTokens.All(TrySet);
         }
 
+        [UsedImplicitly]
         public bool TrySet(JToken filterToken)
         {
             var name = filterToken.Value<string>("name");
@@ -64,11 +69,13 @@ namespace GravityCTRL.FilterChili
             return domain != null && filter.TrySet(domain);
         }
 
+        [UsedImplicitly]
         public bool TrySet<TSelector>(string name, TSelector min, TSelector max)
         {
             return _contextOptions.GetFilter(name)?.TrySet(min, max) ?? false;
         }
 
+        [UsedImplicitly]
         public bool TrySet<TSelector>(string name, IEnumerable<TSelector> values)
         {
             return _contextOptions.GetFilter(name)?.TrySet(values) ?? false;

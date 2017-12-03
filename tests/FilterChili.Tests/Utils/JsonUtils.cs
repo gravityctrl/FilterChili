@@ -19,7 +19,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace GravityCTRL.FilterChili.Tests.Utils
 {
-    internal class JsonUtils
+    internal static class JsonUtils
     {
         public static string Convert(object obj)
         {
