@@ -33,7 +33,6 @@ namespace GravityCTRL.FilterChili
             _queryable = queryable;
             _filters = new List<FilterSelector<TSource>>();
             configure(this);
-            Resolve().Wait();
         }
 
         public StringFilterSelector<TSource> Filter(Expression<Func<TSource, string>> valueSelector)
