@@ -16,6 +16,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Tests.Models;
 using GravityCTRL.FilterChili.Tests.Utils;
 using Newtonsoft.Json.Linq;
@@ -42,10 +43,10 @@ namespace GravityCTRL.FilterChili.Tests
         }
 
         [Fact]
-        public void Should_Set_Filter_With_Resolver_Instance()
+        public async Task Should_Set_Filter_With_Resolver_Instance()
         {
             var context = CreateContext();
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 1_000_000; i++)
             {
                 context.RatingFilter.Set(1, 7);
                 context.NameFilter.Set("Test2");
@@ -54,16 +55,16 @@ namespace GravityCTRL.FilterChili.Tests
             var filterResults = context.ApplyFilters();
             var evaluatedFilterResults = filterResults.ToList();
 
-            var domains = context.Domains();
+            var domains = await context.Domains();
             _output.WriteLine(JsonUtils.Convert(domains));
             _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
         }
 
         [Fact]
-        public void Should_Set_Filter_With_TrySet()
+        public async Task Should_Set_Filter_With_TrySet()
         {
             var context = CreateContext();
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 1_000_000; i++)
             {
                 context.TrySet("Rating", 1, 7);
                 context.TrySet("Name", new[] { "Test2" });
@@ -72,16 +73,16 @@ namespace GravityCTRL.FilterChili.Tests
             var filterResults = context.ApplyFilters();
             var evaluatedFilterResults = filterResults.ToList();
 
-            var domains = context.Domains();
+            var domains = await context.Domains();
             _output.WriteLine(JsonUtils.Convert(domains));
             _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
         }
 
         [Fact]
-        public void Should_Set_Filter_With_TrySet_Json()
+        public async Task Should_Set_Filter_With_TrySet_Json()
         {
             var context = CreateContext();
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 1_000_000; i++)
             {
                 context.TrySet(_rangeObject);
                 context.TrySet(_listObject);
@@ -90,7 +91,7 @@ namespace GravityCTRL.FilterChili.Tests
             var filterResults = context.ApplyFilters();
             var evaluatedFilterResults = filterResults.ToList();
 
-            var domains = context.Domains();
+            var domains = await context.Domains();
             _output.WriteLine(JsonUtils.Convert(domains));
             _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
         }
