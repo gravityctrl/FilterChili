@@ -45,13 +45,17 @@ namespace GravityCTRL.FilterChili.Tests
         public void Should_Set_Filter_With_Resolver_Instance()
         {
             var context = CreateContext();
-            context.RatingFilter.Set(1, 7);
-            context.NameFilter.Set("Test2");
+            for (int i = 0; i < 1000; i++)
+            {
+                context.RatingFilter.Set(1, 7);
+                context.NameFilter.Set("Test2");
+            }
 
             var filterResults = context.ApplyFilters();
             var evaluatedFilterResults = filterResults.ToList();
 
-            _output.WriteLine(JsonUtils.Convert(context.Domains()));
+            var domains = context.Domains();
+            _output.WriteLine(JsonUtils.Convert(domains));
             _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
         }
 
@@ -59,13 +63,17 @@ namespace GravityCTRL.FilterChili.Tests
         public void Should_Set_Filter_With_TrySet()
         {
             var context = CreateContext();
-            context.TrySet("Rating", 1, 7);
-            context.TrySet("Name", new [] { "Test2" });
+            for (int i = 0; i < 1000; i++)
+            {
+                context.TrySet("Rating", 1, 7);
+                context.TrySet("Name", new[] { "Test2" });
+            }
 
             var filterResults = context.ApplyFilters();
             var evaluatedFilterResults = filterResults.ToList();
 
-            _output.WriteLine(JsonUtils.Convert(context.Domains()));
+            var domains = context.Domains();
+            _output.WriteLine(JsonUtils.Convert(domains));
             _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
         }
 
@@ -73,13 +81,17 @@ namespace GravityCTRL.FilterChili.Tests
         public void Should_Set_Filter_With_TrySet_Json()
         {
             var context = CreateContext();
-            context.TrySet(_rangeObject);
-            context.TrySet(_listObject);
+            for (int i = 0; i < 1000; i++)
+            {
+                context.TrySet(_rangeObject);
+                context.TrySet(_listObject);
+            }
 
             var filterResults = context.ApplyFilters();
             var evaluatedFilterResults = filterResults.ToList();
 
-            _output.WriteLine(JsonUtils.Convert(context.Domains()));
+            var domains = context.Domains();
+            _output.WriteLine(JsonUtils.Convert(domains));
             _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
         }
 
