@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 
 namespace GravityCTRL.FilterChili.Serialization
 {
-    public class JsonUtils
+    public static class JsonUtils
     {
         public static JsonSerializer Serializer { get; }
 
