@@ -23,7 +23,6 @@ using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Serialization;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
@@ -54,6 +53,7 @@ namespace GravityCTRL.FilterChili
         private readonly TDomainProvider _domainProvider;
 
         private DomainResolver<TSource, TSelector> _domainResolver;
+        private Action<JToken> _domainSetterAction;
 
         protected internal FilterSelector(TDomainProvider domainProvider)
         {
@@ -64,6 +64,7 @@ namespace GravityCTRL.FilterChili
         {
             var resolver = select(_domainProvider);
             _domainResolver = resolver;
+            _domainSetterAction = CreateDomainSetter(resolver);
             return resolver;
         }
 
@@ -91,32 +92,13 @@ namespace GravityCTRL.FilterChili
 
         internal override bool TrySet(JToken domainToken)
         {
-            try
-            {
-                switch (_domainResolver)
-                {
-                    case RangeResolver<TSource, TSelector> range:
-                    {
-                        var domain = domainToken.ToObject<Range<TSelector>>(JsonUtils.Serializer);
-                        range.Set(domain.Min, domain.Max);
-                        return true;
-                    }
-                    case ListResolver<TSource, TSelector> list:
-                    {
-                        var domain = domainToken.ToObject<Set<TSelector>>(JsonUtils.Serializer);
-                        list.Set(domain.Values);
-                        return true;
-                    }
-                    default:
-                    {
-                        return false;
-                    }
-                }
-            }
-            catch (JsonSerializationException)
+            if (_domainSetterAction == null)
             {
                 return false;
             }
+
+            _domainSetterAction.Invoke(domainToken);
+            return true;
         }
 
         internal override bool TrySet<TSelectorTarget>(TSelectorTarget min, TSelectorTarget max)
@@ -165,6 +147,33 @@ namespace GravityCTRL.FilterChili
             }
 
             return false;
+        }
+
+        private static Action<JToken> CreateDomainSetter<TDomainResolver>(TDomainResolver resolver) where TDomainResolver : DomainResolver<TSource, TSelector>
+        {
+            switch (resolver)
+            {
+                case RangeResolver<TSource, TSelector> range:
+                {
+                    return domainToken =>
+                    {
+                        var domain = domainToken.ToObject<Range<TSelector>>(JsonUtils.Serializer);
+                        range.Set(domain.Min, domain.Max);
+                    };
+                }
+                case ListResolver<TSource, TSelector> list:
+                {
+                    return domainToken =>
+                    {
+                        var domain = domainToken.ToObject<Set<TSelector>>(JsonUtils.Serializer);
+                        list.Set(domain.Values);
+                    };
+                }
+                default:
+                {
+                    return null;
+                }
+            }
         }
 
         #endregion
