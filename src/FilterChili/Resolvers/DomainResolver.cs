@@ -18,6 +18,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Resolvers
 {
@@ -29,6 +30,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         public string Name { get; }
         public string SourceType => _sourceType.Name;
         public string TargetType => _selectorType.Name;
+        public abstract bool TrySet(JToken domainToken);
 
         internal abstract bool NeedsToBeResolved { get; }
         internal abstract Task Resolve(IQueryable<TSource> queryable, IQueryable<TSource> selectableItems);

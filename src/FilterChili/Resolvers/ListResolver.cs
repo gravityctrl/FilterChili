@@ -20,7 +20,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Models;
+using GravityCTRL.FilterChili.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Resolvers
 {
@@ -54,6 +57,21 @@ namespace GravityCTRL.FilterChili.Resolvers
         {
             _selectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
             _needsToBeResolved = true;
+        }
+
+        public override bool TrySet(JToken domainToken)
+        {
+            try
+            {
+                var domain = domainToken.ToObject<Set<TSelector>>(JsonUtils.Serializer);
+                Set(domain.Values);
+            }
+            catch (JsonSerializationException)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         #region Internal Methods

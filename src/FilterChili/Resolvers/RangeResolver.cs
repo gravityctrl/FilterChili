@@ -20,7 +20,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Models;
+using GravityCTRL.FilterChili.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Resolvers
 {
@@ -47,6 +50,21 @@ namespace GravityCTRL.FilterChili.Resolvers
             SelectedRange.Min = min;
             SelectedRange.Max = max;
             _needsToBeResolved = true;
+        }
+
+        public override bool TrySet(JToken domainToken)
+        {
+            try
+            {
+                var domain = domainToken.ToObject<Range<TSelector>>(JsonUtils.Serializer);
+                Set(domain.Min, domain.Max);
+            }
+            catch (JsonSerializationException)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         #region Internal Methods

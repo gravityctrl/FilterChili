@@ -55,7 +55,6 @@ namespace GravityCTRL.FilterChili
         private readonly TDomainProvider _domainProvider;
 
         private DomainResolver<TSource, TSelector> _domainResolver;
-        private Action<JToken> _domainSetterAction;
 
         internal override bool NeedsToBeResolved => _domainResolver.NeedsToBeResolved;
 
@@ -68,7 +67,6 @@ namespace GravityCTRL.FilterChili
         {
             var resolver = select(_domainProvider);
             _domainResolver = resolver;
-            _domainSetterAction = CreateDomainSetter(resolver);
             return resolver;
         }
 
@@ -96,13 +94,7 @@ namespace GravityCTRL.FilterChili
 
         internal override bool TrySet(JToken domainToken)
         {
-            if (_domainSetterAction == null)
-            {
-                return false;
-            }
-
-            _domainSetterAction.Invoke(domainToken);
-            return true;
+            return _domainResolver.TrySet(domainToken);
         }
 
         internal override bool TrySet<TSelectorTarget>(TSelectorTarget min, TSelectorTarget max)
@@ -151,33 +143,6 @@ namespace GravityCTRL.FilterChili
             }
 
             return false;
-        }
-
-        private static Action<JToken> CreateDomainSetter<TDomainResolver>(TDomainResolver resolver) where TDomainResolver : DomainResolver<TSource, TSelector>
-        {
-            switch (resolver)
-            {
-                case RangeResolver<TSource, TSelector> range:
-                {
-                    return domainToken =>
-                    {
-                        var domain = domainToken.ToObject<Range<TSelector>>(JsonUtils.Serializer);
-                        range.Set(domain.Min, domain.Max);
-                    };
-                }
-                case ListResolver<TSource, TSelector> list:
-                {
-                    return domainToken =>
-                    {
-                        var domain = domainToken.ToObject<Set<TSelector>>(JsonUtils.Serializer);
-                        list.Set(domain.Values);
-                    };
-                }
-                default:
-                {
-                    return null;
-                }
-            }
         }
 
         #endregion
