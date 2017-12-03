@@ -46,7 +46,7 @@ namespace GravityCTRL.FilterChili.Tests
         public async Task Should_Set_Filter_With_Resolver_Instance()
         {
             var context = CreateContext();
-            for (int i = 0; i < 1_000_000; i++)
+            for (var i = 0; i < 1_000_000; i++)
             {
                 context.RatingFilter.Set(1, 7);
                 context.NameFilter.Set("Test2");
@@ -64,7 +64,7 @@ namespace GravityCTRL.FilterChili.Tests
         public async Task Should_Set_Filter_With_TrySet()
         {
             var context = CreateContext();
-            for (int i = 0; i < 1_000_000; i++)
+            for (var i = 0; i < 1_000_000; i++)
             {
                 context.TrySet("Rating", 1, 7);
                 context.TrySet("Name", new[] { "Test2" });
@@ -82,7 +82,7 @@ namespace GravityCTRL.FilterChili.Tests
         public async Task Should_Set_Filter_With_TrySet_Json()
         {
             var context = CreateContext();
-            for (int i = 0; i < 1_000_000; i++)
+            for (var i = 0; i < 1_000_000; i++)
             {
                 context.TrySet(_rangeObject);
                 context.TrySet(_listObject);
