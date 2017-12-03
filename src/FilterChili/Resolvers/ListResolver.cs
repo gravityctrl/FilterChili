@@ -26,7 +26,9 @@ namespace GravityCTRL.FilterChili.Resolvers
 {
     public abstract class ListResolver<TSource, TSelector> : DomainResolver<TSource, TSelector>
     {
-        private readonly Action _onChange;
+        private bool _needsToBeResolved;
+
+        internal override bool NeedsToBeResolved => _needsToBeResolved;
 
         private IReadOnlyList<TSelector> _selectedValues;
         private IReadOnlyList<TSelector> _selectableValues;
@@ -34,9 +36,9 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         public IReadOnlyList<Selectable<TSelector>> Values => CombineLists();
 
-        protected internal ListResolver(string name, Action onChange, Expression<Func<TSource, TSelector>> selector) : base(name, selector)
+        protected internal ListResolver(string name, Expression<Func<TSource, TSelector>> selector) : base(name, selector)
         {
-            _onChange = onChange;
+            _needsToBeResolved = true;
             _selectedValues = new List<TSelector>();
             _selectableValues = new List<TSelector>();
             _allValues = new List<TSelector>();
@@ -45,13 +47,13 @@ namespace GravityCTRL.FilterChili.Resolvers
         public void Set(IEnumerable<TSelector> selectedValues)
         {
             _selectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
-            _onChange?.Invoke();
+            _needsToBeResolved = true;
         }
 
         public void Set(params TSelector[] selectedValues)
         {
             _selectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
-            _onChange?.Invoke();
+            _needsToBeResolved = true;
         }
 
         #region Internal Methods
@@ -65,6 +67,8 @@ namespace GravityCTRL.FilterChili.Resolvers
             _selectableValues = selectableItems is IAsyncEnumerable<TSelector>
                 ? await selectableItems.ToListAsync()
                 : selectableItems.ToList();
+
+            _needsToBeResolved = false;
         }
 
         internal override Expression<Func<IGrouping<TSelector, TSource>, bool>> FilterExpression()
@@ -108,6 +112,6 @@ namespace GravityCTRL.FilterChili.Resolvers
 
     public class StringListResolver<TSource> : ListResolver<TSource, string>
     {
-        internal StringListResolver(string name, Action onChange, Expression<Func<TSource, string>> selector) : base(name, onChange, selector) { }
+        internal StringListResolver(string name, Expression<Func<TSource, string>> selector) : base(name, selector) { }
     }
 }

@@ -22,11 +22,11 @@ namespace GravityCTRL.FilterChili.Providers
 {
     public class StringDomainProvider<TSource> : DomainProvider<TSource, string>
     {
-        internal StringDomainProvider(Action onChange, Expression<Func<TSource, string>> selector) : base(onChange, selector) {}
+        internal StringDomainProvider(Expression<Func<TSource, string>> selector) : base(selector) {}
 
         public StringListResolver<TSource> List(string name, Action<StringListResolver<TSource>> options = null)
         {
-            var resolver = new StringListResolver<TSource>(name, OnChange, Selector);
+            var resolver = new StringListResolver<TSource>(name, Selector);
             options?.Invoke(resolver);
             return resolver;
         }

@@ -38,14 +38,14 @@ namespace GravityCTRL.FilterChili
 
         public StringFilterSelector<TSource> Filter(Expression<Func<TSource, string>> valueSelector)
         {
-            var filter = new StringFilterSelector<TSource>(async () => await Resolve(), valueSelector);
+            var filter = new StringFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         public IntFilterSelector<TSource> Filter(Expression<Func<TSource, int>> valueSelector)
         {
-            var filter = new IntFilterSelector<TSource>(async () => await Resolve(), valueSelector);
+            var filter = new IntFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
@@ -63,8 +63,13 @@ namespace GravityCTRL.FilterChili
             return _filters.Aggregate(queryable, (current, filter) => filter.ApplyFilter(current));
         }
 
-        internal IEnumerable<DomainResolver<TSource>> Domains()
+        internal async Task<IEnumerable<DomainResolver<TSource>>> Domains()
         {
+            if (_filters.Any(f => f.NeedsToBeResolved))
+            {
+                await Resolve();
+            }
+
             return _filters.Select(filter => filter.Domain());
         }
 

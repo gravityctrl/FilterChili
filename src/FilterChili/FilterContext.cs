@@ -16,6 +16,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Resolvers;
 using Newtonsoft.Json.Linq;
 
@@ -35,9 +36,9 @@ namespace GravityCTRL.FilterChili
             return _contextOptions.ApplyFilters();
         }
 
-        public IEnumerable<DomainResolver<TSource>> Domains()
+        public async Task<IEnumerable<DomainResolver<TSource>>> Domains()
         {
-            return _contextOptions.Domains();
+            return await _contextOptions.Domains();
         }
 
         public bool TrySet(JArray filterTokens)

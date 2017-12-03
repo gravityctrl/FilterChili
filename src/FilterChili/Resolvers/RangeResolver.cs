@@ -26,15 +26,17 @@ namespace GravityCTRL.FilterChili.Resolvers
 {
     public abstract class RangeResolver<TSource, TSelector> : DomainResolver<TSource, TSelector>
     {
-        private readonly Action _onChange;
+        private bool _needsToBeResolved;
+
+        internal override bool NeedsToBeResolved => _needsToBeResolved;
 
         public Range<TSelector> TotalRange { get; }
         public Range<TSelector> SelectableRange { get; }
         public Range<TSelector> SelectedRange { get; }
 
-        protected internal RangeResolver(string name, Action onChange, Expression<Func<TSource, TSelector>> selector, TSelector min, TSelector max) : base(name, selector)
+        protected internal RangeResolver(string name, Expression<Func<TSource, TSelector>> selector, TSelector min, TSelector max) : base(name, selector)
         {
-            _onChange = onChange;
+            _needsToBeResolved = true;
             SelectableRange = new Range<TSelector>(min, max);
             SelectedRange = new Range<TSelector>(min, max);
             TotalRange = new Range<TSelector>(min, max);
@@ -44,7 +46,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         {
             SelectedRange.Min = min;
             SelectedRange.Max = max;
-            _onChange?.Invoke();
+            _needsToBeResolved = true;
         }
 
         #region Internal Methods
@@ -72,6 +74,8 @@ namespace GravityCTRL.FilterChili.Resolvers
                 SelectableRange.Min = selectableItems.Min();
                 SelectableRange.Max = selectableItems.Max();
             }
+
+            _needsToBeResolved = false;
         }
 
         #endregion
@@ -79,7 +83,7 @@ namespace GravityCTRL.FilterChili.Resolvers
 
     public class IntRangeResolver<TSource> : RangeResolver<TSource, int>
     {
-        internal IntRangeResolver(string name, Action onChange, Expression<Func<TSource, int>> selector) : base(name, onChange, selector, int.MinValue, int.MaxValue) { }
+        internal IntRangeResolver(string name, Expression<Func<TSource, int>> selector) : base(name, selector, int.MinValue, int.MaxValue) { }
 
         internal override Expression<Func<IGrouping<int, TSource>, bool>> FilterExpression()
         {

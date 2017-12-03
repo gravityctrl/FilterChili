@@ -30,6 +30,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         public string SourceType => _sourceType.Name;
         public string TargetType => _selectorType.Name;
 
+        internal abstract bool NeedsToBeResolved { get; }
         internal abstract Task Resolve(IQueryable<TSource> queryable, IQueryable<TSource> selectableItems);
         internal abstract IQueryable<TSource> ExecuteFilter(IQueryable<TSource> queryable);
 

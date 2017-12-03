@@ -31,6 +31,8 @@ namespace GravityCTRL.FilterChili
     {
         #region Internal Methods
 
+        internal abstract bool NeedsToBeResolved { get; }
+
         internal abstract IQueryable<TSource> ApplyFilter(IQueryable<TSource> queryable);
 
         internal abstract Task Resolve(IQueryable<TSource> queryable, IQueryable<TSource> selectableItems);
@@ -54,6 +56,8 @@ namespace GravityCTRL.FilterChili
 
         private DomainResolver<TSource, TSelector> _domainResolver;
         private Action<JToken> _domainSetterAction;
+
+        internal override bool NeedsToBeResolved => _domainResolver.NeedsToBeResolved;
 
         protected internal FilterSelector(TDomainProvider domainProvider)
         {
@@ -181,11 +185,11 @@ namespace GravityCTRL.FilterChili
 
     public class StringFilterSelector<TSource> : FilterSelector<TSource, string, StringDomainProvider<TSource>>
     {
-        internal StringFilterSelector(Action onChange, Expression<Func<TSource, string>> valueSelector) : base(new StringDomainProvider<TSource>(onChange, valueSelector)) { }
+        internal StringFilterSelector(Expression<Func<TSource, string>> valueSelector) : base(new StringDomainProvider<TSource>(valueSelector)) { }
     }
 
     public class IntFilterSelector<TSource> : FilterSelector<TSource, int, IntDomainProvider<TSource>>
     {
-        internal IntFilterSelector(Action onChange, Expression<Func<TSource, int>> valueSelector) : base(new IntDomainProvider<TSource>(onChange, valueSelector)) { }
+        internal IntFilterSelector(Expression<Func<TSource, int>> valueSelector) : base(new IntDomainProvider<TSource>(valueSelector)) { }
     }
 }

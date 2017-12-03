@@ -22,11 +22,9 @@ namespace GravityCTRL.FilterChili.Providers
     public abstract class DomainProvider<TSource, TSelector>
     {
         protected internal readonly Expression<Func<TSource, TSelector>> Selector;
-        protected internal readonly Action OnChange;
 
-        protected internal DomainProvider(Action onChange, Expression<Func<TSource, TSelector>> selector)
+        protected internal DomainProvider(Expression<Func<TSource, TSelector>> selector)
         {
-            OnChange = onChange;
             Selector = selector;
         }
     }
