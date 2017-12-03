@@ -129,9 +129,4 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         #endregion
     }
-
-    public class StringListResolver<TSource> : ListResolver<TSource, string>
-    {
-        internal StringListResolver(string name, Expression<Func<TSource, string>> selector) : base(name, selector) { }
-    }
 }
