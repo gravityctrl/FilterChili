@@ -104,29 +104,4 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         #endregion
     }
-
-    public class IntRangeResolver<TSource> : RangeResolver<TSource, int>
-    {
-        internal IntRangeResolver(string name, Expression<Func<TSource, int>> selector) : base(name, selector, int.MinValue, int.MaxValue) { }
-
-        protected override Expression<Func<IGrouping<int, TSource>, bool>> FilterExpression()
-        {
-            if (SelectedRange.Min != int.MinValue && SelectedRange.Max != int.MaxValue)
-            {
-                return group => group.Key >= SelectedRange.Min && group.Key <= SelectedRange.Max;
-            }
-
-            if (SelectedRange.Min == int.MinValue)
-            {
-                return group => group.Key <= SelectedRange.Max;
-            }
-
-            if (SelectedRange.Max == int.MaxValue)
-            {
-                return group => group.Key >= SelectedRange.Min;
-            }
-
-            return null;
-        }
-    }
 }
