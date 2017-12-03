@@ -86,12 +86,18 @@ namespace GravityCTRL.FilterChili.Resolvers
             var entities = _allValues.ToDictionary(value => value, value => new Selectable<TSelector> { Value = value });
             foreach (var selectedValue in _selectedValues)
             {
-                entities[selectedValue].IsSelected = true;
+                if (entities.TryGetValue(selectedValue, out var selectable))
+                {
+                    selectable.IsSelected = true;
+                }
             }
 
             foreach (var selectableValue in _selectableValues)
             {
-                entities[selectableValue].CanBeSelected = true;
+                if (entities.TryGetValue(selectableValue, out var selectable))
+                {
+                    selectable.CanBeSelected = true;
+                }
             }
 
             return entities.Values.ToList();
