@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
@@ -117,6 +118,8 @@ namespace GravityCTRL.FilterChili.Tests
 
         private static ProductFilterContext CreateContext()
         {
+            Randomizer.Seed = new Random(0);
+
             var index = 1;
             var testProducts = new Faker<Product>();
             testProducts.RuleFor(product => product.Id, faker => index++);
