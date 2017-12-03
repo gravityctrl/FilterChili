@@ -22,6 +22,8 @@ using GravityCTRL.FilterChili.Tests.Utils;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using static GravityCTRL.FilterChili.Tests.Utils.JsonUtils;
+using static GravityCTRL.FilterChili.Tests.Utils.Benchmark;
 
 namespace GravityCTRL.FilterChili.Tests
 {
@@ -45,55 +47,71 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public async Task Should_Set_Filter_With_Resolver_Instance()
         {
-            var context = CreateContext();
-            for (var i = 0; i < 1_000_000; i++)
+            var duration = await Measure(async () =>
             {
-                context.RatingFilter.Set(1, 7);
-                context.NameFilter.Set("Test2");
-            }
+                var context = CreateContext();
+                for (var i = 0; i < 1_000_000; i++)
+                {
+                    context.RatingFilter.Set(1, 7);
+                    context.NameFilter.Set("Test2");
+                }
 
-            var filterResults = context.ApplyFilters();
-            var evaluatedFilterResults = filterResults.ToList();
+                var filterResults = context.ApplyFilters();
+                var evaluatedFilterResults = filterResults.ToList();
+                _output.WriteLine(Convert(evaluatedFilterResults));
 
-            var domains = await context.Domains();
-            _output.WriteLine(JsonUtils.Convert(domains));
-            _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
+                var domains = await context.Domains();
+                _output.WriteLine(Convert(domains));
+            });
+
+            _output.WriteLine("Duration {0}", duration);
         }
 
         [Fact]
         public async Task Should_Set_Filter_With_TrySet()
         {
-            var context = CreateContext();
-            for (var i = 0; i < 1_000_000; i++)
+            var duration = await Measure(async () =>
             {
-                context.TrySet("Rating", 1, 7);
-                context.TrySet("Name", new[] { "Test2" });
-            }
+                var context = CreateContext();
+                for (var i = 0; i < 1_000_000; i++)
+                {
+                    context.TrySet("Rating", 1, 7);
+                    context.TrySet("Name", new[] { "Test2" });
+                }
 
-            var filterResults = context.ApplyFilters();
-            var evaluatedFilterResults = filterResults.ToList();
+                var filterResults = context.ApplyFilters();
+                var evaluatedFilterResults = filterResults.ToList();
+                _output.WriteLine(Convert(evaluatedFilterResults));
 
-            var domains = await context.Domains();
-            _output.WriteLine(JsonUtils.Convert(domains));
-            _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
+                var domains = await context.Domains();
+                _output.WriteLine(Convert(domains));
+
+            });
+
+            _output.WriteLine("Duration {0}", duration);
         }
 
         [Fact]
         public async Task Should_Set_Filter_With_TrySet_Json()
         {
-            var context = CreateContext();
-            for (var i = 0; i < 1_000_000; i++)
+            var duration = await Measure(async () =>
             {
-                context.TrySet(_rangeObject);
-                context.TrySet(_listObject);
-            }
+                var context = CreateContext();
+                for (var i = 0; i < 1_000_000; i++)
+                {
+                    context.TrySet(_rangeObject);
+                    context.TrySet(_listObject);
+                }
 
-            var filterResults = context.ApplyFilters();
-            var evaluatedFilterResults = filterResults.ToList();
+                var filterResults = context.ApplyFilters();
+                var evaluatedFilterResults = filterResults.ToList();
+                _output.WriteLine(Convert(evaluatedFilterResults));
 
-            var domains = await context.Domains();
-            _output.WriteLine(JsonUtils.Convert(domains));
-            _output.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
+                var domains = await context.Domains();
+                _output.WriteLine(Convert(domains));
+            });
+
+            _output.WriteLine("Duration {0}", duration);
         }
 
         private static ProductFilterContext CreateContext()
