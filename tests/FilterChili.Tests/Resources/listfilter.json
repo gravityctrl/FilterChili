@@ -2,7 +2,11 @@
   "name": "Name",
   "domain": {
     "values": [
-      "Test2"
+      "Pizza",
+      "Chicken",
+      "Cheese",
+      "Fish",
+      "Tuna"
     ] 
   }
 }

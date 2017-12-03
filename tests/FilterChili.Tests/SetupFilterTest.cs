@@ -17,6 +17,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Bogus;
 using GravityCTRL.FilterChili.Tests.Models;
 using GravityCTRL.FilterChili.Tests.Utils;
 using Newtonsoft.Json.Linq;
@@ -50,10 +51,11 @@ namespace GravityCTRL.FilterChili.Tests
             var duration = await Measure(async () =>
             {
                 var context = CreateContext();
+
                 for (var i = 0; i < 1_000_000; i++)
                 {
                     context.RatingFilter.Set(1, 7);
-                    context.NameFilter.Set("Test2");
+                    context.NameFilter.Set("Pizza", "Chicken", "Cheese", "Fish", "Tuna");
                 }
 
                 var filterResults = context.ApplyFilters();
@@ -76,7 +78,7 @@ namespace GravityCTRL.FilterChili.Tests
                 for (var i = 0; i < 1_000_000; i++)
                 {
                     context.TrySet("Rating", 1, 7);
-                    context.TrySet("Name", new[] { "Test2" });
+                    context.TrySet("Name", new[] { "Pizza", "Chicken", "Cheese", "Fish", "Tuna" });
                 }
 
                 var filterResults = context.ApplyFilters();
@@ -116,27 +118,14 @@ namespace GravityCTRL.FilterChili.Tests
 
         private static ProductFilterContext CreateContext()
         {
-            var products = new List<Product>
-            {
-                new Product
-                {
-                    Sold = 1,
-                    Rating = 2,
-                    Name = "Test1"
-                },
-                new Product
-                {
-                    Sold = 2,
-                    Rating = 6,
-                    Name = "Test2"
-                },
-                new Product
-                {
-                    Sold = 5,
-                    Rating = 9,
-                    Name = "Test2"
-                }
-            };
+            var index = 1;
+            var testProducts = new Faker<Product>();
+            testProducts.RuleFor(product => product.Id, faker => index++);
+            testProducts.RuleFor(product => product.Sold, faker => faker.Random.Int(0, 1000));
+            testProducts.RuleFor(product => product.Rating, faker => faker.Random.Int(1, 10));
+            testProducts.RuleFor(product => product.Name, faker => faker.Commerce.Product());
+
+            var products = testProducts.GenerateLazy(50);
 
             var queryable = products.AsQueryable();
             return new ProductFilterContext(queryable);

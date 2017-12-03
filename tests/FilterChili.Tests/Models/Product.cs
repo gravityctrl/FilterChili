@@ -18,6 +18,7 @@ namespace GravityCTRL.FilterChili.Tests.Models
 {
     public class Product
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public int Rating { get; set; }
         public int Sold { get; set; }
