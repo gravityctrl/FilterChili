@@ -17,13 +17,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers;
 using Newtonsoft.Json.Linq;
 
-namespace GravityCTRL.FilterChili
+namespace GravityCTRL.FilterChili.Selectors
 {
     public abstract class FilterSelector<TSource>
     {
@@ -144,15 +143,5 @@ namespace GravityCTRL.FilterChili
         }
 
         #endregion
-    }
-
-    public class StringFilterSelector<TSource> : FilterSelector<TSource, string, StringDomainProvider<TSource>>
-    {
-        internal StringFilterSelector(Expression<Func<TSource, string>> valueSelector) : base(new StringDomainProvider<TSource>(valueSelector)) { }
-    }
-
-    public class IntFilterSelector<TSource> : FilterSelector<TSource, int, IntDomainProvider<TSource>>
-    {
-        internal IntFilterSelector(Expression<Func<TSource, int>> valueSelector) : base(new IntDomainProvider<TSource>(valueSelector)) { }
     }
 }
