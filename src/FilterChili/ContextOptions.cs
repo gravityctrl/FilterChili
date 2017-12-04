@@ -21,6 +21,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Selectors;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili
 {
@@ -29,6 +30,7 @@ namespace GravityCTRL.FilterChili
         private readonly IQueryable<TSource> _queryable;
         private readonly List<FilterSelector<TSource>> _filters;
 
+        [UsedImplicitly]
         public bool EnableMars { get; set; }
 
         internal ContextOptions(IQueryable<TSource> queryable, Action<ContextOptions<TSource>> configure)
