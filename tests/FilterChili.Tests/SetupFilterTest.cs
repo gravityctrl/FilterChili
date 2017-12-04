@@ -18,6 +18,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
+using GravityCTRL.FilterChili.Tests.Extensions;
 using GravityCTRL.FilterChili.Tests.Models;
 using GravityCTRL.FilterChili.Tests.Utils;
 using Newtonsoft.Json.Linq;
@@ -30,8 +31,9 @@ namespace GravityCTRL.FilterChili.Tests
 {
     public class SetupFilterTest
     {
-        private const int FILTER_ASSIGNMENTS = 1_000_000;
-        private const int ENTITY_AMOUNT = 1_000;
+        private const int FILTER_ASSIGNMENTS = 100_000;
+        private const int ENTITY_AMOUNT = 100_000;
+        private const int MAX_PRINTED_RESULTS = 5;
 
         private readonly ITestOutputHelper _output;
         private readonly JObject _rangeObject;
@@ -61,7 +63,7 @@ namespace GravityCTRL.FilterChili.Tests
                     context.NameFilter.Set("Pizza", "Chicken", "Cheese", "Fish", "Tuna");
                 }
 
-                var filterResults = context.ApplyFilters();
+                var filterResults = context.ApplyFilters().Take(MAX_PRINTED_RESULTS);
                 var evaluatedFilterResults = filterResults.ToList();
                 _output.WriteLine(Convert(evaluatedFilterResults));
 
@@ -84,7 +86,7 @@ namespace GravityCTRL.FilterChili.Tests
                     context.TrySet("Name", new[] { "Pizza", "Chicken", "Cheese", "Fish", "Tuna" });
                 }
 
-                var filterResults = context.ApplyFilters();
+                var filterResults = context.ApplyFilters().Take(MAX_PRINTED_RESULTS);
                 var evaluatedFilterResults = filterResults.ToList();
                 _output.WriteLine(Convert(evaluatedFilterResults));
 
@@ -108,7 +110,7 @@ namespace GravityCTRL.FilterChili.Tests
                     context.TrySet(_listObject);
                 }
 
-                var filterResults = context.ApplyFilters();
+                var filterResults = context.ApplyFilters().Take(MAX_PRINTED_RESULTS);
                 var evaluatedFilterResults = filterResults.ToList();
                 _output.WriteLine(Convert(evaluatedFilterResults));
 
@@ -132,7 +134,7 @@ namespace GravityCTRL.FilterChili.Tests
 
             var products = testProducts.GenerateLazy(ENTITY_AMOUNT);
 
-            var queryable = products.AsQueryable();
+            var queryable = products.AsAsyncEnumerable();
             return new ProductFilterContext(queryable);
         }
     }
