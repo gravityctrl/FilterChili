@@ -82,7 +82,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             _needsToBeResolved = false;
         }
 
-        private async Task SetRange(Range<TSelector> range, IQueryable<TSelector> queryable)
+        private static async Task SetRange(Range<TSelector> range, IQueryable<TSelector> queryable)
         {
             if (queryable is IAsyncEnumerable<TSelector> _)
             {
