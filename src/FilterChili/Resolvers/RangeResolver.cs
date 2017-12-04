@@ -77,29 +77,43 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         protected override async Task Resolve(IQueryable<TSelector> allItems, IQueryable<TSelector> selectableItems)
         {
-            if (allItems is IAsyncEnumerable<TSelector>)
-            {
-                TotalRange.Min = await allItems.MinAsync();
-                TotalRange.Max = await allItems.MaxAsync();
-            }
-            else
-            {
-                TotalRange.Min = allItems.Min();
-                TotalRange.Max = allItems.Max();
-            }
-
-            if (selectableItems is IAsyncEnumerable<TSelector>)
-            {
-                SelectableRange.Min = await selectableItems.MinAsync();
-                SelectableRange.Max = await selectableItems.MaxAsync();
-            }
-            else
-            {
-                SelectableRange.Min = selectableItems.Min();
-                SelectableRange.Max = selectableItems.Max();
-            }
-
+            await SetRange(TotalRange, allItems);
+            await SetRange(SelectableRange, selectableItems);
             _needsToBeResolved = false;
+        }
+
+        private async Task SetRange(Range<TSelector> range, IQueryable<TSelector> queryable)
+        {
+            if (queryable is IAsyncEnumerable<TSelector> _)
+            {
+                await ResolveRangeAsync(range, queryable);
+            }
+            else
+            {
+                ResolveRange(range, queryable);
+            }
+        }
+
+        private void ResolveRange(Range<TSelector> range, IQueryable<TSelector> queryable)
+        {
+            if (!queryable.Any())
+            {
+                return;
+            }
+
+            range.Min = queryable.Min();
+            range.Max = queryable.Max();
+        }
+
+        private async Task ResolveRangeAsync(Range<TSelector> range, IQueryable<TSelector> queryable)
+        {
+            if (!await queryable.AnyAsync())
+            {
+                return;
+            }
+
+            range.Min = await queryable.MinAsync();
+            range.Max = await queryable.MaxAsync();
         }
 
         #endregion
