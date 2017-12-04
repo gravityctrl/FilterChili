@@ -94,7 +94,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             }
         }
 
-        private void ResolveRange(Range<TSelector> range, IQueryable<TSelector> queryable)
+        private static void ResolveRange(Range<TSelector> range, IQueryable<TSelector> queryable)
         {
             if (!queryable.Any())
             {
@@ -105,7 +105,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             range.Max = queryable.Max();
         }
 
-        private async Task ResolveRangeAsync(Range<TSelector> range, IQueryable<TSelector> queryable)
+        private static async Task ResolveRangeAsync(Range<TSelector> range, IQueryable<TSelector> queryable)
         {
             if (!await queryable.AnyAsync())
             {
