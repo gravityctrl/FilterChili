@@ -29,6 +29,8 @@ namespace GravityCTRL.FilterChili
         private readonly IQueryable<TSource> _queryable;
         private readonly List<FilterSelector<TSource>> _filters;
 
+        public bool EnableMars { get; set; }
+
         internal ContextOptions(IQueryable<TSource> queryable, Action<ContextOptions<TSource>> configure)
         {
             _queryable = queryable;
@@ -65,7 +67,16 @@ namespace GravityCTRL.FilterChili
 
         internal async Task<IEnumerable<DomainResolver<TSource>>> Domains()
         {
-            if (_filters.Any(f => f.NeedsToBeResolved))
+            if (!_filters.Any(f => f.NeedsToBeResolved))
+            {
+                return _filters.Select(filter => filter.Domain());
+            }
+
+            if (EnableMars)
+            {
+                await ResolveConcurrently();
+            }
+            else
             {
                 await Resolve();
             }
@@ -90,6 +101,23 @@ namespace GravityCTRL.FilterChili
 
                 await filters[indexToResolve].Resolve(_queryable, selectableItems);
             }
+        }
+
+        private async Task ResolveConcurrently()
+        {
+            var filters = _filters.ToList();
+            var tasks = filters.Select((_, indexToResolve) =>
+            {
+                var selectableItems = _queryable.AsQueryable();
+
+                var ignoredIndex = indexToResolve;
+                var filtersToExecute = filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
+                selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filter) => filter.ApplyFilter(current));
+
+                return filters[indexToResolve].Resolve(_queryable, selectableItems);
+            });
+
+            await Task.WhenAll(tasks);
         }
 
         #endregion
