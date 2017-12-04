@@ -30,6 +30,9 @@ namespace GravityCTRL.FilterChili.Tests
 {
     public class SetupFilterTest
     {
+        private const int FILTER_ASSIGNMENTS = 1_000_000;
+        private const int ENTITY_AMOUNT = 1_000;
+
         private readonly ITestOutputHelper _output;
         private readonly JObject _rangeObject;
         private readonly JObject _listObject;
@@ -52,7 +55,7 @@ namespace GravityCTRL.FilterChili.Tests
             {
                 var context = CreateContext();
 
-                for (var i = 0; i < 1_000_000; i++)
+                for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
                 {
                     context.RatingFilter.Set(1, 7);
                     context.NameFilter.Set("Pizza", "Chicken", "Cheese", "Fish", "Tuna");
@@ -75,7 +78,7 @@ namespace GravityCTRL.FilterChili.Tests
             var duration = await Measure(async () =>
             {
                 var context = CreateContext();
-                for (var i = 0; i < 1_000_000; i++)
+                for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
                 {
                     context.TrySet("Rating", 1, 7);
                     context.TrySet("Name", new[] { "Pizza", "Chicken", "Cheese", "Fish", "Tuna" });
@@ -99,7 +102,7 @@ namespace GravityCTRL.FilterChili.Tests
             var duration = await Measure(async () =>
             {
                 var context = CreateContext();
-                for (var i = 0; i < 1_000_000; i++)
+                for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
                 {
                     context.TrySet(_rangeObject);
                     context.TrySet(_listObject);
@@ -127,7 +130,7 @@ namespace GravityCTRL.FilterChili.Tests
             testProducts.RuleFor(product => product.Rating, faker => faker.Random.Int(1, 10));
             testProducts.RuleFor(product => product.Name, faker => faker.Commerce.Product());
 
-            var products = testProducts.GenerateLazy(50);
+            var products = testProducts.GenerateLazy(ENTITY_AMOUNT);
 
             var queryable = products.AsQueryable();
             return new ProductFilterContext(queryable);
