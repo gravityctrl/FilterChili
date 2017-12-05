@@ -22,7 +22,7 @@ namespace GravityCTRL.FilterChili.Models
     {
         public TValue Value { [UsedImplicitly] get; set; }
 
-        public bool CanBeSelected { [UsedImplicitly] get; set; }
+        public bool? CanBeSelected { [UsedImplicitly] get; set; }
 
         public bool IsSelected { [UsedImplicitly] get; set; }
     }

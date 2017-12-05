@@ -32,13 +32,17 @@ namespace GravityCTRL.FilterChili.Resolvers
     {
         private bool _needsToBeResolved;
 
-        internal override bool NeedsToBeResolved => _needsToBeResolved;
+        internal override bool NeedsToBeResolved
+        {
+            get => _needsToBeResolved;
+            set => _needsToBeResolved = value;
+        }
 
         [UsedImplicitly]
-        public Range<TSelector> TotalRange { get; }
+        public Range<TSelector> TotalRange { get; private set; }
 
         [UsedImplicitly]
-        public Range<TSelector> SelectableRange { get; }
+        public Range<TSelector> SelectableRange { get; private set; }
 
         [UsedImplicitly]
         public Range<TSelector> SelectedRange { get; }
@@ -46,9 +50,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         protected internal RangeResolver(string name, Expression<Func<TSource, TSelector>> selector, TSelector min, TSelector max) : base(name, selector)
         {
             _needsToBeResolved = true;
-            SelectableRange = new Range<TSelector>(min, max);
             SelectedRange = new Range<TSelector>(min, max);
-            TotalRange = new Range<TSelector>(min, max);
         }
 
         public void Set(TSelector min, TSelector max)
@@ -75,45 +77,48 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         #region Internal Methods
 
-        protected override async Task Resolve(IQueryable<TSelector> allItems, IQueryable<TSelector> selectableItems)
+        protected override async Task SetAvailableValues(IQueryable<TSelector> allValues)
         {
-            await SetRange(TotalRange, allItems);
-            await SetRange(SelectableRange, selectableItems);
-            _needsToBeResolved = false;
+            TotalRange = await SetRange(allValues);
         }
 
-        private static async Task SetRange(Range<TSelector> range, IQueryable<TSelector> queryable)
+        protected override async Task SetSelectableValues(IQueryable<TSelector> selectableItems)
+        {
+            SelectableRange = await SetRange(selectableItems);
+        }
+
+        private static async Task<Range<TSelector>> SetRange(IQueryable<TSelector> queryable)
         {
             if (queryable is IAsyncEnumerable<TSelector> _)
             {
-                await ResolveRangeAsync(range, queryable);
+                return await ResolveRangeAsync(queryable);
             }
-            else
-            {
-                ResolveRange(range, queryable);
-            }
+
+            return ResolveRange(queryable);
         }
 
-        private static void ResolveRange(Range<TSelector> range, IQueryable<TSelector> queryable)
+        private static Range<TSelector> ResolveRange(IQueryable<TSelector> queryable)
         {
             if (!queryable.Any())
             {
-                return;
+                return null;
             }
 
-            range.Min = queryable.Min();
-            range.Max = queryable.Max();
+            var min = queryable.Min();
+            var max = queryable.Max();
+            return new Range<TSelector>(min, max);
         }
 
-        private static async Task ResolveRangeAsync(Range<TSelector> range, IQueryable<TSelector> queryable)
+        private static async Task<Range<TSelector>> ResolveRangeAsync(IQueryable<TSelector> queryable)
         {
             if (!await queryable.AnyAsync())
             {
-                return;
+                return null;
             }
-
-            range.Min = await queryable.MinAsync();
-            range.Max = await queryable.MaxAsync();
+            
+            var min = await queryable.MinAsync();
+            var max = await queryable.MaxAsync();
+            return new Range<TSelector>(min, max);
         }
 
         #endregion

@@ -95,31 +95,47 @@ namespace GravityCTRL.FilterChili
             var filters = _filters.ToList();
             for (var indexToResolve = 0; indexToResolve < filters.Count; indexToResolve++)
             {
-                var selectableItems = _queryable.AsQueryable();
+                var currentFilter = filters[indexToResolve];
+                if (!currentFilter.NeedsToBeResolved)
+                {
+                    continue;
+                }
 
+                var selectableItems = _queryable.AsQueryable();
                 var ignoredIndex = indexToResolve;
                 var filtersToExecute = filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
-                selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filter) => filter.ApplyFilter(current));
+                selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
 
-                await filters[indexToResolve].Resolve(_queryable, selectableItems);
+                var filter = filters[indexToResolve];
+                await filter.SetAvailableEntities(_queryable);
+                await filter.SetSelectableEntities(selectableItems);
+                currentFilter.NeedsToBeResolved = false;
             }
         }
 
         private async Task ResolveConcurrently()
         {
             var filters = _filters.ToList();
-            var tasks = filters.Select((_, indexToResolve) =>
+            var tasks = filters.Select((currentFilter, ignoredIndex) =>
             {
+                if (!currentFilter.NeedsToBeResolved)
+                {
+                    return null;
+                }
+
                 var selectableItems = _queryable.AsQueryable();
-
-                var ignoredIndex = indexToResolve;
                 var filtersToExecute = filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
-                selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filter) => filter.ApplyFilter(current));
+                selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
 
-                return filters[indexToResolve].Resolve(_queryable, selectableItems);
+                var task1 = currentFilter.SetAvailableEntities(_queryable);
+                var task2 = currentFilter.SetSelectableEntities(selectableItems);
+                return Task.WhenAll(task1, task2).ContinueWith(_ =>
+                {
+                    currentFilter.NeedsToBeResolved = false;
+                });
             });
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks.Where(task => task != null));
         }
 
         #endregion

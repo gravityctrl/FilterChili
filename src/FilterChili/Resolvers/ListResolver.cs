@@ -32,11 +32,20 @@ namespace GravityCTRL.FilterChili.Resolvers
     {
         private bool _needsToBeResolved;
 
-        internal override bool NeedsToBeResolved => _needsToBeResolved;
+        internal override bool NeedsToBeResolved
+        {
+            get => _needsToBeResolved;
+            set => _needsToBeResolved = value;
+        }
 
+        [NotNull]
         private IReadOnlyList<TSelector> _selectedValues;
+
+        [CanBeNull]
         private IReadOnlyList<TSelector> _selectableValues;
-        private IReadOnlyList<TSelector> _allValues;
+
+        [CanBeNull]
+        private IReadOnlyList<TSelector> _availableValues;
 
         [UsedImplicitly]
         public IReadOnlyList<Selectable<TSelector>> Values => CombineLists();
@@ -44,20 +53,19 @@ namespace GravityCTRL.FilterChili.Resolvers
         protected internal ListResolver(string name, Expression<Func<TSource, TSelector>> selector) : base(name, selector)
         {
             _needsToBeResolved = true;
-            _selectedValues = new List<TSelector>();
-            _selectableValues = new List<TSelector>();
-            _allValues = new List<TSelector>();
         }
 
         public void Set(IEnumerable<TSelector> selectedValues)
         {
             _selectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
+            _selectableValues = null;
             _needsToBeResolved = true;
         }
 
         public void Set(params TSelector[] selectedValues)
         {
             _selectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
+            _selectableValues = null;
             _needsToBeResolved = true;
         }
 
@@ -78,17 +86,18 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         #region Internal Methods
 
-        protected override async Task Resolve(IQueryable<TSelector> allItems, IQueryable<TSelector> selectableItems)
+        protected override async Task SetAvailableValues(IQueryable<TSelector> queryable)
         {
-            _allValues = allItems is IAsyncEnumerable<TSelector>
-                ? await allItems.Distinct().ToListAsync()
-                : allItems.Distinct().ToList();
+            _availableValues = queryable is IAsyncEnumerable<TSelector>
+                ? await queryable.Distinct().ToListAsync()
+                : queryable.Distinct().ToList();
+        }
 
-            _selectableValues = selectableItems is IAsyncEnumerable<TSelector>
-                ? await selectableItems.ToListAsync()
-                : selectableItems.ToList();
-
-            _needsToBeResolved = false;
+        protected override async Task SetSelectableValues(IQueryable<TSelector> queryable)
+        {
+            _selectableValues = queryable is IAsyncEnumerable<TSelector>
+                ? await queryable.ToListAsync()
+                : queryable.ToList();
         }
 
         protected override Expression<Func<IGrouping<TSelector, TSource>, bool>> FilterExpression()
@@ -107,24 +116,46 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         private IReadOnlyList<Selectable<TSelector>> CombineLists()
         {
-            var entities = _allValues.ToDictionary(value => value, value => new Selectable<TSelector> { Value = value });
-            foreach (var selectedValue in _selectedValues)
+            if (_availableValues == null)
             {
-                if (entities.TryGetValue(selectedValue, out var selectable))
+                return _selectedValues.Select(value => new Selectable<TSelector> { Value = value }).ToList();
+            }
+
+            var entities = _availableValues.ToDictionary(value => value, value => new Selectable<TSelector> { Value = value });
+            CreateItemDictionary(_selectedValues, entities);
+            if (_selectableValues != null)
+            {
+                SetSelectableStatus(_selectableValues, entities);
+            }
+
+            return entities.Values.ToList();
+        }
+
+        private void CreateItemDictionary(IReadOnlyList<TSelector> selectedValues, Dictionary<TSelector, Selectable<TSelector>> dictionary)
+        {
+            foreach (var selectedValue in selectedValues)
+            {
+                if (dictionary.TryGetValue(selectedValue, out var selectable))
                 {
                     selectable.IsSelected = true;
                 }
             }
+        }
 
-            foreach (var selectableValue in _selectableValues)
+        private void SetSelectableStatus(IReadOnlyList<TSelector> selectableValues, Dictionary<TSelector, Selectable<TSelector>> dictionary)
+        {
+            foreach (var selectable in dictionary.Values)
             {
-                if (entities.TryGetValue(selectableValue, out var selectable))
+                selectable.CanBeSelected = false;
+            }
+
+            foreach (var selectableValue in selectableValues)
+            {
+                if (dictionary.TryGetValue(selectableValue, out var selectable))
                 {
                     selectable.CanBeSelected = true;
                 }
             }
-
-            return entities.Values.ToList();
         }
 
         #endregion

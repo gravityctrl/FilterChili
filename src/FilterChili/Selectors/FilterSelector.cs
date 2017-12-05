@@ -28,11 +28,13 @@ namespace GravityCTRL.FilterChili.Selectors
     {
         #region Internal Methods
 
-        internal abstract bool NeedsToBeResolved { get; }
+        internal abstract bool NeedsToBeResolved { get; set; }
 
         internal abstract IQueryable<TSource> ApplyFilter(IQueryable<TSource> queryable);
 
-        internal abstract Task Resolve(IQueryable<TSource> queryable, IQueryable<TSource> selectableItems);
+        internal abstract Task SetAvailableEntities(IQueryable<TSource> queryable);
+
+        internal abstract Task SetSelectableEntities(IQueryable<TSource> selectableItems);
 
         internal abstract DomainResolver<TSource> Domain();
 
@@ -53,7 +55,11 @@ namespace GravityCTRL.FilterChili.Selectors
 
         private DomainResolver<TSource, TSelector> _domainResolver;
 
-        internal override bool NeedsToBeResolved => _domainResolver.NeedsToBeResolved;
+        internal override bool NeedsToBeResolved
+        {
+            get => _domainResolver.NeedsToBeResolved;
+            set => _domainResolver.NeedsToBeResolved = value;
+        }
 
         protected internal FilterSelector(TDomainProvider domainProvider)
         {
@@ -74,9 +80,14 @@ namespace GravityCTRL.FilterChili.Selectors
             return _domainResolver.ExecuteFilter(queryable);
         }
 
-        internal override async Task Resolve(IQueryable<TSource> queryable, IQueryable<TSource> selectableItems)
+        internal override async Task SetAvailableEntities(IQueryable<TSource> queryable)
         {
-            await _domainResolver.Resolve(queryable, selectableItems);
+            await _domainResolver.SetAvailableEntities(queryable);
+        }
+
+        internal override async Task SetSelectableEntities(IQueryable<TSource> selectableItems)
+        {
+            await _domainResolver.SetSelectableEntities(selectableItems);
         }
 
         internal override DomainResolver<TSource> Domain()

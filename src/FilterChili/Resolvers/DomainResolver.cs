@@ -28,7 +28,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         private readonly Type _sourceType;
         private readonly Type _selectorType;
 
-        internal abstract bool NeedsToBeResolved { get; }
+        internal abstract bool NeedsToBeResolved { get; set; }
 
         public string Name { get; }
 
@@ -57,9 +57,14 @@ namespace GravityCTRL.FilterChili.Resolvers
             _selector = selector;
         }
 
-        internal async Task Resolve(IQueryable<TSource> queryable, IQueryable<TSource> selectableItems)
+        internal async Task SetAvailableEntities(IQueryable<TSource> queryable)
         {
-            await Resolve(queryable.Select(_selector), selectableItems.Select(_selector));
+            await SetAvailableValues(queryable.Select(_selector));
+        }
+
+        internal async Task SetSelectableEntities(IQueryable<TSource> queryable)
+        {
+            await SetSelectableValues(queryable.Select(_selector));
         }
 
         internal IQueryable<TSource> ExecuteFilter(IQueryable<TSource> queryable)
@@ -73,7 +78,9 @@ namespace GravityCTRL.FilterChili.Resolvers
                     .SelectMany(group => group);
         }
 
-        protected abstract Task Resolve(IQueryable<TSelector> allItems, IQueryable<TSelector> selectableItems);
+        protected abstract Task SetAvailableValues(IQueryable<TSelector> allValues);
+
+        protected abstract Task SetSelectableValues(IQueryable<TSelector> selectableItems);
 
         protected abstract Expression<Func<IGrouping<TSelector, TSource>, bool>> FilterExpression();
     }
