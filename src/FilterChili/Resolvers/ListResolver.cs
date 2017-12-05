@@ -48,7 +48,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         private IReadOnlyList<TSelector> _availableValues;
 
         [UsedImplicitly]
-        public IReadOnlyList<Selectable<TSelector>> Values => CombineLists();
+        public IReadOnlyList<Item<TSelector>> Values => CombineLists();
 
         protected internal ListResolver(string name, Expression<Func<TSource, TSelector>> selector) : base(name, selector)
         {
@@ -115,14 +115,14 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         #region Private Methods
 
-        private IReadOnlyList<Selectable<TSelector>> CombineLists()
+        private IReadOnlyList<Item<TSelector>> CombineLists()
         {
             if (_availableValues == null)
             {
-                return _selectedValues.Select(value => new Selectable<TSelector> { Value = value }).ToList();
+                return _selectedValues.Select(value => new Item<TSelector> { Value = value }).ToList();
             }
 
-            var entities = _availableValues.ToDictionary(value => value, value => new Selectable<TSelector> { Value = value });
+            var entities = _availableValues.ToDictionary(value => value, value => new Item<TSelector> { Value = value });
             SetSelectedStatus(_selectedValues, entities);
             if (_selectableValues != null)
             {
@@ -132,7 +132,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             return entities.Values.ToList();
         }
 
-        private static void SetSelectedStatus(IEnumerable<TSelector> selectedValues, IReadOnlyDictionary<TSelector, Selectable<TSelector>> dictionary)
+        private static void SetSelectedStatus(IEnumerable<TSelector> selectedValues, IReadOnlyDictionary<TSelector, Item<TSelector>> dictionary)
         {
             foreach (var selectedValue in selectedValues)
             {
@@ -143,7 +143,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             }
         }
 
-        private static void SetSelectableStatus(IEnumerable<TSelector> selectableValues, Dictionary<TSelector, Selectable<TSelector>> dictionary)
+        private static void SetSelectableStatus(IEnumerable<TSelector> selectableValues, Dictionary<TSelector, Item<TSelector>> dictionary)
         {
             foreach (var selectable in dictionary.Values)
             {

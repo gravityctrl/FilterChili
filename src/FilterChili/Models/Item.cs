@@ -18,7 +18,7 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Models
 {
-    public class Selectable<TValue>
+    public class Item<TValue>
     {
         public TValue Value { [UsedImplicitly] get; set; }
 
