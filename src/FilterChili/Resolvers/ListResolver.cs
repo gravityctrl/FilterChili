@@ -53,6 +53,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         protected internal ListResolver(string name, Expression<Func<TSource, TSelector>> selector) : base(name, selector)
         {
             _needsToBeResolved = true;
+            _selectedValues = new List<TSelector>();
         }
 
         public void Set(IEnumerable<TSelector> selectedValues)
@@ -122,7 +123,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             }
 
             var entities = _availableValues.ToDictionary(value => value, value => new Selectable<TSelector> { Value = value });
-            CreateItemDictionary(_selectedValues, entities);
+            SetSelectedStatus(_selectedValues, entities);
             if (_selectableValues != null)
             {
                 SetSelectableStatus(_selectableValues, entities);
@@ -131,7 +132,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             return entities.Values.ToList();
         }
 
-        private void CreateItemDictionary(IReadOnlyList<TSelector> selectedValues, Dictionary<TSelector, Selectable<TSelector>> dictionary)
+        private static void SetSelectedStatus(IEnumerable<TSelector> selectedValues, IReadOnlyDictionary<TSelector, Selectable<TSelector>> dictionary)
         {
             foreach (var selectedValue in selectedValues)
             {
@@ -142,7 +143,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             }
         }
 
-        private void SetSelectableStatus(IReadOnlyList<TSelector> selectableValues, Dictionary<TSelector, Selectable<TSelector>> dictionary)
+        private static void SetSelectableStatus(IEnumerable<TSelector> selectableValues, Dictionary<TSelector, Selectable<TSelector>> dictionary)
         {
             foreach (var selectable in dictionary.Values)
             {
