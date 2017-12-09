@@ -17,6 +17,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Resolvers;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
@@ -42,6 +43,12 @@ namespace GravityCTRL.FilterChili
         public async Task<IEnumerable<DomainResolver<TSource>>> Domains()
         {
             return await _contextOptions.Domains();
+        }
+
+        [UsedImplicitly]
+        public async Task<IEnumerable<DomainResolver<TSource>>> Domains(CalculationStrategy calculationStrategy)
+        {
+            return await _contextOptions.Domains(calculationStrategy);
         }
 
         [UsedImplicitly]

@@ -73,6 +73,11 @@ namespace GravityCTRL.FilterChili
 
         internal async Task<IEnumerable<DomainResolver<TSource>>> Domains()
         {
+            return await Domains(CalculationStrategy);
+        }
+
+        internal async Task<IEnumerable<DomainResolver<TSource>>> Domains(CalculationStrategy calculationStrategy)
+        {
             if (!_filters.Any(f => f.NeedsToBeResolved))
             {
                 return _filters.Select(filter => filter.Domain());
@@ -80,11 +85,11 @@ namespace GravityCTRL.FilterChili
 
             if (EnableMars)
             {
-                await ResolveConcurrently();
+                await ResolveConcurrently(calculationStrategy);
             }
             else
             {
-                await Resolve();
+                await Resolve(calculationStrategy);
             }
 
             return _filters.Select(filter => filter.Domain());
@@ -94,7 +99,7 @@ namespace GravityCTRL.FilterChili
 
         #region Private Methods
 
-        private async Task Resolve()
+        private async Task Resolve(CalculationStrategy calculationStrategy)
         {
             var filters = _filters.ToList();
             async Task ResolveFilterAtIndex(int ignoredIndex)
@@ -108,7 +113,7 @@ namespace GravityCTRL.FilterChili
                 var selectableItems = _queryable.AsQueryable();
                 await currentFilter.SetAvailableEntities(selectableItems);
 
-                if (CalculationStrategy == CalculationStrategy.Full)
+                if (calculationStrategy == CalculationStrategy.Full)
                 {
                     var filtersToExecute = filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
                     selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
@@ -124,7 +129,7 @@ namespace GravityCTRL.FilterChili
             }
         }
 
-        private async Task ResolveConcurrently()
+        private async Task ResolveConcurrently(CalculationStrategy calculationStrategy)
         {
             var filters = _filters.ToList();
             IEnumerable<Task> CreateResolvingTasks(FilterSelector<TSource> currentFilter, int ignoredIndex)
@@ -137,7 +142,7 @@ namespace GravityCTRL.FilterChili
                 var selectableItems = _queryable.AsQueryable();
                 yield return currentFilter.SetAvailableEntities(selectableItems);
 
-                if (CalculationStrategy == CalculationStrategy.Full)
+                if (calculationStrategy == CalculationStrategy.Full)
                 {
                     var filtersToExecute = filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
                     selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
