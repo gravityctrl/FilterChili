@@ -116,9 +116,13 @@ namespace GravityCTRL.FilterChili
         private async Task ResolveConcurrently()
         {
             var filters = _filters.ToList();
-
             IEnumerable<Task> CreateResolvingTasks(FilterSelector<TSource> currentFilter, int ignoredIndex)
             {
+                if (!currentFilter.NeedsToBeResolved)
+                {
+                    yield break;
+                }
+
                 var selectableItems = _queryable.AsQueryable();
                 yield return currentFilter.SetAvailableEntities(selectableItems);
 
@@ -127,12 +131,8 @@ namespace GravityCTRL.FilterChili
                 yield return currentFilter.SetSelectableEntities(selectableItems);
             }
 
-            var filtersToResolve = filters.Where(filter => filter.NeedsToBeResolved).ToList();
-            var resolvingTasks = filtersToResolve.SelectMany(CreateResolvingTasks);
-
-            await Task.WhenAll(resolvingTasks);
-
-            filtersToResolve.ForEach(filter => filter.NeedsToBeResolved = false);
+            await Task.WhenAll(filters.SelectMany(CreateResolvingTasks));
+            filters.ForEach(filter => filter.NeedsToBeResolved = false);
         }
 
         #endregion
