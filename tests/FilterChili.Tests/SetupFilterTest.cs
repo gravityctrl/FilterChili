@@ -63,12 +63,7 @@ namespace GravityCTRL.FilterChili.Tests
                     context.NameFilter.Set("Pizza", "Chicken", "Cheese", "Fish", "Tuna");
                 }
 
-                var filterResults = context.ApplyFilters().Take(MAX_PRINTED_RESULTS);
-                var evaluatedFilterResults = filterResults.ToList();
-                _output.WriteLine(Convert(evaluatedFilterResults));
-
-                var domains = await context.Domains();
-                _output.WriteLine(Convert(domains));
+                await PerformAnalysis(context);
             });
 
             _output.WriteLine("Duration {0}", duration);
@@ -86,13 +81,7 @@ namespace GravityCTRL.FilterChili.Tests
                     context.TrySet("Name", new[] { "Pizza", "Chicken", "Cheese", "Fish", "Tuna" });
                 }
 
-                var filterResults = context.ApplyFilters().Take(MAX_PRINTED_RESULTS);
-                var evaluatedFilterResults = filterResults.ToList();
-                _output.WriteLine(Convert(evaluatedFilterResults));
-
-                var domains = await context.Domains();
-                _output.WriteLine(Convert(domains));
-
+                await PerformAnalysis(context);
             });
 
             _output.WriteLine("Duration {0}", duration);
@@ -110,15 +99,20 @@ namespace GravityCTRL.FilterChili.Tests
                     context.TrySet(_listObject);
                 }
 
-                var filterResults = context.ApplyFilters().Take(MAX_PRINTED_RESULTS);
-                var evaluatedFilterResults = filterResults.ToList();
-                _output.WriteLine(Convert(evaluatedFilterResults));
-
-                var domains = await context.Domains();
-                _output.WriteLine(Convert(domains));
+                await PerformAnalysis(context);
             });
 
             _output.WriteLine("Duration {0}", duration);
+        }
+
+        private async Task PerformAnalysis(ProductFilterContext context)
+        {
+            var filterResults = context.ApplyFilters().Take(MAX_PRINTED_RESULTS);
+            var evaluatedFilterResults = filterResults.ToList();
+            _output.WriteLine(Convert(evaluatedFilterResults));
+
+            var domains = await context.Domains();
+            _output.WriteLine(Convert(domains));
         }
 
         private static ProductFilterContext CreateContext()
