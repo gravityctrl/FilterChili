@@ -18,11 +18,24 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Enums
 {
+    /// <summary>
+    /// Specifies in which detail the filterable values are reported.
+    /// </summary>
     public enum CalculationStrategy
     {
+        /// <summary>
+        /// Provides all information on the filterable values per filtered property.
+        /// By Choosing this <see cref="CalculationStrategy"/> a set over all existing property values will be created.
+        /// This strategy also creates a set of values, that can currently be selected using the filter.
+        /// </summary>
         [UsedImplicitly]
         Full = 0,
 
+        /// <summary>
+        /// Provides all information on the filterable values per filtered property.
+        /// By Choosing this <see cref="CalculationStrategy"/> a set over all existing property values will be created.
+        /// This strategy does not create a set of values, that can currently be selected using the filter.
+        /// </summary>
         [UsedImplicitly]
         WithoutSelectableValues = 1
     }
