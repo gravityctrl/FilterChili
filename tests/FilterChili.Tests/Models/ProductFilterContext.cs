@@ -15,6 +15,7 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System.Linq;
+using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Resolvers;
 using JetBrains.Annotations;
 
@@ -36,6 +37,8 @@ namespace GravityCTRL.FilterChili.Tests.Models
         protected override void Configure(ContextOptions<Product> options)
         {
             options.EnableMars = true;
+            options.CalculationStrategy = CalculationStrategy.WithoutSelectableValues;
+
             NameFilter = options.Filter(product => product.Name).With(domain => domain.List("Name"));
             RatingFilter = options.Filter(product => product.Rating).With(domain => domain.Range("Rating"));
             SoldFilter = options.Filter(product => product.Sold).With(domain => domain.Range("Sold"));

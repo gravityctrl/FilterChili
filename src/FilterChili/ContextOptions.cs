@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Selectors;
 using JetBrains.Annotations;
@@ -32,6 +33,9 @@ namespace GravityCTRL.FilterChili
 
         [UsedImplicitly]
         public bool EnableMars { get; set; }
+
+        [UsedImplicitly]
+        public CalculationStrategy CalculationStrategy { get; set; }
 
         internal ContextOptions(IQueryable<TSource> queryable, Action<ContextOptions<TSource>> configure)
         {
@@ -104,9 +108,12 @@ namespace GravityCTRL.FilterChili
                 var selectableItems = _queryable.AsQueryable();
                 await currentFilter.SetAvailableEntities(selectableItems);
 
-                var filtersToExecute = filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
-                selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
-                await currentFilter.SetSelectableEntities(selectableItems);
+                if (CalculationStrategy == CalculationStrategy.Full)
+                {
+                    var filtersToExecute = filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
+                    selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
+                    await currentFilter.SetSelectableEntities(selectableItems);
+                }
 
                 currentFilter.NeedsToBeResolved = false;
             }
@@ -130,9 +137,12 @@ namespace GravityCTRL.FilterChili
                 var selectableItems = _queryable.AsQueryable();
                 yield return currentFilter.SetAvailableEntities(selectableItems);
 
-                var filtersToExecute = filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
-                selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
-                yield return currentFilter.SetSelectableEntities(selectableItems);
+                if (CalculationStrategy == CalculationStrategy.Full)
+                {
+                    var filtersToExecute = filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
+                    selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
+                    yield return currentFilter.SetSelectableEntities(selectableItems);
+                }
             }
 
             await Task.WhenAll(filters.SelectMany(CreateResolvingTasks));
