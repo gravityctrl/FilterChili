@@ -93,23 +93,27 @@ namespace GravityCTRL.FilterChili
         private async Task Resolve()
         {
             var filters = _filters.ToList();
-            for (var indexToResolve = 0; indexToResolve < filters.Count; indexToResolve++)
+            async Task ResolveFilterAtIndex(int ignoredIndex)
             {
-                var currentFilter = filters[indexToResolve];
+                var currentFilter = filters[ignoredIndex];
                 if (!currentFilter.NeedsToBeResolved)
                 {
-                    continue;
+                    return;
                 }
 
                 var selectableItems = _queryable.AsQueryable();
-                var ignoredIndex = indexToResolve;
+                await currentFilter.SetAvailableEntities(selectableItems);
+
                 var filtersToExecute = filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
                 selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
+                await currentFilter.SetSelectableEntities(selectableItems);
 
-                var filter = filters[indexToResolve];
-                await filter.SetAvailableEntities(_queryable);
-                await filter.SetSelectableEntities(selectableItems);
                 currentFilter.NeedsToBeResolved = false;
+            }
+
+            for (var i = 0; i < filters.Count; i++)
+            {
+                await ResolveFilterAtIndex(i);
             }
         }
 
