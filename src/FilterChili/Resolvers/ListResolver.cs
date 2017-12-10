@@ -97,8 +97,8 @@ namespace GravityCTRL.FilterChili.Resolvers
         protected override async Task SetSelectableValues(IQueryable<TSelector> queryable)
         {
             _selectableValues = queryable is IAsyncEnumerable<TSelector>
-                ? await queryable.ToListAsync()
-                : queryable.ToList();
+                ? await queryable.Distinct().ToListAsync()
+                : queryable.Distinct().ToList();
         }
 
         protected override Expression<Func<IGrouping<TSelector, TSource>, bool>> FilterExpression()
