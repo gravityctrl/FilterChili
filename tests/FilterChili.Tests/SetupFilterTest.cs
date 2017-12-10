@@ -60,7 +60,7 @@ namespace GravityCTRL.FilterChili.Tests
                 for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
                 {
                     context.RatingFilter.Set(1, 7);
-                    context.NameFilter.Set("Pizza", "Chicken", "Cheese", "Fish", "Tuna");
+                    context.NameFilter.Set("Bizza", "Chicken", "Chese", "Fish", "Tun");
                 }
 
                 await PerformAnalysis(context);
@@ -78,7 +78,7 @@ namespace GravityCTRL.FilterChili.Tests
                 for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
                 {
                     context.TrySet("Rating", 1, 7);
-                    context.TrySet("Name", new[] { "Pizza", "Chicken", "Cheese", "Fish", "Tuna" });
+                    context.TrySet("Name", new[] { "Bizza", "Chicken", "Chese", "Fish", "Tun" });
                 }
 
                 await PerformAnalysis(context);

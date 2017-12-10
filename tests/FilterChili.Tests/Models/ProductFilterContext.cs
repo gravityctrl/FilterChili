@@ -39,7 +39,15 @@ namespace GravityCTRL.FilterChili.Tests.Models
             options.EnableMars = true;
             options.CalculationStrategy = CalculationStrategy.WithoutSelectableValues;
 
-            NameFilter = options.Filter(product => product.Name).With(domain => domain.List("Name"));
+            NameFilter = options
+                .Filter(product => product.Name)
+                .With(domain => 
+                    domain.List("Name", opt =>
+                    {
+                        opt.ComparisonStrategy = StringComparisonStrategy.Contains;
+                    })
+                );
+
             RatingFilter = options.Filter(product => product.Rating).With(domain => domain.Range("Rating"));
             SoldFilter = options.Filter(product => product.Sold).With(domain => domain.Range("Sold"));
         }

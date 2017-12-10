@@ -1,0 +1,56 @@
+﻿// This file is part of FilterChili.
+// Copyright © 2017 Sebastian Krogull.
+// 
+// FilterChili is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as 
+// published by the Free Software Foundation, either version 3 
+// of the License, or any later version.
+// 
+// FilterChili is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
+
+using FluentAssertions;
+using GravityCTRL.FilterChili.Phonetics;
+using Xunit;
+
+namespace GravityCTRL.FilterChili.Tests
+{
+    public class SoundexTest
+    {
+        [Fact]
+        public void Test_Soundex_For_Breschnew()
+        {
+            "Breschnew".ToSoundex().Should().Be("17863");
+        }
+
+        [Fact]
+        public void Test_Soundex_For_Luedenscheid()
+        {
+            "Müller-Lüdenscheidt".ToSoundex().Should().Be("657 52682");
+        }
+
+        [Fact]
+        public void Test_Soundex_For_Heinz_Classen()
+        {
+            "Heinz Classen".ToSoundex().Should().Be("068 4586");
+        }
+
+        [Fact]
+        public void Test_Soundex_For_Wakapodia()
+        {
+            "Wikipedia".ToSoundex().Should().Be("3412");
+        }
+
+        [Fact]
+        public void Test_Soundex_For_Tuna()
+        {
+            "Tun".ToSoundex().Should().Be("26");
+            "Tuna".ToSoundex().Should().Be("26");
+        }
+    }
+}

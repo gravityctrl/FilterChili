@@ -14,9 +14,12 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using GravityCTRL.FilterChili.Phonetics;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Enums;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Resolvers
 {
@@ -24,14 +27,30 @@ namespace GravityCTRL.FilterChili.Resolvers
     {
         internal StringListResolver(string name, Expression<Func<TSource, string>> selector) : base(name, selector) { }
 
+        public StringComparisonStrategy ComparisonStrategy { get; [UsedImplicitly]set; }
+
         protected override Expression<Func<IGrouping<string, TSource>, bool>> FilterExpression()
         {
-            if (SelectedValues.Any())
+            if (!SelectedValues.Any())
             {
-                return group => SelectedValues.Contains(group.Key);
+                return null;
             }
 
-            return null;
+            switch (ComparisonStrategy)
+            {
+                case StringComparisonStrategy.Contains:
+                {
+                    return group => SelectedValues.Any(value => value.Contains(@group.Key));
+                }
+                case StringComparisonStrategy.Soundex:
+                {
+                    return group => SelectedValues.Select(SoundexExtensions.ToSoundex).Contains(group.Key.ToSoundex());
+                }
+                default:
+                {
+                    return group => SelectedValues.Contains(@group.Key);
+                }
+            }
         }
     }
 }
