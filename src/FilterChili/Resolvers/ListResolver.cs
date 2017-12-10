@@ -39,7 +39,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         }
 
         [NotNull]
-        private IReadOnlyList<TSelector> _selectedValues;
+        internal IReadOnlyList<TSelector> SelectedValues { get; private set; }
 
         [CanBeNull]
         private IReadOnlyList<TSelector> _selectableValues;
@@ -53,19 +53,19 @@ namespace GravityCTRL.FilterChili.Resolvers
         protected internal ListResolver(string name, Expression<Func<TSource, TSelector>> selector) : base(name, selector)
         {
             _needsToBeResolved = true;
-            _selectedValues = new List<TSelector>();
+            SelectedValues = new List<TSelector>();
         }
 
         public void Set(IEnumerable<TSelector> selectedValues)
         {
-            _selectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
+            SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
             _selectableValues = null;
             _needsToBeResolved = true;
         }
 
         public void Set(params TSelector[] selectedValues)
         {
-            _selectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
+            SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
             _selectableValues = null;
             _needsToBeResolved = true;
         }
@@ -101,16 +101,6 @@ namespace GravityCTRL.FilterChili.Resolvers
                 : queryable.Distinct().ToList();
         }
 
-        protected override Expression<Func<IGrouping<TSelector, TSource>, bool>> FilterExpression()
-        {
-            if (_selectedValues.Any())
-            {
-                return group => _selectedValues.Contains(group.Key);
-            }
-
-            return null;
-        }
-
         #endregion
 
         #region Private Methods
@@ -119,11 +109,11 @@ namespace GravityCTRL.FilterChili.Resolvers
         {
             if (_availableValues == null)
             {
-                return _selectedValues.Select(value => new Item<TSelector> { Value = value }).ToList();
+                return SelectedValues.Select(value => new Item<TSelector> { Value = value }).ToList();
             }
 
             var entities = _availableValues.ToDictionary(value => value, value => new Item<TSelector> { Value = value });
-            SetSelectedStatus(_selectedValues, entities);
+            SetSelectedStatus(SelectedValues, entities);
             if (_selectableValues != null)
             {
                 SetSelectableStatus(_selectableValues, entities);

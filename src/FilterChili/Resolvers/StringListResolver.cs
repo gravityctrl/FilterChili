@@ -15,6 +15,7 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace GravityCTRL.FilterChili.Resolvers
@@ -22,5 +23,15 @@ namespace GravityCTRL.FilterChili.Resolvers
     public class StringListResolver<TSource> : ListResolver<TSource, string>
     {
         internal StringListResolver(string name, Expression<Func<TSource, string>> selector) : base(name, selector) { }
+
+        protected override Expression<Func<IGrouping<string, TSource>, bool>> FilterExpression()
+        {
+            if (SelectedValues.Any())
+            {
+                return group => SelectedValues.Contains(group.Key);
+            }
+
+            return null;
+        }
     }
 }
