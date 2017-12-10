@@ -33,7 +33,7 @@ namespace GravityCTRL.FilterChili.Phonetics
 
         private static string SoundexForWord(string word)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             var length = word.Length;
 
             void Append(char code)
@@ -48,6 +48,8 @@ namespace GravityCTRL.FilterChili.Phonetics
             for (var index = 0; index < length; index++)
             {
                 var character = word[index];
+
+                // ReSharper disable once SwitchStatementMissingSomeCases
                 switch (character)
                 {
                     case 'a':

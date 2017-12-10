@@ -27,7 +27,8 @@ namespace GravityCTRL.FilterChili.Resolvers
     {
         internal StringListResolver(string name, Expression<Func<TSource, string>> selector) : base(name, selector) { }
 
-        public StringComparisonStrategy ComparisonStrategy { get; [UsedImplicitly]set; }
+        [UsedImplicitly]
+        public StringComparisonStrategy ComparisonStrategy { get; set; }
 
         protected override Expression<Func<IGrouping<string, TSource>, bool>> FilterExpression()
         {
@@ -36,11 +37,12 @@ namespace GravityCTRL.FilterChili.Resolvers
                 return null;
             }
 
+            // ReSharper disable once SwitchStatementMissingSomeCases
             switch (ComparisonStrategy)
             {
                 case StringComparisonStrategy.Contains:
                 {
-                    return group => SelectedValues.Any(value => value.Contains(@group.Key));
+                    return group => SelectedValues.Any(value => value.Contains(group.Key));
                 }
                 case StringComparisonStrategy.Soundex:
                 {
@@ -48,7 +50,7 @@ namespace GravityCTRL.FilterChili.Resolvers
                 }
                 default:
                 {
-                    return group => SelectedValues.Contains(@group.Key);
+                    return group => SelectedValues.Contains(group.Key);
                 }
             }
         }
