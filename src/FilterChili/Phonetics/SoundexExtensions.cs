@@ -90,7 +90,7 @@ namespace GravityCTRL.FilterChili.Phonetics
                     case 'd':
                     case 't':
                     {
-                        if (index < length - 1 && new[] {'c', 's', 'z'}.Contains(word[index + 1]))
+                        if (index < length - 1 && "cszß".Contains(word[index + 1]))
                         {
                             Append('8');
                         }
@@ -118,26 +118,24 @@ namespace GravityCTRL.FilterChili.Phonetics
                     {
                         if (index == 0 && index < length - 1)
                         {
-                            Append(new[] {'a', 'h', 'k', 'l', 'o', 'q', 'r', 'u', 'x'}.Contains(word[index + 1])
-                                ? '4'
-                                : '8');
+                            Append("ahkloqrux".Contains(word[index + 1]) ? '4' : '8');
                         }
                         else
                         {
-                            if (new[] {'s', 'z'}.Contains(word[index - 1]))
+                            if ("szß".Contains(word[index - 1]))
                             {
                                 Append('8');
                             }
                             else if (index < length - 1)
                             {
-                                Append(new[] {'a', 'h', 'k', 'o', 'q', 'u', 'x'}.Contains(word[index + 1]) ? '4' : '8');
+                                Append("ahkoqux".Contains(word[index + 1]) ? '4' : '8');
                             }
                         }
                         break;
                     }
                     case 'x':
                     {
-                        if (index > 0 && new[] {'c', 'k', 'q'}.Contains(word[index - 1]))
+                        if (index > 0 && "ckq".Contains(word[index - 1]))
                         {
                             Append('8');
                         }
