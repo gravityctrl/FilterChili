@@ -20,18 +20,18 @@ using System.Text;
 
 namespace GravityCTRL.FilterChili.Phonetics
 {
-    public static class SoundexExtensions
+    public static class GermanSoundex
     {
-        public static string ToSoundex(this string word)
+        public static string ToGermanSoundex(this string word)
         {
             word = word.Trim().ToLowerInvariant();
 
             var splitters = word.Where(character => !char.IsLetter(character));
             var words = word.Split(splitters.ToArray(), StringSplitOptions.RemoveEmptyEntries);
-            return string.Join(' ', words.Select(SoundexForWord));
+            return string.Join(' ', words.Select(GermanSoundexForWord));
         }
 
-        private static string SoundexForWord(string word)
+        private static string GermanSoundexForWord(string word)
         {
             var sb = new StringBuilder();
             var length = word.Length;
