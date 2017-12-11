@@ -15,6 +15,7 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
@@ -23,6 +24,7 @@ using GravityCTRL.FilterChili.Tests.Models;
 using GravityCTRL.FilterChili.Tests.Services;
 using GravityCTRL.FilterChili.Tests.Utils;
 using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
@@ -41,24 +43,12 @@ namespace GravityCTRL.FilterChili.Tests
 
         public DatabaseFixture()
         {
-            _context = TestContext.CreateInstance();
+            _context = TestContext.CreateWithSqlite(Guid.NewGuid().ToString());
+            _context.Migrate();
+
+            var products = CreateTestProducts();
+
             var service = new ProductService(_context);
-
-            if (service.Any().Result)
-            {
-                return;
-            }
-
-            Randomizer.Seed = new Random(0);
-
-            var index = 1;
-            var testProducts = new Faker<Product>();
-            testProducts.RuleFor(product => product.Id, faker => index++);
-            testProducts.RuleFor(product => product.Sold, faker => faker.Random.Int(0, 1000));
-            testProducts.RuleFor(product => product.Rating, faker => faker.Random.Int(1, 10));
-            testProducts.RuleFor(product => product.Name, faker => faker.Commerce.Product());
-            var products = testProducts.GenerateLazy(ENTITY_AMOUNT);
-
             service.AddRange(products).Wait();
 
             Service = service;
@@ -66,7 +56,19 @@ namespace GravityCTRL.FilterChili.Tests
 
         public void Dispose()
         {
+            _context.Delete();
             _context.Dispose();
+        }
+
+        private List<Product> CreateTestProducts()
+        {
+            Randomizer.Seed = new Random(0);
+
+            var testProducts = new Faker<Product>();
+            testProducts.RuleFor(product => product.Sold, faker => faker.Random.Int(0, 1000));
+            testProducts.RuleFor(product => product.Rating, faker => faker.Random.Int(1, 10));
+            testProducts.RuleFor(product => product.Name, faker => faker.Commerce.Product());
+            return testProducts.GenerateLazy(ENTITY_AMOUNT).ToList();
         }
     }
 

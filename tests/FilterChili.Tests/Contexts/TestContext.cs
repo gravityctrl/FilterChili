@@ -14,9 +14,11 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using GravityCTRL.FilterChili.Tests.Models;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace GravityCTRL.FilterChili.Tests.Contexts
 {
@@ -26,10 +28,43 @@ namespace GravityCTRL.FilterChili.Tests.Contexts
 
         private TestContext(DbContextOptions options) : base(options) {}
 
-        public static TestContext CreateInstance()
+        public static TestContext CreateWithSqlite(string databaseName)
         {
-            var options = new DbContextOptionsBuilder<TestContext>().UseInMemoryDatabase("database").Options;
+            var builder = new DbContextOptionsBuilder<TestContext>();
+            var options = builder.UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database={databaseName};Trusted_Connection=True;MultipleActiveResultSets=true").Options;
             return new TestContext(options);
+        }
+
+        public static TestContext CreateInMemory(string databaseName)
+        {
+            var builder = new DbContextOptionsBuilder<TestContext>();
+            var options = builder.UseInMemoryDatabase(databaseName).Options;
+            return new TestContext(options);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Product>().HasKey(p => p.Id);
+            base.OnModelCreating(modelBuilder);
+        }
+
+        public void Migrate()
+        {
+            if (!Database.IsSqlServer())
+            {
+                return;
+            }
+
+            Database.EnsureCreated();
+            Database.Migrate();
+        }
+
+        public void Delete()
+        {
+            if (Database.IsSqlServer())
+            {
+                Database.EnsureDeleted();
+            }
         }
     }
 }
