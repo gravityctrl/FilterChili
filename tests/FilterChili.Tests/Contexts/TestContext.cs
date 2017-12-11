@@ -22,6 +22,12 @@ namespace GravityCTRL.FilterChili.Tests.Contexts
 {
     public class TestContext : DbContext
     {
+        [UsedImplicitly]
+        private const string LOCALDB = "(localdb)\\mssqllocaldb";
+
+        [UsedImplicitly]
+        private const string SQLEXPRESS = "localhost\\sqlexpress";
+
         public DbSet<Product> Products { get; [UsedImplicitly] set; }
 
         private TestContext(DbContextOptions options) : base(options) {}
@@ -30,7 +36,7 @@ namespace GravityCTRL.FilterChili.Tests.Contexts
         public static TestContext CreateWithSqlServer(string databaseName)
         {
             var builder = new DbContextOptionsBuilder<TestContext>();
-            var options = builder.UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database={databaseName};Trusted_Connection=True;MultipleActiveResultSets=true").Options;
+            var options = builder.UseSqlServer($"Server={SQLEXPRESS};Database={databaseName};Trusted_Connection=True;MultipleActiveResultSets=true").Options;
             return new TestContext(options);
         }
 
