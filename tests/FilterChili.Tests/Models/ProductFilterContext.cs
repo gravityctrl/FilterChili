@@ -37,7 +37,7 @@ namespace GravityCTRL.FilterChili.Tests.Models
         protected override void Configure(ContextOptions<Product> options)
         {
             options.EnableMars = true;
-            options.CalculationStrategy = CalculationStrategy.WithoutSelectableValues;
+            options.CalculationStrategy = CalculationStrategy.Full;
 
             NameFilter = options
                 .Filter(product => product.Name)
