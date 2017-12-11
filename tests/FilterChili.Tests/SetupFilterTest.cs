@@ -74,7 +74,6 @@ namespace GravityCTRL.FilterChili.Tests
     public class SetupFilterTest : IClassFixture<DatabaseFixture>
     {
         private const int FILTER_ASSIGNMENTS = 100_000;
-
         private const int MAX_PRINTED_RESULTS = 5;
 
         private readonly ITestOutputHelper _output;
