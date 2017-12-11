@@ -32,9 +32,6 @@ namespace GravityCTRL.FilterChili
         private readonly List<FilterSelector<TSource>> _filters;
 
         [UsedImplicitly]
-        public bool EnableMars { get; set; }
-
-        [UsedImplicitly]
         public CalculationStrategy CalculationStrategy { get; set; }
 
         internal ContextOptions(IQueryable<TSource> queryable, Action<ContextOptions<TSource>> configure)
@@ -83,15 +80,7 @@ namespace GravityCTRL.FilterChili
                 return _filters.Select(filter => filter.Domain());
             }
 
-            if (EnableMars)
-            {
-                await ResolveConcurrently(calculationStrategy);
-            }
-            else
-            {
-                await Resolve(calculationStrategy);
-            }
-
+            await Resolve(calculationStrategy);
             return _filters.Select(filter => filter.Domain());
         }
 
@@ -127,31 +116,6 @@ namespace GravityCTRL.FilterChili
             {
                 await ResolveFilterAtIndex(i);
             }
-        }
-
-        private async Task ResolveConcurrently(CalculationStrategy calculationStrategy)
-        {
-            var filters = _filters.ToList();
-            IEnumerable<Task> CreateResolvingTasks(FilterSelector<TSource> currentFilter, int ignoredIndex)
-            {
-                if (!currentFilter.NeedsToBeResolved)
-                {
-                    yield break;
-                }
-
-                var selectableItems = _queryable.AsQueryable();
-                yield return currentFilter.SetAvailableEntities(selectableItems);
-
-                if (calculationStrategy == CalculationStrategy.Full)
-                {
-                    var filtersToExecute = filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
-                    selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
-                    yield return currentFilter.SetSelectableEntities(selectableItems);
-                }
-            }
-
-            await Task.WhenAll(filters.SelectMany(CreateResolvingTasks));
-            filters.ForEach(filter => filter.NeedsToBeResolved = false);
         }
 
         #endregion
