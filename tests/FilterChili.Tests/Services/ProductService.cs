@@ -15,7 +15,6 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Tests.Contexts;
 using GravityCTRL.FilterChili.Tests.Models;

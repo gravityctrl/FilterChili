@@ -22,6 +22,7 @@ using GravityCTRL.FilterChili.Tests.Contexts;
 using GravityCTRL.FilterChili.Tests.Models;
 using GravityCTRL.FilterChili.Tests.Services;
 using GravityCTRL.FilterChili.Tests.Utils;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
@@ -30,6 +31,7 @@ using static GravityCTRL.FilterChili.Tests.Utils.Benchmark;
 
 namespace GravityCTRL.FilterChili.Tests
 {
+    [UsedImplicitly]
     public class DatabaseFixture : IDisposable
     {
         private const int ENTITY_AMOUNT = 100_000;
@@ -77,7 +79,7 @@ namespace GravityCTRL.FilterChili.Tests
         private readonly ITestOutputHelper _output;
         private readonly JObject _rangeObject;
         private readonly JObject _listObject;
-        private ProductService _service;
+        private readonly ProductService _service;
 
         public SetupFilterTest(DatabaseFixture fixture, ITestOutputHelper output)
         {

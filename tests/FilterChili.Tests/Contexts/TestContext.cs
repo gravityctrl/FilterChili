@@ -15,15 +15,16 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using GravityCTRL.FilterChili.Tests.Models;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace GravityCTRL.FilterChili.Tests.Contexts
 {
     public class TestContext : DbContext
     {
-        public DbSet<Product> Products { get; set; }
+        public DbSet<Product> Products { get; [UsedImplicitly] set; }
 
-        private TestContext(DbContextOptions<TestContext> options) : base(options) {}
+        private TestContext(DbContextOptions options) : base(options) {}
 
         public static TestContext CreateInstance()
         {
