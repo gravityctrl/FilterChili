@@ -18,8 +18,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
-using GravityCTRL.FilterChili.Tests.Extensions;
+using GravityCTRL.FilterChili.Tests.Contexts;
 using GravityCTRL.FilterChili.Tests.Models;
+using GravityCTRL.FilterChili.Tests.Services;
 using GravityCTRL.FilterChili.Tests.Utils;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -29,18 +30,58 @@ using static GravityCTRL.FilterChili.Tests.Utils.Benchmark;
 
 namespace GravityCTRL.FilterChili.Tests
 {
-    public class SetupFilterTest
+    public class DatabaseFixture : IDisposable
+    {
+        private const int ENTITY_AMOUNT = 100_000;
+        private readonly TestContext _context;
+
+        public ProductService Service { get; }
+
+        public DatabaseFixture()
+        {
+            _context = TestContext.CreateInstance();
+            var service = new ProductService(_context);
+
+            if (service.Any().Result)
+            {
+                return;
+            }
+
+            Randomizer.Seed = new Random(0);
+
+            var index = 1;
+            var testProducts = new Faker<Product>();
+            testProducts.RuleFor(product => product.Id, faker => index++);
+            testProducts.RuleFor(product => product.Sold, faker => faker.Random.Int(0, 1000));
+            testProducts.RuleFor(product => product.Rating, faker => faker.Random.Int(1, 10));
+            testProducts.RuleFor(product => product.Name, faker => faker.Commerce.Product());
+            var products = testProducts.GenerateLazy(ENTITY_AMOUNT);
+
+            service.AddRange(products).Wait();
+
+            Service = service;
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
+    }
+
+    public class SetupFilterTest : IClassFixture<DatabaseFixture>
     {
         private const int FILTER_ASSIGNMENTS = 100_000;
-        private const int ENTITY_AMOUNT = 100_000;
+
         private const int MAX_PRINTED_RESULTS = 5;
 
         private readonly ITestOutputHelper _output;
         private readonly JObject _rangeObject;
         private readonly JObject _listObject;
+        private ProductService _service;
 
-        public SetupFilterTest(ITestOutputHelper output)
+        public SetupFilterTest(DatabaseFixture fixture, ITestOutputHelper output)
         {
+            _service = fixture.Service;
             _output = output;
 
             var rangeJson = ResourceHelper.Load("rangefilter.json");
@@ -55,15 +96,15 @@ namespace GravityCTRL.FilterChili.Tests
         {
             var duration = await Measure(async () =>
             {
-                var context = CreateContext();
+                var filterContext = new ProductFilterContext(_service.Entities);
 
                 for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
                 {
-                    context.RatingFilter.Set(1, 7);
-                    context.NameFilter.Set("Bizza", "Chicken", "Chese", "Fish", "Tun");
+                    filterContext.RatingFilter.Set(1, 7);
+                    filterContext.NameFilter.Set("Bizza", "Chicken", "Chese", "Fish", "Tun");
                 }
 
-                await PerformAnalysis(context);
+                await PerformAnalysis(filterContext);
             });
 
             _output.WriteLine("Duration {0}", duration);
@@ -74,14 +115,15 @@ namespace GravityCTRL.FilterChili.Tests
         {
             var duration = await Measure(async () =>
             {
-                var context = CreateContext();
+                var filterContext = new ProductFilterContext(_service.Entities);
+
                 for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
                 {
-                    context.TrySet("Rating", 1, 7);
-                    context.TrySet("Name", new[] { "Bizza", "Chicken", "Chese", "Fish", "Tun" });
+                    filterContext.TrySet("Rating", 1, 7);
+                    filterContext.TrySet("Name", new[] {"Bizza", "Chicken", "Chese", "Fish", "Tun"});
                 }
 
-                await PerformAnalysis(context);
+                await PerformAnalysis(filterContext);
             });
 
             _output.WriteLine("Duration {0}", duration);
@@ -92,14 +134,15 @@ namespace GravityCTRL.FilterChili.Tests
         {
             var duration = await Measure(async () =>
             {
-                var context = CreateContext();
+                var filterContext = new ProductFilterContext(_service.Entities);
+
                 for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
                 {
-                    context.TrySet(_rangeObject);
-                    context.TrySet(_listObject);
+                    filterContext.TrySet(_rangeObject);
+                    filterContext.TrySet(_listObject);
                 }
 
-                await PerformAnalysis(context);
+                await PerformAnalysis(filterContext);
             });
 
             _output.WriteLine("Duration {0}", duration);
@@ -113,23 +156,6 @@ namespace GravityCTRL.FilterChili.Tests
 
             var domains = await context.Domains();
             _output.WriteLine(Convert(domains));
-        }
-
-        private static ProductFilterContext CreateContext()
-        {
-            Randomizer.Seed = new Random(0);
-
-            var index = 1;
-            var testProducts = new Faker<Product>();
-            testProducts.RuleFor(product => product.Id, faker => index++);
-            testProducts.RuleFor(product => product.Sold, faker => faker.Random.Int(0, 1000));
-            testProducts.RuleFor(product => product.Rating, faker => faker.Random.Int(1, 10));
-            testProducts.RuleFor(product => product.Name, faker => faker.Commerce.Product());
-
-            var products = testProducts.GenerateLazy(ENTITY_AMOUNT);
-
-            var queryable = products.AsAsyncEnumerable();
-            return new ProductFilterContext(queryable);
         }
     }
 }
