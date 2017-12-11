@@ -42,7 +42,7 @@ namespace GravityCTRL.FilterChili.Tests
 
         public DatabaseFixture()
         {
-            _context = TestContext.CreateInMemory(Guid.NewGuid().ToString());
+            _context = TestContext.CreateWithSqlServer(Guid.NewGuid().ToString());
             _context.Migrate();
 
             var products = CreateTestProducts();

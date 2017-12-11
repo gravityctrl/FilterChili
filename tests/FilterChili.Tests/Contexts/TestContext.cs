@@ -27,7 +27,7 @@ namespace GravityCTRL.FilterChili.Tests.Contexts
         private TestContext(DbContextOptions options) : base(options) {}
 
         [UsedImplicitly]
-        public static TestContext CreateWithSqlite(string databaseName)
+        public static TestContext CreateWithSqlServer(string databaseName)
         {
             var builder = new DbContextOptionsBuilder<TestContext>();
             var options = builder.UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database={databaseName};Trusted_Connection=True;MultipleActiveResultSets=true").Options;
