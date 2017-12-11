@@ -14,11 +14,9 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using GravityCTRL.FilterChili.Tests.Models;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace GravityCTRL.FilterChili.Tests.Contexts
 {
@@ -28,6 +26,7 @@ namespace GravityCTRL.FilterChili.Tests.Contexts
 
         private TestContext(DbContextOptions options) : base(options) {}
 
+        [UsedImplicitly]
         public static TestContext CreateWithSqlite(string databaseName)
         {
             var builder = new DbContextOptionsBuilder<TestContext>();
@@ -35,6 +34,7 @@ namespace GravityCTRL.FilterChili.Tests.Contexts
             return new TestContext(options);
         }
 
+        [UsedImplicitly]
         public static TestContext CreateInMemory(string databaseName)
         {
             var builder = new DbContextOptionsBuilder<TestContext>();

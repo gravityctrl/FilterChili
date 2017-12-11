@@ -38,10 +38,5 @@ namespace GravityCTRL.FilterChili.Tests.Services
             await Entities.AddRangeAsync(products);
             await _context.SaveChangesAsync();
         }
-
-        public async Task<bool> Any()
-        {
-            return await Entities.AnyAsync();
-        }
     }
 }

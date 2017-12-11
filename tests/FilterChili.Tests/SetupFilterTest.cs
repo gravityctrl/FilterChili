@@ -24,7 +24,6 @@ using GravityCTRL.FilterChili.Tests.Models;
 using GravityCTRL.FilterChili.Tests.Services;
 using GravityCTRL.FilterChili.Tests.Utils;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
@@ -43,13 +42,13 @@ namespace GravityCTRL.FilterChili.Tests
 
         public DatabaseFixture()
         {
-            _context = TestContext.CreateWithSqlite(Guid.NewGuid().ToString());
+            _context = TestContext.CreateInMemory(Guid.NewGuid().ToString());
             _context.Migrate();
 
             var products = CreateTestProducts();
 
             var service = new ProductService(_context);
-            service.AddRange(products).Wait();
+            service.AddRange(products.ToList()).Wait();
 
             Service = service;
         }
@@ -60,7 +59,7 @@ namespace GravityCTRL.FilterChili.Tests
             _context.Dispose();
         }
 
-        private List<Product> CreateTestProducts()
+        private static IEnumerable<Product> CreateTestProducts()
         {
             Randomizer.Seed = new Random(0);
 
@@ -68,7 +67,7 @@ namespace GravityCTRL.FilterChili.Tests
             testProducts.RuleFor(product => product.Sold, faker => faker.Random.Int(0, 1000));
             testProducts.RuleFor(product => product.Rating, faker => faker.Random.Int(1, 10));
             testProducts.RuleFor(product => product.Name, faker => faker.Commerce.Product());
-            return testProducts.GenerateLazy(ENTITY_AMOUNT).ToList();
+            return testProducts.GenerateLazy(ENTITY_AMOUNT);
         }
     }
 
