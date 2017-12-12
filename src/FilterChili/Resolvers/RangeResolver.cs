@@ -64,8 +64,9 @@ namespace GravityCTRL.FilterChili.Resolvers
         {
             try
             {
-                var domain = domainToken.ToObject<Range<TSelector>>(JsonUtils.Serializer);
-                Set(domain.Min, domain.Max);
+                var min = domainToken.Value<TSelector>("min");
+                var max = domainToken.Value<TSelector>("max");
+                Set(min, max);
             }
             catch (JsonSerializationException)
             {

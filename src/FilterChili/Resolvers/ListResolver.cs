@@ -74,7 +74,11 @@ namespace GravityCTRL.FilterChili.Resolvers
         {
             try
             {
-                var domain = domainToken.ToObject<Set<TSelector>>(JsonUtils.Serializer);
+                var domain = new Set<TSelector>
+                {
+                    Values = domainToken.SelectToken("values").Values<TSelector>()
+                };
+
                 Set(domain.Values);
             }
             catch (JsonSerializationException)
