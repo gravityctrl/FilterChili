@@ -79,6 +79,7 @@ namespace GravityCTRL.FilterChili.Tests
         private readonly ITestOutputHelper _output;
         private readonly JObject _rangeObject;
         private readonly JObject _listObject;
+        private readonly JArray _allArrayObject;
         private readonly ProductService _service;
 
         public SetupFilterTest(DatabaseFixture fixture, ITestOutputHelper output)
@@ -91,6 +92,9 @@ namespace GravityCTRL.FilterChili.Tests
 
             var listJson = ResourceHelper.Load("listfilter.json");
             _listObject = JObject.Parse(listJson);
+
+            var allFiltersJson = ResourceHelper.Load("allfilters.json");
+            _allArrayObject = JArray.Parse(allFiltersJson);
         }
 
         [Fact]
@@ -142,6 +146,24 @@ namespace GravityCTRL.FilterChili.Tests
                 {
                     filterContext.TrySet(_rangeObject);
                     filterContext.TrySet(_listObject);
+                }
+
+                await PerformAnalysis(filterContext);
+            });
+
+            _output.WriteLine("Duration {0}", duration);
+        }
+
+        [Fact]
+        public async Task Should_Set_Filter_With_TrySet_JsonArray()
+        {
+            var filterContext = new ProductFilterContext(_service.Entities);
+
+            var duration = await Measure(async () =>
+            {
+                for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
+                {
+                    filterContext.TrySet(_allArrayObject);
                 }
 
                 await PerformAnalysis(filterContext);

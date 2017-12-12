@@ -1,0 +1,21 @@
+﻿[
+  {
+    "name": "Name",
+    "domain": {
+      "values": [
+        "Bizza",
+        "Chicken",
+        "Chese",
+        "Fish",
+        "Tun"
+      ]
+    }
+  }, 
+  {
+    "name": "Rating",
+    "domain": {
+      "min": 1,
+      "max": 7
+    }
+  }
+]
