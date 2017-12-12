@@ -20,7 +20,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GravityCTRL.FilterChili.Tests.Contexts
 {
-    public class TestContext : DbContext
+    public class DataContext : DbContext
     {
         [UsedImplicitly]
         private const string LOCALDB = "(localdb)\\mssqllocaldb";
@@ -30,22 +30,22 @@ namespace GravityCTRL.FilterChili.Tests.Contexts
 
         public DbSet<Product> Products { get; [UsedImplicitly] set; }
 
-        private TestContext(DbContextOptions options) : base(options) {}
+        private DataContext(DbContextOptions options) : base(options) {}
 
         [UsedImplicitly]
-        public static TestContext CreateWithSqlServer(string databaseName)
+        public static DataContext CreateWithSqlServer(string databaseName)
         {
-            var builder = new DbContextOptionsBuilder<TestContext>();
+            var builder = new DbContextOptionsBuilder<DataContext>();
             var options = builder.UseSqlServer($"Server={SQLEXPRESS};Database={databaseName};Trusted_Connection=True;MultipleActiveResultSets=true").Options;
-            return new TestContext(options);
+            return new DataContext(options);
         }
 
         [UsedImplicitly]
-        public static TestContext CreateInMemory(string databaseName)
+        public static DataContext CreateInMemory(string databaseName)
         {
-            var builder = new DbContextOptionsBuilder<TestContext>();
+            var builder = new DbContextOptionsBuilder<DataContext>();
             var options = builder.UseInMemoryDatabase(databaseName).Options;
-            return new TestContext(options);
+            return new DataContext(options);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

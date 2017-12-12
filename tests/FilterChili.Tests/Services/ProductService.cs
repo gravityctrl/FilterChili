@@ -24,11 +24,11 @@ namespace GravityCTRL.FilterChili.Tests.Services
 {
     public class ProductService
     {
-        private readonly TestContext _context;
+        private readonly DataContext _context;
 
         public DbSet<Product> Entities => _context.Products;
 
-        public ProductService(TestContext context)
+        public ProductService(DataContext context)
         {
             _context = context;
         }

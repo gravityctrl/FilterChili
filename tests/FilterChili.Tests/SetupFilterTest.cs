@@ -36,13 +36,13 @@ namespace GravityCTRL.FilterChili.Tests
     public class DatabaseFixture : IDisposable
     {
         private const int ENTITY_AMOUNT = 100_000;
-        private readonly TestContext _context;
+        private readonly DataContext _context;
 
         public ProductService Service { get; }
 
         public DatabaseFixture()
         {
-            _context = TestContext.CreateWithSqlServer(Guid.NewGuid().ToString());
+            _context = DataContext.CreateWithSqlServer(Guid.NewGuid().ToString());
             _context.Migrate();
 
             var products = CreateTestProducts();
@@ -96,10 +96,10 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public async Task Should_Set_Filter_With_Resolver_Instance()
         {
+            var filterContext = new ProductFilterContext(_service.Entities);
+
             var duration = await Measure(async () =>
             {
-                var filterContext = new ProductFilterContext(_service.Entities);
-
                 for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
                 {
                     filterContext.RatingFilter.Set(1, 7);
@@ -115,10 +115,10 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public async Task Should_Set_Filter_With_TrySet()
         {
+            var filterContext = new ProductFilterContext(_service.Entities);
+
             var duration = await Measure(async () =>
             {
-                var filterContext = new ProductFilterContext(_service.Entities);
-
                 for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
                 {
                     filterContext.TrySet("Rating", 1, 7);
@@ -134,10 +134,10 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public async Task Should_Set_Filter_With_TrySet_Json()
         {
+            var filterContext = new ProductFilterContext(_service.Entities);
+
             var duration = await Measure(async () =>
             {
-                var filterContext = new ProductFilterContext(_service.Entities);
-
                 for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
                 {
                     filterContext.TrySet(_rangeObject);
