@@ -44,9 +44,13 @@ namespace GravityCTRL.FilterChili.Resolvers
                 {
                     return group => SelectedValues.Any(value => value.Contains(group.Key));
                 }
+                case StringComparisonStrategy.Soundex:
+                {
+                    return group => SelectedValues.Select(Soundex.ToSoundex).Contains(group.Key.ToSoundex());
+                }
                 case StringComparisonStrategy.GermanSoundex:
                 {
-                    return group => SelectedValues.Select(GermanSoundex.ToGermanSoundex).Contains(group.Key.ToGermanSoundex());
+                    return group => SelectedValues.Select(Soundex.ToSoundex).Contains(group.Key.ToGermanSoundex());
                 }
                 default:
                 {

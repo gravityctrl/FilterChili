@@ -27,6 +27,9 @@ namespace GravityCTRL.FilterChili.Enums
         Contains,
 
         [UsedImplicitly]
+        Soundex,
+
+        [UsedImplicitly]
         GermanSoundex
     }
 }
