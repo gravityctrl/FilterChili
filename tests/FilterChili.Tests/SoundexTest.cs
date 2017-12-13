@@ -23,6 +23,37 @@ namespace GravityCTRL.FilterChili.Tests
     public class SoundexTest
     {
         [Fact]
+        public void Test_Soundex_For_Breschnew()
+        {
+            "Breschnew".ToSoundex().Should().Be("B625");
+        }
+
+        [Fact]
+        public void Test_Soundex_For_Luedenscheid()
+        {
+            "Müller-Lüdenscheidt".ToSoundex().Should().Be("M460 L352");
+        }
+
+        [Fact]
+        public void Test_Soundex_For_Heinz_Classen()
+        {
+            "Heinz Classen".ToSoundex().Should().Be("H520 C425");
+        }
+
+        [Fact]
+        public void Test_Soundex_For_Wakapodia()
+        {
+            "Wikipedia".ToSoundex().Should().Be("W213");
+        }
+
+        [Fact]
+        public void Test_Soundex_For_Tuna()
+        {
+            "Tun".ToSoundex().Should().Be("T500");
+            "Tuna".ToSoundex().Should().Be("T500");
+        }
+
+        [Fact]
         public void Test_German_Soundex_For_Breschnew()
         {
             "Breschnew".ToGermanSoundex().Should().Be("17863");
