@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -27,11 +26,13 @@ namespace GravityCTRL.FilterChili.Phonetics
             void Append(char code)
             {
                 var codeLength = sb.Length;
-                if (codeLength == 0 || sb[codeLength - 1] != code)
+                if (codeLength > 0 && sb[codeLength - 1] == code)
                 {
-                    sb.Append(code);
-                    count++;
+                    return;
                 }
+
+                sb.Append(code);
+                count++;
             }
 
             for (var index = 0; index < length && count < MAX_DIGITS; index++)
