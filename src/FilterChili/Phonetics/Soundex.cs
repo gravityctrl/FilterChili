@@ -37,8 +37,8 @@ namespace GravityCTRL.FilterChili.Phonetics
                 var character = word[index];
                 if (index == 0)
                 {
-                    Append(character);
-                    Append('-');
+                    sb.Append(character);
+                    sb.Append('-');
                     continue;
                 }
 
