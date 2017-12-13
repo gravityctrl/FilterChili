@@ -9,7 +9,7 @@ namespace GravityCTRL.FilterChili.Phonetics
     {
         public static string ToSoundex(this string word)
         {
-            word = word.Trim().ToLowerInvariant();
+            word = word.Trim().ToUpperInvariant();
 
             var splitters = word.Where(character => !char.IsLetter(character));
             var words = word.Split(splitters.ToArray(), StringSplitOptions.RemoveEmptyEntries);
@@ -38,51 +38,50 @@ namespace GravityCTRL.FilterChili.Phonetics
                 if (index == 0)
                 {
                     sb.Append(character);
-                    sb.Append('-');
                     continue;
                 }
 
                 // ReSharper disable once SwitchStatementMissingSomeCases
                 switch (character)
                 {
-                    case 'b':
-                    case 'f':
-                    case 'p':
-                    case 'v':
+                    case 'B':
+                    case 'F':
+                    case 'P':
+                    case 'V':
                     {
                         Append('1');
                         break;
                     }
-                    case 'c':
-                    case 'g':
-                    case 'j':
-                    case 'k':
-                    case 'q':
-                    case 's':
-                    case 'x':
-                    case 'z':
+                    case 'C':
+                    case 'G':
+                    case 'J':
+                    case 'K':
+                    case 'Q':
+                    case 'S':
+                    case 'X':
+                    case 'Z':
                     {
                         Append('2');
                         break;
                     }
-                    case 'd':
-                    case 't':
+                    case 'D':
+                    case 'T':
                     {
                         Append('3');
                         break;
                     }
-                    case 'l':
+                    case 'L':
                     {
                         Append('4');
                         break;
                     }
-                    case 'm':
-                    case 'n':
+                    case 'M':
+                    case 'N':
                     {
                         Append('5');
                         break;
                     }
-                    case 'r':
+                    case 'R':
                     {
                         Append('6');
                         break;
