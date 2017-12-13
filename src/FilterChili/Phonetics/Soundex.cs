@@ -7,6 +7,8 @@ namespace GravityCTRL.FilterChili.Phonetics
 {
     public static class Soundex
     {
+        private const int MAX_DIGITS = 3;
+
         public static string ToSoundex(this string word)
         {
             word = word.Trim().ToUpperInvariant();
@@ -32,7 +34,7 @@ namespace GravityCTRL.FilterChili.Phonetics
                 }
             }
 
-            for (var index = 0; index < length && count < 3; index++)
+            for (var index = 0; index < length && count < MAX_DIGITS; index++)
             {
                 var character = word[index];
                 if (index == 0)
@@ -89,10 +91,9 @@ namespace GravityCTRL.FilterChili.Phonetics
                 }
             }
 
-            // ReSharper disable once NotAccessedVariable
-            for (var index = count; count < 3; index++)
+            for (var i = 0; i < MAX_DIGITS - count; i++)
             {
-                Append('0');
+                sb.Append('0');
             }
 
             return sb.ToString();
