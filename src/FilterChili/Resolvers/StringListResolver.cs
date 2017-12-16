@@ -19,7 +19,9 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Enums;
+using GravityCTRL.FilterChili.Expressions;
 using JetBrains.Annotations;
+using static GravityCTRL.FilterChili.Expressions.MethodExpressions;
 
 namespace GravityCTRL.FilterChili.Resolvers
 {
@@ -30,7 +32,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         [UsedImplicitly]
         public StringComparisonStrategy ComparisonStrategy { get; set; }
 
-        protected override Expression<Func<IGrouping<string, TSource>, bool>> FilterExpression()
+        protected override Expression<Func<TSource, bool>> FilterExpression()
         {
             if (!SelectedValues.Any())
             {
@@ -40,21 +42,33 @@ namespace GravityCTRL.FilterChili.Resolvers
             // ReSharper disable once SwitchStatementMissingSomeCases
             switch (ComparisonStrategy)
             {
+                case StringComparisonStrategy.Equals:
+                {
+                    var selectedValueExpressions = SelectedValues.Select(Expression.Constant);
+                    var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Equal(expression, Selector.Body));
+                    var orExpression = equalsExpressions.Or();
+                    return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
+                }
                 case StringComparisonStrategy.Contains:
                 {
-                    return group => SelectedValues.Any(value => value.Contains(group.Key));
+                    var selectedValueExpressions = SelectedValues.Select(Expression.Constant);
+                    var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Call(expression, StringContainsExpression, Selector.Body));
+                    var orExpression = equalsExpressions.Or();
+                    return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
                 }
                 case StringComparisonStrategy.Soundex:
                 {
-                    return group => SelectedValues.Select(Soundex.ToSoundex).Contains(group.Key.ToSoundex());
+                    var compiledExpression = Selector.Compile();
+                    return entity => SelectedValues.Select(Soundex.ToSoundex).Contains(compiledExpression(entity).ToSoundex());
                 }
                 case StringComparisonStrategy.GermanSoundex:
                 {
-                    return group => SelectedValues.Select(Soundex.ToSoundex).Contains(group.Key.ToGermanSoundex());
+                    var compiledExpression = Selector.Compile();
+                    return entity => SelectedValues.Select(Soundex.ToSoundex).Contains(compiledExpression(entity).ToGermanSoundex());
                 }
                 default:
                 {
-                    return group => SelectedValues.Contains(group.Key);
+                    return null;
                 }
             }
         }

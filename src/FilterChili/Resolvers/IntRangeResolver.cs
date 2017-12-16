@@ -24,21 +24,35 @@ namespace GravityCTRL.FilterChili.Resolvers
     {
         internal IntRangeResolver(string name, Expression<Func<TSource, int>> selector) : base(name, selector, int.MinValue, int.MaxValue) { }
 
-        protected override Expression<Func<IGrouping<int, TSource>, bool>> FilterExpression()
+        protected override Expression<Func<TSource, bool>> FilterExpression()
         {
             if (SelectedRange.Min != int.MinValue && SelectedRange.Max != int.MaxValue)
             {
-                return group => group.Key >= SelectedRange.Min && group.Key <= SelectedRange.Max;
+                var minConstant = Expression.Constant(SelectedRange.Min);
+                var maxConstant = Expression.Constant(SelectedRange.Max);
+                var greaterThanExpression = Expression.GreaterThanOrEqual(Selector.Body, minConstant);
+                var lessThanExpression = Expression.LessThanOrEqual(Selector.Body, maxConstant);
+                var andExpression = Expression.And(greaterThanExpression, lessThanExpression);
+                return Expression.Lambda<Func<TSource, bool>>(andExpression, Selector.Parameters);
+            }
+
+            if (SelectedRange.Min == int.MinValue && SelectedRange.Max == int.MaxValue)
+            {
+                return null;
             }
 
             if (SelectedRange.Min == int.MinValue)
             {
-                return group => group.Key <= SelectedRange.Max;
+                var maxConstant = Expression.Constant(SelectedRange.Max);
+                var lessThanExpression = Expression.LessThanOrEqual(Selector.Body, maxConstant);
+                return Expression.Lambda<Func<TSource, bool>>(lessThanExpression, Selector.Parameters);
             }
 
             if (SelectedRange.Max == int.MaxValue)
             {
-                return group => group.Key >= SelectedRange.Min;
+                var minConstant = Expression.Constant(SelectedRange.Min);
+                var greaterThanExpression = Expression.GreaterThanOrEqual(Selector.Body, minConstant);
+                return Expression.Lambda<Func<TSource, bool>>(greaterThanExpression, Selector.Parameters);
             }
 
             return null;

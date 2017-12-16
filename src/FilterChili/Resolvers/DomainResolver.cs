@@ -50,38 +50,35 @@ namespace GravityCTRL.FilterChili.Resolvers
 
     public abstract class DomainResolver<TSource, TSelector> : DomainResolver<TSource>
     {
-        private readonly Expression<Func<TSource, TSelector>> _selector;
+        protected Expression<Func<TSource, TSelector>> Selector { get; }
 
         protected internal DomainResolver(string name, Expression<Func<TSource, TSelector>> selector) : base(name, typeof(TSelector))
         {
-            _selector = selector;
+            Selector = selector;
         }
 
         internal async Task SetAvailableEntities(IQueryable<TSource> queryable)
         {
-            await SetAvailableValues(queryable.Select(_selector));
+            await SetAvailableValues(queryable.Select(Selector));
         }
 
         internal async Task SetSelectableEntities(IQueryable<TSource> queryable)
         {
-            await SetSelectableValues(queryable.Select(_selector));
+            await SetSelectableValues(queryable.Select(Selector));
         }
 
         internal IQueryable<TSource> ExecuteFilter(IQueryable<TSource> queryable)
         {
             var expression = FilterExpression();
-            return expression == null 
-                ? queryable 
-                : queryable
-                    .GroupBy(_selector)
-                    .Where(FilterExpression())
-                    .SelectMany(group => group);
+            return expression == null
+                ? queryable
+                : queryable.Where(expression);
         }
 
         protected abstract Task SetAvailableValues(IQueryable<TSelector> allValues);
 
         protected abstract Task SetSelectableValues(IQueryable<TSelector> selectableItems);
 
-        protected abstract Expression<Func<IGrouping<TSelector, TSource>, bool>> FilterExpression();
+        protected abstract Expression<Func<TSource, bool>> FilterExpression();
     }
 }
