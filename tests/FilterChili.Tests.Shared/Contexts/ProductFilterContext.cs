@@ -17,9 +17,10 @@
 using System.Linq;
 using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Resolvers;
+using GravityCTRL.FilterChili.Tests.Shared.Models;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Tests.Shared.Models
+namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
 {
     public class ProductFilterContext : FilterContext<Product>
     {
