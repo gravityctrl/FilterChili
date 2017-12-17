@@ -17,7 +17,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Tests.Shared.Contexts;
-using GravityCTRL.FilterChili.Tests.Shared.Models;
 using GravityCTRL.FilterChili.Tests.Shared.Services;
 using GravityCTRL.FilterChili.Tests.TestFixtures;
 using GravityCTRL.FilterChili.Tests.Utils;
