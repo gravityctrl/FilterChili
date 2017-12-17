@@ -22,7 +22,7 @@ namespace GravityCTRL.FilterChili.Providers
 {
     public class DecimalDomainProvider<TSource> : DomainProvider<TSource, decimal>
     {
-        internal DecimalDomainProvider(Expression<Func<TSource, decimal>> selector) : base(selector) { }
+        internal DecimalDomainProvider(Expression<Func<TSource, decimal>> selector) : base(selector) {}
 
         public DecimalRangeResolver<TSource> Range(string name, Action<DecimalRangeResolver<TSource>> options = null)
         {

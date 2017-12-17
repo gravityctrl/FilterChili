@@ -22,7 +22,7 @@ namespace GravityCTRL.FilterChili.Providers
 {
     public class UShortDomainProvider<TSource> : DomainProvider<TSource, ushort>
     {
-        internal UShortDomainProvider(Expression<Func<TSource, ushort>> selector) : base(selector) { }
+        internal UShortDomainProvider(Expression<Func<TSource, ushort>> selector) : base(selector) {}
 
         public UShortRangeResolver<TSource> Range(string name, Action<UShortRangeResolver<TSource>> options = null)
         {

@@ -22,7 +22,7 @@ namespace GravityCTRL.FilterChili.Providers
 {
     public class CharDomainProvider<TSource> : DomainProvider<TSource, char>
     {
-        internal CharDomainProvider(Expression<Func<TSource, char>> selector) : base(selector) { }
+        internal CharDomainProvider(Expression<Func<TSource, char>> selector) : base(selector) {}
 
         public CharRangeResolver<TSource> Range(string name, Action<CharRangeResolver<TSource>> options = null)
         {

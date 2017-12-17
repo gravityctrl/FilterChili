@@ -22,7 +22,7 @@ namespace GravityCTRL.FilterChili.Providers
 {
     public class ULongDomainProvider<TSource> : DomainProvider<TSource, ulong>
     {
-        internal ULongDomainProvider(Expression<Func<TSource, ulong>> selector) : base(selector) { }
+        internal ULongDomainProvider(Expression<Func<TSource, ulong>> selector) : base(selector) {}
 
         public ULongRangeResolver<TSource> Range(string name, Action<ULongRangeResolver<TSource>> options = null)
         {

@@ -22,7 +22,7 @@ namespace GravityCTRL.FilterChili.Providers
 {
     public class FloatDomainProvider<TSource> : DomainProvider<TSource, float>
     {
-        internal FloatDomainProvider(Expression<Func<TSource, float>> selector) : base(selector) { }
+        internal FloatDomainProvider(Expression<Func<TSource, float>> selector) : base(selector) {}
 
         public FloatRangeResolver<TSource> Range(string name, Action<FloatRangeResolver<TSource>> options = null)
         {

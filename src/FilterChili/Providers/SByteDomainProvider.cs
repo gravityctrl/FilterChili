@@ -22,7 +22,7 @@ namespace GravityCTRL.FilterChili.Providers
 {
     public class SByteDomainProvider<TSource> : DomainProvider<TSource, sbyte>
     {
-        internal SByteDomainProvider(Expression<Func<TSource, sbyte>> selector) : base(selector) { }
+        internal SByteDomainProvider(Expression<Func<TSource, sbyte>> selector) : base(selector) {}
 
         public SByteRangeResolver<TSource> Range(string name, Action<SByteRangeResolver<TSource>> options = null)
         {

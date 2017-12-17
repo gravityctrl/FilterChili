@@ -22,7 +22,7 @@ namespace GravityCTRL.FilterChili.Providers
 {
     public class DoubleDomainProvider<TSource> : DomainProvider<TSource, double>
     {
-        internal DoubleDomainProvider(Expression<Func<TSource, double>> selector) : base(selector) { }
+        internal DoubleDomainProvider(Expression<Func<TSource, double>> selector) : base(selector) {}
 
         public DoubleRangeResolver<TSource> Range(string name, Action<DoubleRangeResolver<TSource>> options = null)
         {
