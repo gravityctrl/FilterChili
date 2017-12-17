@@ -31,7 +31,6 @@ namespace GravityCTRL.FilterChili.TestConsole
     {
         private const int MAX_PRINTED_RESULTS = 5;
         private const int ENTITY_AMOUNT = 100_000;
-        private const int FILTER_ASSIGNMENTS = 100_000;
 
         public static void Main()
         {
@@ -46,12 +45,8 @@ namespace GravityCTRL.FilterChili.TestConsole
 
                 var duration = Benchmark.Measure(() =>
                 {
-                    for (var i = 0; i < FILTER_ASSIGNMENTS; i++)
-                    {
-                        filterContext.TrySet("Rating", 1, 7);
-                        filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
-                    }
-
+                    filterContext.TrySet("Rating", 1, 7);
+                    filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
                     PerformAnalysis(filterContext).Wait();
                 });
 
