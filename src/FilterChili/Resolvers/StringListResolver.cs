@@ -64,7 +64,7 @@ namespace GravityCTRL.FilterChili.Resolvers
                 case StringComparisonStrategy.GermanSoundex:
                 {
                     var compiledExpression = Selector.Compile();
-                    return entity => SelectedValues.Select(Soundex.ToSoundex).Contains(compiledExpression(entity).ToGermanSoundex());
+                    return entity => SelectedValues.Select(GermanSoundex.ToGermanSoundex).Contains(compiledExpression(entity).ToGermanSoundex());
                 }
                 default:
                 {
