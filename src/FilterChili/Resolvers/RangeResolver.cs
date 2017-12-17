@@ -37,9 +37,9 @@ namespace GravityCTRL.FilterChili.Resolvers
             set => _needsToBeResolved = value;
         }
 
-        protected abstract TSelector Min { get; }
+        private readonly TSelector _min;
 
-        protected abstract TSelector Max { get; }
+        private readonly TSelector _max;
 
         [UsedImplicitly]
         public Range<TSelector> TotalRange { get; private set; }
@@ -53,6 +53,8 @@ namespace GravityCTRL.FilterChili.Resolvers
         protected internal RangeResolver(string name, Expression<Func<TSource, TSelector>> selector, TSelector min, TSelector max) : base(name, selector)
         {
             _needsToBeResolved = true;
+            _min = min;
+            _max = max;
             SelectedRange = new Range<TSelector>(min, max);
         }
 
@@ -83,7 +85,7 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         protected override Expression<Func<TSource, bool>> FilterExpression()
         {
-            if (Min.CompareTo(SelectedRange.Min) != 0 && Max.CompareTo(SelectedRange.Max) != 0)
+            if (_min.CompareTo(SelectedRange.Min) != 0 && _max.CompareTo(SelectedRange.Max) != 0)
             {
                 var minConstant = Expression.Constant(SelectedRange.Min);
                 var maxConstant = Expression.Constant(SelectedRange.Max);
@@ -93,14 +95,14 @@ namespace GravityCTRL.FilterChili.Resolvers
                 return Expression.Lambda<Func<TSource, bool>>(andExpression, Selector.Parameters);
             }
 
-            if (Max.CompareTo(SelectedRange.Max) != 0)
+            if (_max.CompareTo(SelectedRange.Max) != 0)
             {
                 var maxConstant = Expression.Constant(SelectedRange.Max);
                 var lessThanExpression = Expression.LessThanOrEqual(Selector.Body, maxConstant);
                 return Expression.Lambda<Func<TSource, bool>>(lessThanExpression, Selector.Parameters);
             }
 
-            if (Min.CompareTo(SelectedRange.Min) != 0)
+            if (_min.CompareTo(SelectedRange.Min) != 0)
             {
                 var minConstant = Expression.Constant(SelectedRange.Min);
                 var greaterThanExpression = Expression.GreaterThanOrEqual(Selector.Body, minConstant);
