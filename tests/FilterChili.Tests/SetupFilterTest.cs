@@ -14,16 +14,12 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Bogus;
-using GravityCTRL.FilterChili.Tests.Shared.Contexts;
 using GravityCTRL.FilterChili.Tests.Shared.Models;
 using GravityCTRL.FilterChili.Tests.Shared.Services;
+using GravityCTRL.FilterChili.Tests.TestFixtures;
 using GravityCTRL.FilterChili.Tests.Utils;
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
@@ -32,45 +28,6 @@ using static GravityCTRL.FilterChili.Tests.Shared.Utils.JsonUtils;
 
 namespace GravityCTRL.FilterChili.Tests
 {
-    [UsedImplicitly]
-    public class DatabaseFixture : IDisposable
-    {
-        private const int ENTITY_AMOUNT = 100_000;
-        private readonly DataContext _context;
-
-        public ProductService Service { get; }
-
-        public DatabaseFixture()
-        {
-            _context = DataContext.CreateWithSqlServer(Guid.NewGuid().ToString());
-            _context.Migrate();
-
-            var products = CreateTestProducts();
-
-            var service = new ProductService(_context);
-            service.AddRange(products.ToList()).Wait();
-
-            Service = service;
-        }
-
-        public void Dispose()
-        {
-            _context.Delete();
-            _context.Dispose();
-        }
-
-        private static IEnumerable<Product> CreateTestProducts()
-        {
-            Randomizer.Seed = new Random(0);
-
-            var testProducts = new Faker<Product>();
-            testProducts.RuleFor(product => product.Sold, faker => faker.Random.Int(0, 1000));
-            testProducts.RuleFor(product => product.Rating, faker => faker.Random.Int(1, 10));
-            testProducts.RuleFor(product => product.Name, faker => faker.Commerce.Product());
-            return testProducts.GenerateLazy(ENTITY_AMOUNT);
-        }
-    }
-
     public class SetupFilterTest : IClassFixture<DatabaseFixture>
     {
         private const int FILTER_ASSIGNMENTS = 100_000;
