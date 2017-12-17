@@ -61,6 +61,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().HasKey(p => p.Id);
+            modelBuilder.Entity<Product>().Property(p => p.Name).HasMaxLength(70);
             base.OnModelCreating(modelBuilder);
         }
 
