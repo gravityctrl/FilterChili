@@ -15,7 +15,6 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace GravityCTRL.FilterChili.Resolvers
@@ -36,19 +35,14 @@ namespace GravityCTRL.FilterChili.Resolvers
                 return Expression.Lambda<Func<TSource, bool>>(andExpression, Selector.Parameters);
             }
 
-            if (SelectedRange.Min == int.MinValue && SelectedRange.Max == int.MaxValue)
-            {
-                return null;
-            }
-
-            if (SelectedRange.Min == int.MinValue)
+            if (SelectedRange.Max != int.MaxValue)
             {
                 var maxConstant = Expression.Constant(SelectedRange.Max);
                 var lessThanExpression = Expression.LessThanOrEqual(Selector.Body, maxConstant);
                 return Expression.Lambda<Func<TSource, bool>>(lessThanExpression, Selector.Parameters);
             }
 
-            if (SelectedRange.Max == int.MaxValue)
+            if (SelectedRange.Min != int.MinValue)
             {
                 var minConstant = Expression.Constant(SelectedRange.Min);
                 var greaterThanExpression = Expression.GreaterThanOrEqual(Selector.Body, minConstant);
