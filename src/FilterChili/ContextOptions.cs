@@ -43,6 +43,7 @@ namespace GravityCTRL.FilterChili
 
         #region Filters
 
+        [UsedImplicitly]
         public ByteFilterSelector<TSource> Filter(Expression<Func<TSource, byte>> valueSelector)
         {
             var filter = new ByteFilterSelector<TSource>(valueSelector);
@@ -50,6 +51,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [UsedImplicitly]
         public CharFilterSelector<TSource> Filter(Expression<Func<TSource, char>> valueSelector)
         {
             var filter = new CharFilterSelector<TSource>(valueSelector);
@@ -57,6 +59,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [UsedImplicitly]
         public DecimalFilterSelector<TSource> Filter(Expression<Func<TSource, decimal>> valueSelector)
         {
             var filter = new DecimalFilterSelector<TSource>(valueSelector);
@@ -64,6 +67,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [UsedImplicitly]
         public DoubleFilterSelector<TSource> Filter(Expression<Func<TSource, double>> valueSelector)
         {
             var filter = new DoubleFilterSelector<TSource>(valueSelector);
@@ -71,6 +75,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [UsedImplicitly]
         public FloatFilterSelector<TSource> Filter(Expression<Func<TSource, float>> valueSelector)
         {
             var filter = new FloatFilterSelector<TSource>(valueSelector);
@@ -78,6 +83,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [UsedImplicitly]
         public IntFilterSelector<TSource> Filter(Expression<Func<TSource, int>> valueSelector)
         {
             var filter = new IntFilterSelector<TSource>(valueSelector);
@@ -85,6 +91,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [UsedImplicitly]
         public LongFilterSelector<TSource> Filter(Expression<Func<TSource, long>> valueSelector)
         {
             var filter = new LongFilterSelector<TSource>(valueSelector);
@@ -92,6 +99,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [UsedImplicitly]
         public SByteFilterSelector<TSource> Filter(Expression<Func<TSource, sbyte>> valueSelector)
         {
             var filter = new SByteFilterSelector<TSource>(valueSelector);
@@ -99,6 +107,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [UsedImplicitly]
         public ShortFilterSelector<TSource> Filter(Expression<Func<TSource, short>> valueSelector)
         {
             var filter = new ShortFilterSelector<TSource>(valueSelector);
@@ -106,6 +115,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [UsedImplicitly]
         public StringFilterSelector<TSource> Filter(Expression<Func<TSource, string>> valueSelector)
         {
             var filter = new StringFilterSelector<TSource>(valueSelector);
@@ -113,6 +123,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [UsedImplicitly]
         public UIntFilterSelector<TSource> Filter(Expression<Func<TSource, uint>> valueSelector)
         {
             var filter = new UIntFilterSelector<TSource>(valueSelector);
@@ -120,6 +131,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [UsedImplicitly]
         public ULongFilterSelector<TSource> Filter(Expression<Func<TSource, ulong>> valueSelector)
         {
             var filter = new ULongFilterSelector<TSource>(valueSelector);
@@ -127,6 +139,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [UsedImplicitly]
         public UShortFilterSelector<TSource> Filter(Expression<Func<TSource, ushort>> valueSelector)
         {
             var filter = new UShortFilterSelector<TSource>(valueSelector);

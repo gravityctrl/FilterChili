@@ -17,6 +17,7 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Resolvers.Range;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Providers
 {
@@ -24,6 +25,7 @@ namespace GravityCTRL.FilterChili.Providers
     {
         internal ShortDomainProvider(Expression<Func<TSource, short>> selector) : base(selector) {}
 
+        [UsedImplicitly]
         public ShortRangeResolver<TSource> Range(string name, Action<ShortRangeResolver<TSource>> options = null)
         {
             var resolver = new ShortRangeResolver<TSource>(name, Selector);

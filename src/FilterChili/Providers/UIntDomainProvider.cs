@@ -17,6 +17,7 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Resolvers.Range;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Providers
 {
@@ -24,6 +25,7 @@ namespace GravityCTRL.FilterChili.Providers
     {
         internal UIntDomainProvider(Expression<Func<TSource, uint>> selector) : base(selector) {}
 
+        [UsedImplicitly]
         public UIntRangeResolver<TSource> Range(string name, Action<UIntRangeResolver<TSource>> options = null)
         {
             var resolver = new UIntRangeResolver<TSource>(name, Selector);

@@ -17,6 +17,7 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Resolvers.Range;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Providers
 {
@@ -24,6 +25,7 @@ namespace GravityCTRL.FilterChili.Providers
     {
         internal DoubleDomainProvider(Expression<Func<TSource, double>> selector) : base(selector) {}
 
+        [UsedImplicitly]
         public DoubleRangeResolver<TSource> Range(string name, Action<DoubleRangeResolver<TSource>> options = null)
         {
             var resolver = new DoubleRangeResolver<TSource>(name, Selector);

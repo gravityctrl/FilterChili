@@ -17,6 +17,7 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Resolvers.Range;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Providers
 {
@@ -24,6 +25,7 @@ namespace GravityCTRL.FilterChili.Providers
     {
         internal FloatDomainProvider(Expression<Func<TSource, float>> selector) : base(selector) {}
 
+        [UsedImplicitly]
         public FloatRangeResolver<TSource> Range(string name, Action<FloatRangeResolver<TSource>> options = null)
         {
             var resolver = new FloatRangeResolver<TSource>(name, Selector);

@@ -17,6 +17,7 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Resolvers.Range;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Providers
 {
@@ -24,6 +25,7 @@ namespace GravityCTRL.FilterChili.Providers
     {
         internal ByteDomainProvider(Expression<Func<TSource, byte>> selector) : base(selector) {}
 
+        [UsedImplicitly]
         public ByteRangeResolver<TSource> Range(string name, Action<ByteRangeResolver<TSource>> options = null)
         {
             var resolver = new ByteRangeResolver<TSource>(name, Selector);

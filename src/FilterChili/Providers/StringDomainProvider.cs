@@ -17,6 +17,7 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Resolvers.List;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Providers
 {
@@ -24,6 +25,7 @@ namespace GravityCTRL.FilterChili.Providers
     {
         internal StringDomainProvider(Expression<Func<TSource, string>> selector) : base(selector) {}
 
+        [UsedImplicitly]
         public StringListResolver<TSource> List(string name, Action<StringListResolver<TSource>> options = null)
         {
             var resolver = new StringListResolver<TSource>(name, Selector);

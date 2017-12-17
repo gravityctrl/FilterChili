@@ -17,6 +17,7 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Resolvers.Range;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Providers
 {
@@ -24,6 +25,7 @@ namespace GravityCTRL.FilterChili.Providers
     {
         internal DecimalDomainProvider(Expression<Func<TSource, decimal>> selector) : base(selector) {}
 
+        [UsedImplicitly]
         public DecimalRangeResolver<TSource> Range(string name, Action<DecimalRangeResolver<TSource>> options = null)
         {
             var resolver = new DecimalRangeResolver<TSource>(name, Selector);
