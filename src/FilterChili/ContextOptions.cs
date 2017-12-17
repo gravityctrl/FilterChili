@@ -41,9 +41,39 @@ namespace GravityCTRL.FilterChili
             configure(this);
         }
 
-        public StringFilterSelector<TSource> Filter(Expression<Func<TSource, string>> valueSelector)
+        #region Filters
+
+        public ByteFilterSelector<TSource> Filter(Expression<Func<TSource, byte>> valueSelector)
         {
-            var filter = new StringFilterSelector<TSource>(valueSelector);
+            var filter = new ByteFilterSelector<TSource>(valueSelector);
+            _filters.Add(filter);
+            return filter;
+        }
+
+        public CharFilterSelector<TSource> Filter(Expression<Func<TSource, char>> valueSelector)
+        {
+            var filter = new CharFilterSelector<TSource>(valueSelector);
+            _filters.Add(filter);
+            return filter;
+        }
+
+        public DecimalFilterSelector<TSource> Filter(Expression<Func<TSource, decimal>> valueSelector)
+        {
+            var filter = new DecimalFilterSelector<TSource>(valueSelector);
+            _filters.Add(filter);
+            return filter;
+        }
+
+        public DoubleFilterSelector<TSource> Filter(Expression<Func<TSource, double>> valueSelector)
+        {
+            var filter = new DoubleFilterSelector<TSource>(valueSelector);
+            _filters.Add(filter);
+            return filter;
+        }
+
+        public FloatFilterSelector<TSource> Filter(Expression<Func<TSource, float>> valueSelector)
+        {
+            var filter = new FloatFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
@@ -54,6 +84,57 @@ namespace GravityCTRL.FilterChili
             _filters.Add(filter);
             return filter;
         }
+
+        public LongFilterSelector<TSource> Filter(Expression<Func<TSource, long>> valueSelector)
+        {
+            var filter = new LongFilterSelector<TSource>(valueSelector);
+            _filters.Add(filter);
+            return filter;
+        }
+
+        public SByteFilterSelector<TSource> Filter(Expression<Func<TSource, sbyte>> valueSelector)
+        {
+            var filter = new SByteFilterSelector<TSource>(valueSelector);
+            _filters.Add(filter);
+            return filter;
+        }
+
+        public ShortFilterSelector<TSource> Filter(Expression<Func<TSource, short>> valueSelector)
+        {
+            var filter = new ShortFilterSelector<TSource>(valueSelector);
+            _filters.Add(filter);
+            return filter;
+        }
+
+        public StringFilterSelector<TSource> Filter(Expression<Func<TSource, string>> valueSelector)
+        {
+            var filter = new StringFilterSelector<TSource>(valueSelector);
+            _filters.Add(filter);
+            return filter;
+        }
+
+        public UIntFilterSelector<TSource> Filter(Expression<Func<TSource, uint>> valueSelector)
+        {
+            var filter = new UIntFilterSelector<TSource>(valueSelector);
+            _filters.Add(filter);
+            return filter;
+        }
+
+        public ULongFilterSelector<TSource> Filter(Expression<Func<TSource, ulong>> valueSelector)
+        {
+            var filter = new ULongFilterSelector<TSource>(valueSelector);
+            _filters.Add(filter);
+            return filter;
+        }
+
+        public UShortFilterSelector<TSource> Filter(Expression<Func<TSource, ushort>> valueSelector)
+        {
+            var filter = new UShortFilterSelector<TSource>(valueSelector);
+            _filters.Add(filter);
+            return filter;
+        }
+
+        #endregion
 
         #region Internal Methods
 
