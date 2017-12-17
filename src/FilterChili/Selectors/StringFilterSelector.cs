@@ -22,6 +22,6 @@ namespace GravityCTRL.FilterChili.Selectors
 {
     public class StringFilterSelector<TSource> : FilterSelector<TSource, string, StringDomainProvider<TSource>>
     {
-        internal StringFilterSelector(Expression<Func<TSource, string>> valueSelector) : base(new StringDomainProvider<TSource>(valueSelector)) { }
+        internal StringFilterSelector(Expression<Func<TSource, string>> valueSelector) : base(new StringDomainProvider<TSource>(valueSelector)) {}
     }
 }
