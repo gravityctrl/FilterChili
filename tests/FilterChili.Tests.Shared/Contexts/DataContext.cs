@@ -14,14 +14,17 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using GravityCTRL.FilterChili.Tests.Models;
+using GravityCTRL.FilterChili.Tests.Shared.Models;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace GravityCTRL.FilterChili.Tests.Contexts
+namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
 {
     public class DataContext : DbContext
     {
+        private static readonly LoggerFactory Factory;
+
         [UsedImplicitly]
         private const string LOCALDB = "(localdb)\\mssqllocaldb";
 
@@ -30,13 +33,20 @@ namespace GravityCTRL.FilterChili.Tests.Contexts
 
         public DbSet<Product> Products { get; [UsedImplicitly] set; }
 
+        static DataContext()
+        {
+            var factory = new LoggerFactory();
+            factory.AddConsole();
+            Factory = factory;
+        }
+
         private DataContext(DbContextOptions options) : base(options) {}
 
         [UsedImplicitly]
         public static DataContext CreateWithSqlServer(string databaseName)
         {
             var builder = new DbContextOptionsBuilder<DataContext>();
-            var options = builder.UseSqlServer($"Server={SQLEXPRESS};Database={databaseName};Trusted_Connection=True;MultipleActiveResultSets=true").Options;
+            var options = builder.UseSqlServer($"Server={SQLEXPRESS};Database={databaseName};Trusted_Connection=True;MultipleActiveResultSets=true").UseLoggerFactory(Factory).Options;
             return new DataContext(options);
         }
 

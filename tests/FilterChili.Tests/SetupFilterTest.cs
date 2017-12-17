@@ -19,16 +19,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
-using GravityCTRL.FilterChili.Tests.Contexts;
-using GravityCTRL.FilterChili.Tests.Models;
-using GravityCTRL.FilterChili.Tests.Services;
+using GravityCTRL.FilterChili.Tests.Shared.Contexts;
+using GravityCTRL.FilterChili.Tests.Shared.Models;
+using GravityCTRL.FilterChili.Tests.Shared.Services;
 using GravityCTRL.FilterChili.Tests.Utils;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
-using static GravityCTRL.FilterChili.Tests.Utils.JsonUtils;
-using static GravityCTRL.FilterChili.Tests.Utils.Benchmark;
+using static GravityCTRL.FilterChili.Tests.Shared.Utils.Benchmark;
+using static GravityCTRL.FilterChili.Tests.Shared.Utils.JsonUtils;
 
 namespace GravityCTRL.FilterChili.Tests
 {

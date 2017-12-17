@@ -14,21 +14,15 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Tests.Utils
+namespace GravityCTRL.FilterChili.Tests.Shared.Models
 {
-    internal static class JsonUtils
+    public class Product
     {
-        public static string Convert(object obj)
-        {
-            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Formatting = Formatting.Indented
-            });
-        }
+        public int Id { get; [UsedImplicitly] set; }
+        public string Name { get; [UsedImplicitly] set; }
+        public int Rating { get; [UsedImplicitly] set; }
+        public int Sold { get; [UsedImplicitly] set; }
     }
 }

@@ -14,15 +14,18 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
+using GravityCTRL.FilterChili.Tests.Shared.Models;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Tests.Models
+namespace GravityCTRL.FilterChili.Tests.Shared.Extensions
 {
-    public class Product
+    public static class EnumerableExtensions
     {
-        public int Id { get; [UsedImplicitly] set; }
-        public string Name { get; [UsedImplicitly] set; }
-        public int Rating { get; [UsedImplicitly] set; }
-        public int Sold { get; [UsedImplicitly] set; }
+        [UsedImplicitly]
+        public static AsyncEnumerable<T> AsAsyncEnumerable<T>(this IEnumerable<T> source)
+        {
+            return new AsyncEnumerable<T>(source);
+        }
     }
 }

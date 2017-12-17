@@ -14,29 +14,34 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
+using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
-using GravityCTRL.FilterChili.Tests.Contexts;
-using GravityCTRL.FilterChili.Tests.Models;
-using Microsoft.EntityFrameworkCore;
 
-namespace GravityCTRL.FilterChili.Tests.Services
+namespace GravityCTRL.FilterChili.Tests.Shared.Utils
 {
-    public class ProductService
+    public static class Benchmark
     {
-        private readonly DataContext _context;
-
-        public DbSet<Product> Entities => _context.Products;
-
-        public ProductService(DataContext context)
+        public static TimeSpan Measure(Action action)
         {
-            _context = context;
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            action();
+
+            stopwatch.Stop();
+            return stopwatch.Elapsed;
         }
 
-        public async Task AddRange(IEnumerable<Product> products)
+        public static async Task<TimeSpan> Measure(Func<Task> action)
         {
-            await Entities.AddRangeAsync(products);
-            await _context.SaveChangesAsync();
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            await action();
+
+            stopwatch.Stop();
+            return stopwatch.Elapsed;
         }
     }
 }

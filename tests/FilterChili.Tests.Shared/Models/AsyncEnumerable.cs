@@ -14,23 +14,23 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
-namespace GravityCTRL.FilterChili.Tests.Utils
+namespace GravityCTRL.FilterChili.Tests.Shared.Models
 {
-    public static class Benchmark
+    public class AsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
     {
-        public static async Task<TimeSpan> Measure(Func<Task> action)
+        public AsyncEnumerable(IEnumerable<T> enumerable) : base(enumerable) {}
+
+        public AsyncEnumerable(Expression expression) : base(expression) {}
+
+        public IAsyncEnumerator<T> GetEnumerator()
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            await action();
-
-            stopwatch.Stop();
-            return stopwatch.Elapsed;
+            return new AsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
         }
+
+        IQueryProvider IQueryable.Provider => new AsyncQueryProvider<T>(this);
     }
 }

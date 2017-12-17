@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+    <IsPackable>false</IsPackable>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>GravityCTRL.FilterChili.Tests</AssemblyName>
+    <RootNamespace>GravityCTRL.FilterChili.TestConsole</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="21.0.5" />
+    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FilterChili\FilterChili.csproj" />
+    <ProjectReference Include="..\FilterChili.Tests.Shared\FilterChili.Tests.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

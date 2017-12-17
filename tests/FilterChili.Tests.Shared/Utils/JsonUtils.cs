@@ -14,18 +14,21 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
-using GravityCTRL.FilterChili.Tests.Models;
-using JetBrains.Annotations;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
-namespace GravityCTRL.FilterChili.Tests.Extensions
+namespace GravityCTRL.FilterChili.Tests.Shared.Utils
 {
-    public static class EnumerableExtensions
+    public static class JsonUtils
     {
-        [UsedImplicitly]
-        public static AsyncEnumerable<T> AsAsyncEnumerable<T>(this IEnumerable<T> source)
+        public static string Convert(object obj)
         {
-            return new AsyncEnumerable<T>(source);
+            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            });
         }
     }
 }

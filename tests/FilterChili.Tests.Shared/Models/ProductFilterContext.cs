@@ -19,7 +19,7 @@ using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Resolvers;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Tests.Models
+namespace GravityCTRL.FilterChili.Tests.Shared.Models
 {
     public class ProductFilterContext : FilterContext<Product>
     {

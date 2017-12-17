@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GravityCTRL.FilterChili.Tests.Models
+namespace GravityCTRL.FilterChili.Tests.Shared.Models
 {
     public class AsyncEnumerator<T> : IAsyncEnumerator<T>
     {

@@ -15,22 +15,28 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Tests.Shared.Contexts;
+using GravityCTRL.FilterChili.Tests.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace GravityCTRL.FilterChili.Tests.Models
+namespace GravityCTRL.FilterChili.Tests.Shared.Services
 {
-    public class AsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
+    public class ProductService
     {
-        public AsyncEnumerable(IEnumerable<T> enumerable) : base(enumerable) {}
+        private readonly DataContext _context;
 
-        public AsyncEnumerable(Expression expression) : base(expression) {}
+        public DbSet<Product> Entities => _context.Products;
 
-        public IAsyncEnumerator<T> GetEnumerator()
+        public ProductService(DataContext context)
         {
-            return new AsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
+            _context = context;
         }
 
-        IQueryProvider IQueryable.Provider => new AsyncQueryProvider<T>(this);
+        public async Task AddRange(IEnumerable<Product> products)
+        {
+            await Entities.AddRangeAsync(products);
+            await _context.SaveChangesAsync();
+        }
     }
 }
