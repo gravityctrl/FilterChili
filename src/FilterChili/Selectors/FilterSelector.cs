@@ -49,7 +49,7 @@ namespace GravityCTRL.FilterChili.Selectors
         #endregion
     }
 
-    public abstract class FilterSelector<TSource, TSelector, TDomainProvider> : FilterSelector<TSource> where TDomainProvider : DomainProvider<TSource, TSelector>
+    public abstract class FilterSelector<TSource, TSelector, TDomainProvider> : FilterSelector<TSource> where TDomainProvider : DomainProvider<TSource, TSelector> where TSelector : IComparable
     {
         private readonly TDomainProvider _domainProvider;
 

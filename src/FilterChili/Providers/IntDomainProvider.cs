@@ -16,7 +16,7 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Resolvers;
+using GravityCTRL.FilterChili.Resolvers.Range;
 
 namespace GravityCTRL.FilterChili.Providers
 {

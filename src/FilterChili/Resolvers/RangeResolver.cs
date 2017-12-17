@@ -27,7 +27,7 @@ using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Resolvers
 {
-    public abstract class RangeResolver<TSource, TSelector> : DomainResolver<TSource, TSelector>
+    public abstract class RangeResolver<TSource, TSelector> : DomainResolver<TSource, TSelector> where TSelector : IComparable
     {
         private bool _needsToBeResolved;
 
@@ -36,6 +36,10 @@ namespace GravityCTRL.FilterChili.Resolvers
             get => _needsToBeResolved;
             set => _needsToBeResolved = value;
         }
+
+        protected abstract TSelector Min { get; }
+
+        protected abstract TSelector Max { get; }
 
         [UsedImplicitly]
         public Range<TSelector> TotalRange { get; private set; }
@@ -76,6 +80,35 @@ namespace GravityCTRL.FilterChili.Resolvers
         }
 
         #region Internal Methods
+
+        protected override Expression<Func<TSource, bool>> FilterExpression()
+        {
+            if (Min.CompareTo(SelectedRange.Min) != 0 && Max.CompareTo(SelectedRange.Max) != 0)
+            {
+                var minConstant = Expression.Constant(SelectedRange.Min);
+                var maxConstant = Expression.Constant(SelectedRange.Max);
+                var greaterThanExpression = Expression.GreaterThanOrEqual(Selector.Body, minConstant);
+                var lessThanExpression = Expression.LessThanOrEqual(Selector.Body, maxConstant);
+                var andExpression = Expression.And(greaterThanExpression, lessThanExpression);
+                return Expression.Lambda<Func<TSource, bool>>(andExpression, Selector.Parameters);
+            }
+
+            if (Max.CompareTo(SelectedRange.Max) != 0)
+            {
+                var maxConstant = Expression.Constant(SelectedRange.Max);
+                var lessThanExpression = Expression.LessThanOrEqual(Selector.Body, maxConstant);
+                return Expression.Lambda<Func<TSource, bool>>(lessThanExpression, Selector.Parameters);
+            }
+
+            if (Min.CompareTo(SelectedRange.Min) != 0)
+            {
+                var minConstant = Expression.Constant(SelectedRange.Min);
+                var greaterThanExpression = Expression.GreaterThanOrEqual(Selector.Body, minConstant);
+                return Expression.Lambda<Func<TSource, bool>>(greaterThanExpression, Selector.Parameters);
+            }
+
+            return null;
+        }
 
         protected override async Task SetAvailableValues(IQueryable<TSelector> allValues)
         {

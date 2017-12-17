@@ -14,16 +14,15 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using GravityCTRL.FilterChili.Phonetics;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Expressions;
+using GravityCTRL.FilterChili.Phonetics;
 using JetBrains.Annotations;
-using static GravityCTRL.FilterChili.Expressions.MethodExpressions;
 
-namespace GravityCTRL.FilterChili.Resolvers
+namespace GravityCTRL.FilterChili.Resolvers.List
 {
     public class StringListResolver<TSource> : ListResolver<TSource, string>
     {
@@ -52,7 +51,7 @@ namespace GravityCTRL.FilterChili.Resolvers
                 case StringComparisonStrategy.Contains:
                 {
                     var selectedValueExpressions = SelectedValues.Select(Expression.Constant);
-                    var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Call(expression, StringContainsExpression, Selector.Body));
+                    var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Call(expression, MethodExpressions.StringContainsExpression, Selector.Body));
                     var orExpression = equalsExpressions.Or();
                     return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
                 }

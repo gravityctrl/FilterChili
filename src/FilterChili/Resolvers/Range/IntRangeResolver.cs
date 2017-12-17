@@ -16,19 +16,14 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Resolvers.List;
 
-namespace GravityCTRL.FilterChili.Providers
+namespace GravityCTRL.FilterChili.Resolvers.Range
 {
-    public class StringDomainProvider<TSource> : DomainProvider<TSource, string>
+    public class IntRangeResolver<TSource> : RangeResolver<TSource, int>
     {
-        internal StringDomainProvider(Expression<Func<TSource, string>> selector) : base(selector) {}
+        internal IntRangeResolver(string name, Expression<Func<TSource, int>> selector) : base(name, selector, int.MinValue, int.MaxValue) { }
 
-        public StringListResolver<TSource> List(string name, Action<StringListResolver<TSource>> options = null)
-        {
-            var resolver = new StringListResolver<TSource>(name, Selector);
-            options?.Invoke(resolver);
-            return resolver;
-        }
+        protected override int Min { get; } = int.MinValue;
+        protected override int Max { get; } = int.MaxValue;
     }
 }

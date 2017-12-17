@@ -16,7 +16,8 @@
 
 using System.Linq;
 using GravityCTRL.FilterChili.Enums;
-using GravityCTRL.FilterChili.Resolvers;
+using GravityCTRL.FilterChili.Resolvers.List;
+using GravityCTRL.FilterChili.Resolvers.Range;
 using GravityCTRL.FilterChili.Tests.Shared.Models;
 using JetBrains.Annotations;
 
