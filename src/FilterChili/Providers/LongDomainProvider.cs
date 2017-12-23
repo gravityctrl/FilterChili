@@ -16,6 +16,8 @@
 
 using System;
 using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
@@ -29,6 +31,38 @@ namespace GravityCTRL.FilterChili.Providers
         public LongRangeResolver<TSource> Range(string name, Action<LongRangeResolver<TSource>> options = null)
         {
             var resolver = new LongRangeResolver<TSource>(name, Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public LongComparisonResolver<TSource> GreaterThan(string name, Action<LongComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new LongComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, long>(long.MinValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public LongComparisonResolver<TSource> LessThan(string name, Action<LongComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new LongComparisonResolver<TSource>(name, new LessThanComparer<TSource, long>(long.MaxValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public LongComparisonResolver<TSource> GreaterThanOrEqual(string name, Action<LongComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new LongComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, long>(long.MinValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public LongComparisonResolver<TSource> LessThanOrEqual(string name, Action<LongComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new LongComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, long>(long.MaxValue), Selector);
             options?.Invoke(resolver);
             return resolver;
         }

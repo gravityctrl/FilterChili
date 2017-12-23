@@ -16,6 +16,8 @@
 
 using System;
 using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
@@ -29,6 +31,38 @@ namespace GravityCTRL.FilterChili.Providers
         public DoubleRangeResolver<TSource> Range(string name, Action<DoubleRangeResolver<TSource>> options = null)
         {
             var resolver = new DoubleRangeResolver<TSource>(name, Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public DoubleComparisonResolver<TSource> GreaterThan(string name, Action<DoubleComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new DoubleComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, double>(double.MinValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public DoubleComparisonResolver<TSource> LessThan(string name, Action<DoubleComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new DoubleComparisonResolver<TSource>(name, new LessThanComparer<TSource, double>(double.MaxValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public DoubleComparisonResolver<TSource> GreaterThanOrEqual(string name, Action<DoubleComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new DoubleComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, double>(double.MinValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public DoubleComparisonResolver<TSource> LessThanOrEqual(string name, Action<DoubleComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new DoubleComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, double>(double.MaxValue), Selector);
             options?.Invoke(resolver);
             return resolver;
         }

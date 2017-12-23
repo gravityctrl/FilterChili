@@ -16,6 +16,8 @@
 
 using System;
 using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
@@ -29,6 +31,38 @@ namespace GravityCTRL.FilterChili.Providers
         public ULongRangeResolver<TSource> Range(string name, Action<ULongRangeResolver<TSource>> options = null)
         {
             var resolver = new ULongRangeResolver<TSource>(name, Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public ULongComparisonResolver<TSource> GreaterThan(string name, Action<ULongComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new ULongComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, ulong>(ulong.MinValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public ULongComparisonResolver<TSource> LessThan(string name, Action<ULongComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new ULongComparisonResolver<TSource>(name, new LessThanComparer<TSource, ulong>(ulong.MaxValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public ULongComparisonResolver<TSource> GreaterThanOrEqual(string name, Action<ULongComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new ULongComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, ulong>(ulong.MinValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public ULongComparisonResolver<TSource> LessThanOrEqual(string name, Action<ULongComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new ULongComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, ulong>(ulong.MaxValue), Selector);
             options?.Invoke(resolver);
             return resolver;
         }

@@ -16,6 +16,8 @@
 
 using System;
 using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
@@ -29,6 +31,38 @@ namespace GravityCTRL.FilterChili.Providers
         public UShortRangeResolver<TSource> Range(string name, Action<UShortRangeResolver<TSource>> options = null)
         {
             var resolver = new UShortRangeResolver<TSource>(name, Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public UShortComparisonResolver<TSource> GreaterThan(string name, Action<UShortComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new UShortComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, ushort>(ushort.MinValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public UShortComparisonResolver<TSource> LessThan(string name, Action<UShortComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new UShortComparisonResolver<TSource>(name, new LessThanComparer<TSource, ushort>(ushort.MaxValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public UShortComparisonResolver<TSource> GreaterThanOrEqual(string name, Action<UShortComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new UShortComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, ushort>(ushort.MinValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public UShortComparisonResolver<TSource> LessThanOrEqual(string name, Action<UShortComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new UShortComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, ushort>(ushort.MaxValue), Selector);
             options?.Invoke(resolver);
             return resolver;
         }

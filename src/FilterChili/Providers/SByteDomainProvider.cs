@@ -16,6 +16,8 @@
 
 using System;
 using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
@@ -29,6 +31,38 @@ namespace GravityCTRL.FilterChili.Providers
         public SByteRangeResolver<TSource> Range(string name, Action<SByteRangeResolver<TSource>> options = null)
         {
             var resolver = new SByteRangeResolver<TSource>(name, Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public SByteComparisonResolver<TSource> GreaterThan(string name, Action<SByteComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new SByteComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, sbyte>(sbyte.MinValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public SByteComparisonResolver<TSource> LessThan(string name, Action<SByteComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new SByteComparisonResolver<TSource>(name, new LessThanComparer<TSource, sbyte>(sbyte.MaxValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public SByteComparisonResolver<TSource> GreaterThanOrEqual(string name, Action<SByteComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new SByteComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, sbyte>(sbyte.MinValue), Selector);
+            options?.Invoke(resolver);
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public SByteComparisonResolver<TSource> LessThanOrEqual(string name, Action<SByteComparisonResolver<TSource>> options = null)
+        {
+            var resolver = new SByteComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, sbyte>(sbyte.MaxValue), Selector);
             options?.Invoke(resolver);
             return resolver;
         }
