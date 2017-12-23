@@ -102,6 +102,7 @@ namespace GravityCTRL.FilterChili.Resolvers
                 return Expression.Lambda<Func<TSource, bool>>(lessThanExpression, Selector.Parameters);
             }
 
+            // ReSharper disable once InvertIf
             if (_min.CompareTo(SelectedRange.Min) != 0)
             {
                 var minConstant = Expression.Constant(SelectedRange.Min);
