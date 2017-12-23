@@ -16,22 +16,28 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Resolvers;
-using GravityCTRL.FilterChili.Resolvers.Range;
-using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Providers
+namespace GravityCTRL.FilterChili.Comparison
 {
-    public class ByteDomainProvider<TSource> : DomainProvider<TSource, byte>
+    internal class LessThanComparer<TSource, TSelector> : Comparer<TSource, TSelector> where TSelector : IComparable
     {
-        internal ByteDomainProvider(Expression<Func<TSource, byte>> selector) : base(selector) {}
+        private readonly TSelector _maxValue;
 
-        [UsedImplicitly]
-        public ByteRangeResolver<TSource> Range(string name, Action<ByteRangeResolver<TSource>> options = null)
+        public LessThanComparer(TSelector maxValue)
         {
-            var resolver = new ByteRangeResolver<TSource>(name, Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            _maxValue = maxValue;
+        }
+
+        public override Expression<Func<TSource, bool>> FilterExpression(Expression<Func<TSource, TSelector>> selector, TSelector selectedValue)
+        {
+            if (_maxValue.CompareTo(selectedValue) == 0)
+            {
+                return null;
+            }
+
+            var valueConstant = Expression.Constant(selectedValue);
+            var expression = Expression.LessThan(selector.Body, valueConstant);
+            return Expression.Lambda<Func<TSource, bool>>(expression, selector.Parameters);
         }
     }
 }

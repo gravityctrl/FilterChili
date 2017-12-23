@@ -16,22 +16,11 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Resolvers;
-using GravityCTRL.FilterChili.Resolvers.Range;
-using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Providers
+namespace GravityCTRL.FilterChili.Comparison
 {
-    public class ByteDomainProvider<TSource> : DomainProvider<TSource, byte>
+    public abstract class Comparer<TSource, TSelector> where TSelector : IComparable
     {
-        internal ByteDomainProvider(Expression<Func<TSource, byte>> selector) : base(selector) {}
-
-        [UsedImplicitly]
-        public ByteRangeResolver<TSource> Range(string name, Action<ByteRangeResolver<TSource>> options = null)
-        {
-            var resolver = new ByteRangeResolver<TSource>(name, Selector);
-            options?.Invoke(resolver);
-            return resolver;
-        }
+        public abstract Expression<Func<TSource, bool>> FilterExpression(Expression<Func<TSource, TSelector>> selector, TSelector selectedValue);
     }
 }

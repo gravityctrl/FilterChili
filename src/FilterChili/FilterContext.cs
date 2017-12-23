@@ -77,6 +77,12 @@ namespace GravityCTRL.FilterChili
         }
 
         [UsedImplicitly]
+        public bool TrySet<TSelector>(string name, TSelector value)
+        {
+            return _contextOptions.GetFilter(name)?.TrySet(value) ?? false;
+        }
+
+        [UsedImplicitly]
         public bool TrySet<TSelector>(string name, TSelector min, TSelector max)
         {
             return _contextOptions.GetFilter(name)?.TrySet(min, max) ?? false;

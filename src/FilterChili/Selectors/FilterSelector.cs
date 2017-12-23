@@ -40,6 +40,8 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal abstract bool HasName(string name);
 
+        internal abstract bool TrySet<TSelector>(TSelector value);
+
         internal abstract bool TrySet<TSelector>(TSelector min, TSelector max);
 
         internal abstract bool TrySet<TSelector>(IEnumerable<TSelector> values);
@@ -105,6 +107,16 @@ namespace GravityCTRL.FilterChili.Selectors
             return _domainResolver.TrySet(domainToken);
         }
 
+        internal override bool TrySet<TSelectorTarget>(TSelectorTarget value)
+        {
+            if (value is TSelector valueTarget)
+            {
+                return TrySet(valueTarget);
+            }
+
+            return false;
+        }
+
         internal override bool TrySet<TSelectorTarget>(TSelectorTarget min, TSelectorTarget max)
         {
             if (min is TSelector minTarget && max is TSelector maxTarget)
@@ -128,6 +140,18 @@ namespace GravityCTRL.FilterChili.Selectors
         #endregion
 
         #region Private Methods
+
+        private bool TrySet(TSelector value)
+        {
+            // ReSharper disable once InvertIf
+            if (_domainResolver is ComparisonResolver<TSource, TSelector> target)
+            {
+                target.Set(value);
+                return true;
+            }
+
+            return false;
+        }
 
         private bool TrySet(TSelector min, TSelector max)
         {
