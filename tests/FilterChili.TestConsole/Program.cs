@@ -47,6 +47,7 @@ namespace GravityCTRL.FilterChili.TestConsole
                 {
                     filterContext.TrySet("Rating", 1, 7);
                     filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
+                    filterContext.TrySet("Sold", 600);
                     PerformAnalysis(filterContext).Wait();
                 });
 

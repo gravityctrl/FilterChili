@@ -16,6 +16,7 @@
 
 using System.Linq;
 using GravityCTRL.FilterChili.Enums;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.List;
 using GravityCTRL.FilterChili.Resolvers.Range;
 using GravityCTRL.FilterChili.Tests.Shared.Models;
@@ -29,7 +30,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
         public StringListResolver<Product> NameFilter { get; set; }
 
         [UsedImplicitly]
-        public IntRangeResolver<Product> SoldFilter { get; set; }
+        public IntComparisonResolver<Product> SoldFilter { get; set; }
 
         [UsedImplicitly]
         public IntRangeResolver<Product> RatingFilter { get; set; }
@@ -50,7 +51,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
                 );
 
             RatingFilter = options.Filter(product => product.Rating).With(domain => domain.Range("Rating"));
-            SoldFilter = options.Filter(product => product.Sold).With(domain => domain.Range("Sold"));
+            SoldFilter = options.Filter(product => product.Sold).With(domain => domain.GreaterThan("Sold"));
         }
     }
 }

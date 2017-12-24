@@ -36,6 +36,7 @@ namespace GravityCTRL.FilterChili.Tests
         private readonly ITestOutputHelper _output;
         private readonly JObject _rangeObject;
         private readonly JObject _listObject;
+        private readonly JObject _greaterThanObject;
         private readonly JArray _allArrayObject;
         private readonly ProductService _service;
 
@@ -49,6 +50,9 @@ namespace GravityCTRL.FilterChili.Tests
 
             var listJson = ResourceHelper.Load("listfilter.json");
             _listObject = JObject.Parse(listJson);
+
+            var greaterThanJson = ResourceHelper.Load("greaterthanfilter.json");
+            _greaterThanObject = JObject.Parse(greaterThanJson);
 
             var allFiltersJson = ResourceHelper.Load("allfilters.json");
             _allArrayObject = JArray.Parse(allFiltersJson);
@@ -65,6 +69,7 @@ namespace GravityCTRL.FilterChili.Tests
                 {
                     filterContext.RatingFilter.Set(1, 7);
                     filterContext.NameFilter.Set("Piza", "Chicken", "Chese", "Fish", "Tun");
+                    filterContext.SoldFilter.Set(600);
                 }
 
                 await PerformAnalysis(filterContext);
@@ -84,6 +89,7 @@ namespace GravityCTRL.FilterChili.Tests
                 {
                     filterContext.TrySet("Rating", 1, 7);
                     filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
+                    filterContext.TrySet("Sold", 600);
                 }
 
                 await PerformAnalysis(filterContext);
@@ -103,6 +109,7 @@ namespace GravityCTRL.FilterChili.Tests
                 {
                     filterContext.TrySet(_rangeObject);
                     filterContext.TrySet(_listObject);
+                    filterContext.TrySet(_greaterThanObject);
                 }
 
                 await PerformAnalysis(filterContext);

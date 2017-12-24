@@ -36,12 +36,14 @@
 
   <ItemGroup>
     <None Remove="Resources\allfilters.json" />
+    <None Remove="Resources\greaterthanfilter.json" />
     <None Remove="Resources\listfilter.json" />
     <None Remove="Resources\rangefilter.json" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\allfilters.json" />
+    <EmbeddedResource Include="Resources\greaterthanfilter.json" />
     <EmbeddedResource Include="Resources\listfilter.json" />
     <EmbeddedResource Include="Resources\rangefilter.json" />
   </ItemGroup>

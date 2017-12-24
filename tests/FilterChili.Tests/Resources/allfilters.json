@@ -10,12 +10,18 @@
         "Tun"
       ]
     }
-  }, 
+  },
   {
     "name": "Rating",
     "domain": {
       "min": 1,
       "max": 7
+    }
+  },
+  {
+    "name": "Sold",
+    "domain": {
+      "value": 600
     }
   }
 ]
