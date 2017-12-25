@@ -28,43 +28,33 @@ namespace GravityCTRL.FilterChili.Providers
         internal DecimalDomainProvider(Expression<Func<TSource, decimal>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public DecimalRangeResolver<TSource> Range(string name, Action<DecimalRangeResolver<TSource>> options = null)
+        public DecimalRangeResolver<TSource> Range(string name)
         {
-            var resolver = new DecimalRangeResolver<TSource>(name, Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new DecimalRangeResolver<TSource>(name, Selector);
         }
 
         [UsedImplicitly]
-        public DecimalComparisonResolver<TSource> GreaterThan(string name, Action<DecimalComparisonResolver<TSource>> options = null)
+        public DecimalComparisonResolver<TSource> GreaterThan(string name)
         {
-            var resolver = new DecimalComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, decimal>(decimal.MinValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new DecimalComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, decimal>(decimal.MinValue), Selector);
         }
 
         [UsedImplicitly]
-        public DecimalComparisonResolver<TSource> LessThan(string name, Action<DecimalComparisonResolver<TSource>> options = null)
+        public DecimalComparisonResolver<TSource> LessThan(string name)
         {
-            var resolver = new DecimalComparisonResolver<TSource>(name, new LessThanComparer<TSource, decimal>(decimal.MaxValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new DecimalComparisonResolver<TSource>(name, new LessThanComparer<TSource, decimal>(decimal.MaxValue), Selector);
         }
 
         [UsedImplicitly]
-        public DecimalComparisonResolver<TSource> GreaterThanOrEqual(string name, Action<DecimalComparisonResolver<TSource>> options = null)
+        public DecimalComparisonResolver<TSource> GreaterThanOrEqual(string name)
         {
-            var resolver = new DecimalComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, decimal>(decimal.MinValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new DecimalComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, decimal>(decimal.MinValue), Selector);
         }
 
         [UsedImplicitly]
-        public DecimalComparisonResolver<TSource> LessThanOrEqual(string name, Action<DecimalComparisonResolver<TSource>> options = null)
+        public DecimalComparisonResolver<TSource> LessThanOrEqual(string name)
         {
-            var resolver = new DecimalComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, decimal>(decimal.MaxValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new DecimalComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, decimal>(decimal.MaxValue), Selector);
         }
     }
 }

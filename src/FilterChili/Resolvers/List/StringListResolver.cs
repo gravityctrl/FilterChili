@@ -26,10 +26,13 @@ namespace GravityCTRL.FilterChili.Resolvers.List
 {
     public class StringListResolver<TSource> : ListResolver<TSource, string>
     {
-        internal StringListResolver(string name, Expression<Func<TSource, string>> selector) : base(name, selector) {}
-
         [UsedImplicitly]
         public StringComparisonStrategy ComparisonStrategy { get; set; }
+
+        internal StringListResolver(string name, Expression<Func<TSource, string>> selector, StringComparisonStrategy comparisonStrategy) : base(name, selector)
+        {
+            ComparisonStrategy = comparisonStrategy;
+        }
 
         protected override Expression<Func<TSource, bool>> FilterExpression()
         {

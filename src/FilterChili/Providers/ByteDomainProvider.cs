@@ -28,43 +28,33 @@ namespace GravityCTRL.FilterChili.Providers
         internal ByteDomainProvider(Expression<Func<TSource, byte>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public ByteRangeResolver<TSource> Range(string name, Action<ByteRangeResolver<TSource>> options = null)
+        public ByteRangeResolver<TSource> Range(string name)
         {
-            var resolver = new ByteRangeResolver<TSource>(name, Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new ByteRangeResolver<TSource>(name, Selector);
         }
 
         [UsedImplicitly]
-        public ByteComparisonResolver<TSource> GreaterThan(string name, Action<ByteComparisonResolver<TSource>> options = null)
+        public ByteComparisonResolver<TSource> GreaterThan(string name)
         {
-            var resolver = new ByteComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, byte>(byte.MinValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new ByteComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, byte>(byte.MinValue), Selector);
         }
 
         [UsedImplicitly]
-        public ByteComparisonResolver<TSource> LessThan(string name, Action<ByteComparisonResolver<TSource>> options = null)
+        public ByteComparisonResolver<TSource> LessThan(string name)
         {
-            var resolver = new ByteComparisonResolver<TSource>(name, new LessThanComparer<TSource, byte>(byte.MaxValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new ByteComparisonResolver<TSource>(name, new LessThanComparer<TSource, byte>(byte.MaxValue), Selector);
         }
 
         [UsedImplicitly]
-        public ByteComparisonResolver<TSource> GreaterThanOrEqual(string name, Action<ByteComparisonResolver<TSource>> options = null)
+        public ByteComparisonResolver<TSource> GreaterThanOrEqual(string name)
         {
-            var resolver = new ByteComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, byte>(byte.MinValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new ByteComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, byte>(byte.MinValue), Selector);
         }
 
         [UsedImplicitly]
-        public ByteComparisonResolver<TSource> LessThanOrEqual(string name, Action<ByteComparisonResolver<TSource>> options = null)
+        public ByteComparisonResolver<TSource> LessThanOrEqual(string name)
         {
-            var resolver = new ByteComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, byte>(byte.MaxValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new ByteComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, byte>(byte.MaxValue), Selector);
         }
     }
 }

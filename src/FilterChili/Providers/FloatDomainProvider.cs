@@ -28,43 +28,33 @@ namespace GravityCTRL.FilterChili.Providers
         internal FloatDomainProvider(Expression<Func<TSource, float>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public FloatRangeResolver<TSource> Range(string name, Action<FloatRangeResolver<TSource>> options = null)
+        public FloatRangeResolver<TSource> Range(string name)
         {
-            var resolver = new FloatRangeResolver<TSource>(name, Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new FloatRangeResolver<TSource>(name, Selector);
         }
 
         [UsedImplicitly]
-        public FloatComparisonResolver<TSource> GreaterThan(string name, Action<FloatComparisonResolver<TSource>> options = null)
+        public FloatComparisonResolver<TSource> GreaterThan(string name)
         {
-            var resolver = new FloatComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, float>(float.MinValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new FloatComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, float>(float.MinValue), Selector);
         }
 
         [UsedImplicitly]
-        public FloatComparisonResolver<TSource> LessThan(string name, Action<FloatComparisonResolver<TSource>> options = null)
+        public FloatComparisonResolver<TSource> LessThan(string name)
         {
-            var resolver = new FloatComparisonResolver<TSource>(name, new LessThanComparer<TSource, float>(float.MaxValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new FloatComparisonResolver<TSource>(name, new LessThanComparer<TSource, float>(float.MaxValue), Selector);
         }
 
         [UsedImplicitly]
-        public FloatComparisonResolver<TSource> GreaterThanOrEqual(string name, Action<FloatComparisonResolver<TSource>> options = null)
+        public FloatComparisonResolver<TSource> GreaterThanOrEqual(string name)
         {
-            var resolver = new FloatComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, float>(float.MinValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new FloatComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, float>(float.MinValue), Selector);
         }
 
         [UsedImplicitly]
-        public FloatComparisonResolver<TSource> LessThanOrEqual(string name, Action<FloatComparisonResolver<TSource>> options = null)
+        public FloatComparisonResolver<TSource> LessThanOrEqual(string name)
         {
-            var resolver = new FloatComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, float>(float.MaxValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new FloatComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, float>(float.MaxValue), Selector);
         }
     }
 }

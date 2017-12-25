@@ -48,7 +48,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         public abstract bool TrySet(JToken domainToken);
     }
 
-    public abstract class DomainResolver<TSource, TSelector> : DomainResolver<TSource>
+    public abstract class DomainResolver<TSource, TSelector> : DomainResolver<TSource> where TSelector : IComparable
     {
         protected Expression<Func<TSource, TSelector>> Selector { get; }
 

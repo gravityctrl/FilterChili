@@ -16,6 +16,7 @@
 
 using System;
 using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Resolvers.List;
 using JetBrains.Annotations;
 
@@ -26,11 +27,9 @@ namespace GravityCTRL.FilterChili.Providers
         internal StringDomainProvider(Expression<Func<TSource, string>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public StringListResolver<TSource> List(string name, Action<StringListResolver<TSource>> options = null)
+        public StringListResolver<TSource> List(string name, StringComparisonStrategy comparisonStrategy = StringComparisonStrategy.Equals)
         {
-            var resolver = new StringListResolver<TSource>(name, Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new StringListResolver<TSource>(name, Selector, comparisonStrategy);
         }
     }
 }

@@ -28,43 +28,33 @@ namespace GravityCTRL.FilterChili.Providers
         internal ShortDomainProvider(Expression<Func<TSource, short>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public ShortRangeResolver<TSource> Range(string name, Action<ShortRangeResolver<TSource>> options = null)
+        public ShortRangeResolver<TSource> Range(string name)
         {
-            var resolver = new ShortRangeResolver<TSource>(name, Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new ShortRangeResolver<TSource>(name, Selector);
         }
 
         [UsedImplicitly]
-        public ShortComparisonResolver<TSource> GreaterThan(string name, Action<ShortComparisonResolver<TSource>> options = null)
+        public ShortComparisonResolver<TSource> GreaterThan(string name)
         {
-            var resolver = new ShortComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, short>(short.MinValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new ShortComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, short>(short.MinValue), Selector);
         }
 
         [UsedImplicitly]
-        public ShortComparisonResolver<TSource> LessThan(string name, Action<ShortComparisonResolver<TSource>> options = null)
+        public ShortComparisonResolver<TSource> LessThan(string name)
         {
-            var resolver = new ShortComparisonResolver<TSource>(name, new LessThanComparer<TSource, short>(short.MaxValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new ShortComparisonResolver<TSource>(name, new LessThanComparer<TSource, short>(short.MaxValue), Selector);
         }
 
         [UsedImplicitly]
-        public ShortComparisonResolver<TSource> GreaterThanOrEqual(string name, Action<ShortComparisonResolver<TSource>> options = null)
+        public ShortComparisonResolver<TSource> GreaterThanOrEqual(string name)
         {
-            var resolver = new ShortComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, short>(short.MinValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new ShortComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, short>(short.MinValue), Selector);
         }
 
         [UsedImplicitly]
-        public ShortComparisonResolver<TSource> LessThanOrEqual(string name, Action<ShortComparisonResolver<TSource>> options = null)
+        public ShortComparisonResolver<TSource> LessThanOrEqual(string name)
         {
-            var resolver = new ShortComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, short>(short.MaxValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new ShortComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, short>(short.MaxValue), Selector);
         }
     }
 }

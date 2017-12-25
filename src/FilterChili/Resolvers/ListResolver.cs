@@ -27,7 +27,7 @@ using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Resolvers
 {
-    public abstract class ListResolver<TSource, TSelector> : DomainResolver<TSource, TSelector>
+    public abstract class ListResolver<TSource, TSelector> : DomainResolver<TSource, TSelector> where TSelector : IComparable
     {
         private bool _needsToBeResolved;
 

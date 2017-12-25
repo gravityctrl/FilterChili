@@ -28,43 +28,33 @@ namespace GravityCTRL.FilterChili.Providers
         internal DoubleDomainProvider(Expression<Func<TSource, double>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public DoubleRangeResolver<TSource> Range(string name, Action<DoubleRangeResolver<TSource>> options = null)
+        public DoubleRangeResolver<TSource> Range(string name)
         {
-            var resolver = new DoubleRangeResolver<TSource>(name, Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new DoubleRangeResolver<TSource>(name, Selector);
         }
 
         [UsedImplicitly]
-        public DoubleComparisonResolver<TSource> GreaterThan(string name, Action<DoubleComparisonResolver<TSource>> options = null)
+        public DoubleComparisonResolver<TSource> GreaterThan(string name)
         {
-            var resolver = new DoubleComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, double>(double.MinValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new DoubleComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, double>(double.MinValue), Selector);
         }
 
         [UsedImplicitly]
-        public DoubleComparisonResolver<TSource> LessThan(string name, Action<DoubleComparisonResolver<TSource>> options = null)
+        public DoubleComparisonResolver<TSource> LessThan(string name)
         {
-            var resolver = new DoubleComparisonResolver<TSource>(name, new LessThanComparer<TSource, double>(double.MaxValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new DoubleComparisonResolver<TSource>(name, new LessThanComparer<TSource, double>(double.MaxValue), Selector);
         }
 
         [UsedImplicitly]
-        public DoubleComparisonResolver<TSource> GreaterThanOrEqual(string name, Action<DoubleComparisonResolver<TSource>> options = null)
+        public DoubleComparisonResolver<TSource> GreaterThanOrEqual(string name)
         {
-            var resolver = new DoubleComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, double>(double.MinValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new DoubleComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, double>(double.MinValue), Selector);
         }
 
         [UsedImplicitly]
-        public DoubleComparisonResolver<TSource> LessThanOrEqual(string name, Action<DoubleComparisonResolver<TSource>> options = null)
+        public DoubleComparisonResolver<TSource> LessThanOrEqual(string name)
         {
-            var resolver = new DoubleComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, double>(double.MaxValue), Selector);
-            options?.Invoke(resolver);
-            return resolver;
+            return new DoubleComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, double>(double.MaxValue), Selector);
         }
     }
 }
