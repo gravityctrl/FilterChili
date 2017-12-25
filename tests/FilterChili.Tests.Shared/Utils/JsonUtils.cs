@@ -15,6 +15,7 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 namespace GravityCTRL.FilterChili.Tests.Shared.Utils
@@ -23,12 +24,16 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Utils
     {
         public static string Convert(object obj)
         {
-            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+            var settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
                 Formatting = Formatting.Indented
-            });
+            };
+
+            settings.Converters.Add(new StringEnumConverter());
+
+            return JsonConvert.SerializeObject(obj, settings);
         }
     }
 }
