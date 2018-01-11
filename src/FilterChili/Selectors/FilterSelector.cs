@@ -107,17 +107,21 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal override bool TrySet<TSelectorTarget>(TSelectorTarget value)
         {
-            if (value is TSelector valueTarget)
+            switch (value)
             {
-                return TrySet(valueTarget);
+                case TSelector valueTarget:
+                {
+                    return TrySet(valueTarget);
+                }
+                case IEnumerable<TSelector> targetValues:
+                {
+                    return TrySet(targetValues);
+                }
+                default:
+                {
+                    return false;
+                }
             }
-
-            if (value is IEnumerable<TSelector> targetValues)
-            {
-                return TrySet(targetValues);
-            }
-
-            return false;
         }
 
         internal override bool TrySet<TSelectorTarget>(TSelectorTarget min, TSelectorTarget max)
