@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -86,12 +87,6 @@ namespace GravityCTRL.FilterChili
         public bool TrySet<TSelector>(string name, TSelector min, TSelector max)
         {
             return _contextOptions.GetFilter(name)?.TrySet(min, max) ?? false;
-        }
-
-        [UsedImplicitly]
-        public bool TrySet<TSelector>(string name, IEnumerable<TSelector> values)
-        {
-            return _contextOptions.GetFilter(name)?.TrySet(values) ?? false;
         }
 
         protected abstract void Configure(ContextOptions<TSource> options);

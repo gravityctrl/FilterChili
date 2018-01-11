@@ -44,8 +44,6 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal abstract bool TrySet<TSelector>(TSelector min, TSelector max);
 
-        internal abstract bool TrySet<TSelector>(IEnumerable<TSelector> values);
-
         internal abstract bool TrySet(JToken domainToken);
 
         #endregion
@@ -114,6 +112,11 @@ namespace GravityCTRL.FilterChili.Selectors
                 return TrySet(valueTarget);
             }
 
+            if (value is IEnumerable<TSelector> targetValues)
+            {
+                return TrySet(targetValues);
+            }
+
             return false;
         }
 
@@ -122,16 +125,6 @@ namespace GravityCTRL.FilterChili.Selectors
             if (min is TSelector minTarget && max is TSelector maxTarget)
             {
                 return TrySet(minTarget, maxTarget);
-            }
-
-            return false;
-        }
-
-        internal override bool TrySet<TSelectorTarget>(IEnumerable<TSelectorTarget> values)
-        {
-            if (values is IEnumerable<TSelector> targetValues)
-            {
-                return TrySet(targetValues);
             }
 
             return false;
