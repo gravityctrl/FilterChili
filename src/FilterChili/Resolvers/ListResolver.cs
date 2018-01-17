@@ -37,6 +37,8 @@ namespace GravityCTRL.FilterChili.Resolvers
             set => _needsToBeResolved = value;
         }
 
+        public override string FilterType { get; } = "List";
+
         [NotNull]
         internal IReadOnlyList<TSelector> SelectedValues { get; private set; }
 

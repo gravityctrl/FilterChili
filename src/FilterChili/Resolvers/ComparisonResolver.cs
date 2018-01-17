@@ -39,6 +39,8 @@ namespace GravityCTRL.FilterChili.Resolvers
             set => _needsToBeResolved = value;
         }
 
+        public override string FilterType => _comparer.FilterType;
+
         [UsedImplicitly]
         public Range<TSelector> TotalRange { get; private set; }
 

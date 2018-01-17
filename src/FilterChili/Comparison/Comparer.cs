@@ -21,6 +21,8 @@ namespace GravityCTRL.FilterChili.Comparison
 {
     public abstract class Comparer<TSource, TSelector> where TSelector : IComparable
     {
+        public abstract string FilterType { get; }
+
         public abstract Expression<Func<TSource, bool>> FilterExpression(Expression<Func<TSource, TSelector>> selector, TSelector selectedValue);
     }
 }

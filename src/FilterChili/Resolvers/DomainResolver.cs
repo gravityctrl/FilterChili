@@ -32,6 +32,8 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         public string Name { get; }
 
+        public abstract string FilterType { get; }
+
         [UsedImplicitly]
         public string SourceType => _sourceType.Name;
 

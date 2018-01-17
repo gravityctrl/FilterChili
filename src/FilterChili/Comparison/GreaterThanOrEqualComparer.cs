@@ -23,6 +23,8 @@ namespace GravityCTRL.FilterChili.Comparison
     {
         private readonly TSelector _minValue;
 
+        public override string FilterType { get; } = "GreaterThan";
+
         public GreaterThanOrEqualComparer(TSelector minValue)
         {
             _minValue = minValue;

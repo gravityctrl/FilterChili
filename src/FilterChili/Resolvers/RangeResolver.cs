@@ -41,6 +41,8 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         private readonly TSelector _max;
 
+        public override string FilterType { get; } = "Range";
+
         [UsedImplicitly]
         public Range<TSelector> TotalRange { get; private set; }
 
