@@ -34,7 +34,7 @@ namespace GravityCTRL.FilterChili.TestConsole
 
         public static void Main()
         {
-            using (var dataContext = DataContext.CreateWithSqlServer(Guid.NewGuid().ToString()))
+            using (var dataContext = DataContext.CreateInMemory(Guid.NewGuid().ToString()))
             {
                 dataContext.Migrate();
 

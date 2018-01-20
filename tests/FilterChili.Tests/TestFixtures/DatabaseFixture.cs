@@ -35,7 +35,7 @@ namespace GravityCTRL.FilterChili.Tests.TestFixtures
 
         public DatabaseFixture()
         {
-            _context = DataContext.CreateWithSqlServer(Guid.NewGuid().ToString());
+            _context = DataContext.CreateInMemory(Guid.NewGuid().ToString());
             _context.Migrate();
 
             var products = CreateTestProducts();
