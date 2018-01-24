@@ -44,13 +44,6 @@ namespace GravityCTRL.FilterChili.Resolvers.List
             // ReSharper disable once SwitchStatementMissingSomeCases
             switch (ComparisonStrategy)
             {
-                case StringComparisonStrategy.Equals:
-                {
-                    var selectedValueExpressions = SelectedValues.Select(Expression.Constant);
-                    var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Equal(expression, Selector.Body));
-                    var orExpression = equalsExpressions.Or();
-                    return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
-                }
                 case StringComparisonStrategy.Contains:
                 {
                     var selectedValueExpressions = SelectedValues.Select(Expression.Constant);
@@ -70,7 +63,10 @@ namespace GravityCTRL.FilterChili.Resolvers.List
                 }
                 default:
                 {
-                    return null;
+                    var selectedValueExpressions = SelectedValues.Select(Expression.Constant);
+                    var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Equal(expression, Selector.Body));
+                    var orExpression = equalsExpressions.Or();
+                    return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
                 }
             }
         }
