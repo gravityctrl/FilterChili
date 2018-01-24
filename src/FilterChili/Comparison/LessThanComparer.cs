@@ -32,7 +32,7 @@ namespace GravityCTRL.FilterChili.Comparison
 
         public override Expression<Func<TSource, bool>> FilterExpression(Expression<Func<TSource, TSelector>> selector, TSelector selectedValue)
         {
-            if (_maxValue.CompareTo(selectedValue) == 0)
+            if (_maxValue.CompareTo(selectedValue) <= 0)
             {
                 return null;
             }

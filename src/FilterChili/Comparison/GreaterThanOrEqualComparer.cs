@@ -23,7 +23,7 @@ namespace GravityCTRL.FilterChili.Comparison
     {
         private readonly TSelector _minValue;
 
-        public override string FilterType { get; } = "GreaterThan";
+        public override string FilterType { get; } = "GreaterThanOrEqual";
 
         public GreaterThanOrEqualComparer(TSelector minValue)
         {
@@ -32,7 +32,7 @@ namespace GravityCTRL.FilterChili.Comparison
 
         public override Expression<Func<TSource, bool>> FilterExpression(Expression<Func<TSource, TSelector>> selector, TSelector selectedValue)
         {
-            if (_minValue.CompareTo(selectedValue) == 0)
+            if (_minValue.CompareTo(selectedValue) >= 0)
             {
                 return null;
             }
