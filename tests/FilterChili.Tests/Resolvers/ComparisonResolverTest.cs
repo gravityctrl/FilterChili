@@ -42,8 +42,10 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         public void Should_Initialize_Instance_Correctly()
         {
             _instance.FilterType.Should().Be("TestComparer");
-            _instance.NeedsToBeResolved.Should().BeTrue();
+            _instance.SourceType.Should().Be("GenericSource");
+            _instance.TargetType.Should().Be("Int32");
 
+            _instance.NeedsToBeResolved.Should().BeTrue();
             _instance.SelectableRange.Should().BeNull();
             _instance.SelectedValue.Should().Be(0);
             _instance.TotalRange.Should().BeNull();
@@ -52,7 +54,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         [Fact]
         public void Should_Set_Value_Correctly()
         {
-            _instance.FilterType.Should().Be("TestComparer");
             _instance.NeedsToBeResolved = false;
             _instance.Set(1);
 
@@ -63,7 +64,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         [Fact]
         public void Should_Set_Value_With_TrySet_If_JToken_Is_Correct()
         {
-            _instance.FilterType.Should().Be("TestComparer");
             _instance.NeedsToBeResolved = false;
             _instance.TrySet(JToken.Parse(@"{ ""value"": 2 }"));
 
@@ -74,7 +74,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         [Fact]
         public void Should_Set_Value_With_TrySet_If_JToken_Value_Can_Be_Interpreted()
         {
-            _instance.FilterType.Should().Be("TestComparer");
             _instance.NeedsToBeResolved = false;
             _instance.TrySet(JToken.Parse(@"{ ""value"": ""3"" }"));
 
@@ -85,7 +84,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         [Fact]
         public void Should_Not_Set_Value_With_TrySet_If_JToken_Value_Cannot_Be_Interpreted()
         {
-            _instance.FilterType.Should().Be("TestComparer");
             _instance.NeedsToBeResolved = false;
             Action func = () => _instance.TrySet(JToken.Parse(@"{ ""value"": ""3a"" }"));
 
@@ -97,7 +95,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         [Fact]
         public void Should_Not_Set_Value_With_TrySet_If_JToken_Has_Invalid_Content()
         {
-            _instance.FilterType.Should().Be("TestComparer");
             _instance.NeedsToBeResolved = false;
             _instance.TrySet(JToken.Parse(@"{ ""values"": 4 }"));
 
@@ -108,7 +105,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         [Fact]
         public async Task Should_Return_Null_For_SetAvailableEntities_If_Queryable_Is_Empty()
         {
-            _instance.FilterType.Should().Be("TestComparer");
             _instance.NeedsToBeResolved = false;
             await _instance.SetAvailableEntities(new GenericSource[0].AsQueryable());
 
@@ -118,7 +114,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         [Fact]
         public async Task Should_Return_Null_For_SetSelectableEntities_If_Queryable_Is_Empty()
         {
-            _instance.FilterType.Should().Be("TestComparer");
             _instance.NeedsToBeResolved = false;
             await _instance.SetSelectableEntities(new GenericSource[0].AsQueryable());
 
@@ -128,7 +123,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         [Fact]
         public async Task Should_Set_TotalRange_On_Calling_SetAvailableEntities()
         {
-            _instance.FilterType.Should().Be("TestComparer");
             _instance.NeedsToBeResolved = false;
             var items = new[]
             {
@@ -150,7 +144,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         [Fact]
         public async Task Should_Set_SelectableRange_On_Calling_SetSelectableEntities()
         {
-            _instance.FilterType.Should().Be("TestComparer");
             _instance.NeedsToBeResolved = false;
             var items = new[]
             {
@@ -170,7 +163,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         [Fact]
         public void Should_Return_Correct_Amount_Of_Values_When_Executing_Filter()
         {
-            _instance.FilterType.Should().Be("TestComparer");
             _instance.NeedsToBeResolved = false;
             var items = new[]
             {

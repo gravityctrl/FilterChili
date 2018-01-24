@@ -45,6 +45,9 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         public void Should_Initialize_Instance_Correctly()
         {
             _instance.FilterType.Should().Be("List");
+            _instance.SourceType.Should().Be("GenericSource");
+            _instance.TargetType.Should().Be("Int32");
+
             _instance.NeedsToBeResolved.Should().BeTrue();
             _instance.SelectedValues.Should().BeEmpty();
             _instance.Values.Should().BeEmpty();

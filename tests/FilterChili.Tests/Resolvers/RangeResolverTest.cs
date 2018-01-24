@@ -41,8 +41,10 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         public void Should_Initialize_Instance_Correctly()
         {
             _instance.FilterType.Should().Be("Range");
-            _instance.NeedsToBeResolved.Should().BeTrue();
+            _instance.SourceType.Should().Be("GenericSource");
+            _instance.TargetType.Should().Be("Int32");
 
+            _instance.NeedsToBeResolved.Should().BeTrue();
             _instance.SelectableRange.Should().BeNull();
             _instance.SelectedRange.Min.Should().Be(-5);
             _instance.SelectedRange.Max.Should().Be(5);
