@@ -137,7 +137,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             };
 
             await _instance.SetAvailableEntities(items.AsQueryable());
-            await _instance.SetSelectableEntities(items.AsQueryable().Skip(1).Take(3));
 
             _instance.TotalRange.Min.Should().Be(-2);
             _instance.TotalRange.Max.Should().Be(2);
@@ -157,7 +156,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 1 }
             };
 
-            await _instance.SetAvailableEntities(items.AsQueryable());
             await _instance.SetSelectableEntities(items.AsQueryable());
 
             _instance.SelectableRange.Min.Should().Be(-1);
