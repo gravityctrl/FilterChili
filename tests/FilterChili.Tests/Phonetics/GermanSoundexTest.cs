@@ -49,8 +49,31 @@ namespace GravityCTRL.FilterChili.Tests.Phonetics
         [Fact]
         public void Test_German_Soundex_For_Tuna()
         {
-            "Tun".ToGermanSoundex().Should().Be("26");
             "Tuna".ToGermanSoundex().Should().Be("26");
+        }
+
+        [Fact]
+        public void Test_German_Soundex_For_Wortwitz()
+        {
+            "Wortwitz".ToGermanSoundex().Should().Be("37238");
+        }
+
+        [Fact]
+        public void Test_German_Soundex_For_Lack()
+        {
+            "Lack".ToGermanSoundex().Should().Be("54");
+        }
+
+        [Fact]
+        public void Test_German_Soundex_For_Xylophon()
+        {
+            "Xylophon".ToGermanSoundex().Should().Be("48536");
+        }
+
+        [Fact]
+        public void Test_German_Soundex_For_Lockx()
+        {
+            "Lockx".ToGermanSoundex().Should().Be("548");
         }
     }
 }

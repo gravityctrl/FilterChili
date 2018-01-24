@@ -49,7 +49,6 @@ namespace GravityCTRL.FilterChili.Tests.Phonetics
         [Fact]
         public void Test_Soundex_For_Tuna()
         {
-            "Tun".ToSoundex().Should().Be("T500");
             "Tuna".ToSoundex().Should().Be("T500");
         }
     }
