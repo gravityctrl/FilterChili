@@ -15,6 +15,7 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -123,6 +124,28 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             await _instance.SetSelectableEntities(new GenericSource[0].AsQueryable());
 
             _instance.SelectableRange.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task Should_Support_Async_Queryables()
+        {
+            var items = new[]
+            {
+                new GenericSource { Int = -2 },
+                new GenericSource { Int = -1 },
+                new GenericSource { Int = 0 },
+                new GenericSource { Int = 1 },
+                new GenericSource { Int = 2 }
+            };
+
+            await _instance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(items));
+
+            _instance.TotalRange.Min.Should().Be(-2);
+            _instance.TotalRange.Max.Should().Be(2);
+
+            await _instance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(new List<GenericSource>()));
+
+            _instance.TotalRange.Should().BeNull();
         }
 
         [Fact]

@@ -133,6 +133,63 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
+        public async Task Should_Support_Async_Queryables()
+        {
+            var items = new[]
+            {
+                new GenericSource { Int = -2 },
+                new GenericSource { Int = -1 },
+                new GenericSource { Int = 0 },
+                new GenericSource { Int = 1 },
+                new GenericSource { Int = 2 }
+            };
+
+            await _instance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(items));
+            await _instance.SetSelectableEntities(items.AsQueryable().Skip(1).Take(3));
+
+            var expected = new[]
+            {
+                new Item<int>
+                {
+                    CanBeSelected = false,
+                    IsSelected = false,
+                    Value = -2
+                },
+                new Item<int>
+                {
+                    CanBeSelected = true,
+                    IsSelected = false,
+                    Value = -1
+                },
+                new Item<int>
+                {
+                    CanBeSelected = true,
+                    IsSelected = false,
+                    Value = 0
+                },
+                new Item<int>
+                {
+                    CanBeSelected = true,
+                    IsSelected = false,
+                    Value = 1
+                },
+                new Item<int>
+                {
+                    CanBeSelected = false,
+                    IsSelected = false,
+                    Value = 2
+                }
+            };
+
+            var expectedJson = JsonConvert.SerializeObject(expected);
+            JsonConvert.SerializeObject(_instance.Values).Should().Be(expectedJson);
+
+            await _instance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(new List<GenericSource>()));
+
+            _instance.Values.Should().BeEmpty();
+        }
+
+        [Fact]
         public async Task Should_Set_TotalRange_On_Calling_SetAvailableEntities()
         {
             _instance.NeedsToBeResolved = false;
