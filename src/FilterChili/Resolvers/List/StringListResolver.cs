@@ -54,7 +54,7 @@ namespace GravityCTRL.FilterChili.Resolvers.List
                 case StringComparisonStrategy.Contains:
                 {
                     var selectedValueExpressions = SelectedValues.Select(Expression.Constant);
-                    var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Call(expression, MethodExpressions.StringContainsExpression, Selector.Body));
+                    var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Call(Selector.Body, MethodExpressions.StringContainsExpression, expression));
                     var orExpression = equalsExpressions.Or();
                     return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
                 }
