@@ -16,7 +16,7 @@
 
 namespace GravityCTRL.FilterChili.Tests.Models
 {
-    internal class GenericSource
+    public class GenericSource
     {
         public byte Byte { get; }
 
@@ -36,7 +36,7 @@ namespace GravityCTRL.FilterChili.Tests.Models
 
         public short Short { get; }
 
-        public string String { get; }
+        public string String { get; set; }
 
         public uint UInt { get; }
 
