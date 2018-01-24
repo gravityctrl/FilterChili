@@ -23,7 +23,7 @@ using GravityCTRL.FilterChili.Tests.Shared.Models;
 using GravityCTRL.FilterChili.Tests.Shared.Services;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Tests.TestFixtures
+namespace GravityCTRL.FilterChili.Tests.TestSupport.TestFixtures
 {
     [UsedImplicitly]
     public class DatabaseFixture : IDisposable

@@ -14,25 +14,34 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System.IO;
-using System.Reflection;
-
-namespace GravityCTRL.FilterChili.Tests.Utils
+namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
 {
-    public static class ResourceHelper
+    public class GenericSource
     {
-        private const string RESOURCES_NAMESPACE = "GravityCTRL.FilterChili.Tests.Resources";
+        public byte Byte { get; }
 
-        public static string Load(string resourceName)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resource = $"{RESOURCES_NAMESPACE}.{resourceName}";
+        public char Char { get; }
 
-            using (var stream = assembly.GetManifestResourceStream(resource))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
-        }
+        public decimal Decimal { get; }
+
+        public double Double { get; }
+
+        public float Float { get; }
+
+        public int Int { get; set; }
+
+        public long Long { get; }
+
+        public sbyte SByte { get; }
+
+        public short Short { get; }
+
+        public string String { get; set; }
+
+        public uint UInt { get; }
+
+        public ulong ULong { get; }
+
+        public ushort UShort { get; }
     }
 }

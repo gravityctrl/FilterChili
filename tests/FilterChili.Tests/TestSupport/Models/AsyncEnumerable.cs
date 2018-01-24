@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace GravityCTRL.FilterChili.Tests.Models
+namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
 {
     public class AsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
     {

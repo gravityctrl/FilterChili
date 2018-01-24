@@ -14,34 +14,31 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-namespace GravityCTRL.FilterChili.Tests.Models
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
 {
-    public class GenericSource
+    public class AsyncEnumerator<T> : IAsyncEnumerator<T>
     {
-        public byte Byte { get; }
+        private readonly IEnumerator<T> _inner;
 
-        public char Char { get; }
+        public AsyncEnumerator(IEnumerator<T> inner)
+        {
+            _inner = inner;
+        }
 
-        public decimal Decimal { get; }
+        public void Dispose()
+        {
+            _inner.Dispose();
+        }
 
-        public double Double { get; }
+        public T Current => _inner.Current;
 
-        public float Float { get; }
-
-        public int Int { get; set; }
-
-        public long Long { get; }
-
-        public sbyte SByte { get; }
-
-        public short Short { get; }
-
-        public string String { get; set; }
-
-        public uint UInt { get; }
-
-        public ulong ULong { get; }
-
-        public ushort UShort { get; }
+        public Task<bool> MoveNext(CancellationToken cancellationToken)
+        {
+            return Task.FromResult(_inner.MoveNext());
+        }
     }
 }

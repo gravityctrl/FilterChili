@@ -21,7 +21,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 
-namespace GravityCTRL.FilterChili.Tests.Models
+namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
 {
     public class AsyncQueryProvider<TEntity> : IAsyncQueryProvider
     {

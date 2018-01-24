@@ -18,7 +18,7 @@ using FluentAssertions;
 using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
-using GravityCTRL.FilterChili.Tests.Models;
+using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Providers

@@ -21,7 +21,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Resolvers;
-using GravityCTRL.FilterChili.Tests.Models;
+using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json.Linq;
 using Xunit;
 

@@ -18,7 +18,7 @@ using FluentAssertions;
 using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers.List;
-using GravityCTRL.FilterChili.Tests.Models;
+using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Providers
