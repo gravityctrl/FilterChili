@@ -18,30 +18,30 @@ namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
 {
     public class GenericSource
     {
-        public byte Byte { get; }
+        public byte Byte { get; set; }
 
-        public char Char { get; }
+        public char Char { get; set; }
 
-        public decimal Decimal { get; }
+        public decimal Decimal { get; set; }
 
-        public double Double { get; }
+        public double Double { get; set; }
 
-        public float Float { get; }
+        public float Float { get; set; }
 
         public int Int { get; set; }
 
-        public long Long { get; }
+        public long Long { get; set; }
 
-        public sbyte SByte { get; }
+        public sbyte SByte { get; set; }
 
-        public short Short { get; }
+        public short Short { get; set; }
 
         public string String { get; set; }
 
-        public uint UInt { get; }
+        public uint UInt { get; set; }
 
-        public ulong ULong { get; }
+        public ulong ULong { get; set; }
 
-        public ushort UShort { get; }
+        public ushort UShort { get; set; }
     }
 }
