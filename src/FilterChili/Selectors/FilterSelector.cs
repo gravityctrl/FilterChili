@@ -18,8 +18,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Exceptions;
 using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Selectors
@@ -53,12 +55,21 @@ namespace GravityCTRL.FilterChili.Selectors
     {
         private readonly TDomainProvider _domainProvider;
 
+        [CanBeNull]
         private DomainResolver<TSource, TSelector> _domainResolver;
 
         internal override bool NeedsToBeResolved
         {
-            get => _domainResolver.NeedsToBeResolved;
-            set => _domainResolver.NeedsToBeResolved = value;
+            get => _domainResolver?.NeedsToBeResolved ?? false;
+            set
+            {
+                if (_domainResolver == null)
+                {
+                    throw new MissingResolverException(nameof(TDomainProvider));
+                }
+
+                _domainResolver.NeedsToBeResolved = value;
+            }
         }
 
         protected internal FilterSelector(TDomainProvider domainProvider)
@@ -77,32 +88,47 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal override IQueryable<TSource> ApplyFilter(IQueryable<TSource> queryable)
         {
+            if (_domainResolver == null)
+            {
+                throw new MissingResolverException(nameof(TDomainProvider));
+            }
+
             return _domainResolver.ExecuteFilter(queryable);
         }
 
         internal override async Task SetAvailableEntities(IQueryable<TSource> queryable)
         {
+            if (_domainResolver == null)
+            {
+                throw new MissingResolverException(nameof(TDomainProvider));
+            }
+
             await _domainResolver.SetAvailableEntities(queryable);
         }
 
         internal override async Task SetSelectableEntities(IQueryable<TSource> selectableItems)
         {
+            if (_domainResolver == null)
+            {
+                throw new MissingResolverException(nameof(TDomainProvider));
+            }
+
             await _domainResolver.SetSelectableEntities(selectableItems);
         }
 
         internal override DomainResolver<TSource> Domain()
         {
-            return _domainResolver;
+            return _domainResolver ?? throw new MissingResolverException(nameof(TDomainProvider));
         }
 
         internal override bool HasName(string name)
         {
-            return _domainResolver.Name == name;
+            return _domainResolver?.Name == name;
         }
 
         internal override bool TrySet(JToken domainToken)
         {
-            return _domainResolver.TrySet(domainToken);
+            return _domainResolver?.TrySet(domainToken) ?? false;
         }
 
         internal override bool TrySet<TSelectorTarget>(TSelectorTarget value)
