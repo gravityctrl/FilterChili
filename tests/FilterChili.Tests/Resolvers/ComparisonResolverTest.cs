@@ -32,93 +32,93 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
     {
         private const string TEST_NAME = "TestName";
 
-        private readonly ComparisonResolver<GenericSource, int> _instance;
+        private readonly ComparisonResolver<GenericSource, int> _testInstance;
 
         public ComparisonResolverTest()
         {
-            _instance = new TestComparisonResolver<int>(TEST_NAME, new TestComparer(), source => source.Int);
+            _testInstance = new TestComparisonResolver(TEST_NAME, new TestComparer(), source => source.Int);
         }
 
         [Fact]
         public void Should_Initialize_Instance_Correctly()
         {
-            _instance.FilterType.Should().Be("TestComparer");
-            _instance.SourceType.Should().Be("GenericSource");
-            _instance.TargetType.Should().Be("Int32");
+            _testInstance.FilterType.Should().Be("TestComparer");
+            _testInstance.SourceType.Should().Be("GenericSource");
+            _testInstance.TargetType.Should().Be("Int32");
 
-            _instance.NeedsToBeResolved.Should().BeTrue();
-            _instance.SelectableRange.Should().BeNull();
-            _instance.SelectedValue.Should().Be(0);
-            _instance.TotalRange.Should().BeNull();
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
+            _testInstance.SelectableRange.Should().BeNull();
+            _testInstance.SelectedValue.Should().Be(0);
+            _testInstance.TotalRange.Should().BeNull();
         }
 
         [Fact]
         public void Should_Set_Value_Correctly()
         {
-            _instance.NeedsToBeResolved = false;
-            _instance.Set(1);
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.Set(1);
 
-            _instance.SelectedValue.Should().Be(1);
-            _instance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.SelectedValue.Should().Be(1);
+            _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
         [Fact]
         public void Should_Set_Value_With_TrySet_If_JToken_Is_Correct()
         {
-            _instance.NeedsToBeResolved = false;
-            _instance.TrySet(JToken.Parse(@"{ ""value"": 2 }"));
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.TrySet(JToken.Parse(@"{ ""value"": 2 }"));
 
-            _instance.SelectedValue.Should().Be(2);
-            _instance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.SelectedValue.Should().Be(2);
+            _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
         [Fact]
         public void Should_Set_Value_With_TrySet_If_JToken_Value_Can_Be_Interpreted()
         {
-            _instance.NeedsToBeResolved = false;
-            _instance.TrySet(JToken.Parse(@"{ ""value"": ""3"" }"));
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.TrySet(JToken.Parse(@"{ ""value"": ""3"" }"));
 
-            _instance.SelectedValue.Should().Be(3);
-            _instance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.SelectedValue.Should().Be(3);
+            _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
         [Fact]
         public void Should_Not_Set_Value_With_TrySet_If_JToken_Value_Cannot_Be_Interpreted()
         {
-            _instance.NeedsToBeResolved = false;
-            Action func = () => _instance.TrySet(JToken.Parse(@"{ ""value"": ""3a"" }"));
+            _testInstance.NeedsToBeResolved = false;
+            Action func = () => _testInstance.TrySet(JToken.Parse(@"{ ""value"": ""3a"" }"));
 
             func.ShouldThrow<FormatException>();
-            _instance.SelectedValue.Should().Be(0);
-            _instance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.SelectedValue.Should().Be(0);
+            _testInstance.NeedsToBeResolved.Should().Be(false);
         }
 
         [Fact]
         public void Should_Not_Set_Value_With_TrySet_If_JToken_Has_Invalid_Content()
         {
-            _instance.NeedsToBeResolved = false;
-            _instance.TrySet(JToken.Parse(@"{ ""values"": 4 }"));
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.TrySet(JToken.Parse(@"{ ""values"": 4 }"));
 
-            _instance.SelectedValue.Should().Be(0);
-            _instance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.SelectedValue.Should().Be(0);
+            _testInstance.NeedsToBeResolved.Should().Be(false);
         }
 
         [Fact]
         public async Task Should_Return_Null_For_SetAvailableEntities_If_Queryable_Is_Empty()
         {
-            _instance.NeedsToBeResolved = false;
-            await _instance.SetAvailableEntities(new GenericSource[0].AsQueryable());
+            _testInstance.NeedsToBeResolved = false;
+            await _testInstance.SetAvailableEntities(new GenericSource[0].AsQueryable());
 
-            _instance.TotalRange.Should().BeNull();
+            _testInstance.TotalRange.Should().BeNull();
         }
 
         [Fact]
         public async Task Should_Return_Null_For_SetSelectableEntities_If_Queryable_Is_Empty()
         {
-            _instance.NeedsToBeResolved = false;
-            await _instance.SetSelectableEntities(new GenericSource[0].AsQueryable());
+            _testInstance.NeedsToBeResolved = false;
+            await _testInstance.SetSelectableEntities(new GenericSource[0].AsQueryable());
 
-            _instance.SelectableRange.Should().BeNull();
+            _testInstance.SelectableRange.Should().BeNull();
         }
 
         [Fact]
@@ -133,20 +133,20 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 2 }
             };
 
-            await _instance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(items));
+            await _testInstance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(items));
 
-            _instance.TotalRange.Min.Should().Be(-2);
-            _instance.TotalRange.Max.Should().Be(2);
+            _testInstance.TotalRange.Min.Should().Be(-2);
+            _testInstance.TotalRange.Max.Should().Be(2);
 
-            await _instance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(new List<GenericSource>()));
+            await _testInstance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(new List<GenericSource>()));
 
-            _instance.TotalRange.Should().BeNull();
+            _testInstance.TotalRange.Should().BeNull();
         }
 
         [Fact]
         public async Task Should_Set_TotalRange_On_Calling_SetAvailableEntities()
         {
-            _instance.NeedsToBeResolved = false;
+            _testInstance.NeedsToBeResolved = false;
             var items = new[]
             {
                 new GenericSource { Int = -2 },
@@ -156,18 +156,18 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 2 }
             };
 
-            await _instance.SetAvailableEntities(items.AsQueryable());
+            await _testInstance.SetAvailableEntities(items.AsQueryable());
 
-            _instance.TotalRange.Min.Should().Be(-2);
-            _instance.TotalRange.Max.Should().Be(2);
-            _instance.SelectedValue.Should().Be(0);
-            _instance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.TotalRange.Min.Should().Be(-2);
+            _testInstance.TotalRange.Max.Should().Be(2);
+            _testInstance.SelectedValue.Should().Be(0);
+            _testInstance.NeedsToBeResolved.Should().Be(false);
         }
 
         [Fact]
         public async Task Should_Set_SelectableRange_On_Calling_SetSelectableEntities()
         {
-            _instance.NeedsToBeResolved = false;
+            _testInstance.NeedsToBeResolved = false;
             var items = new[]
             {
                 new GenericSource { Int = -1 },
@@ -175,18 +175,18 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 1 }
             };
 
-            await _instance.SetSelectableEntities(items.AsQueryable());
+            await _testInstance.SetSelectableEntities(items.AsQueryable());
 
-            _instance.SelectableRange.Min.Should().Be(-1);
-            _instance.SelectableRange.Max.Should().Be(1);
-            _instance.SelectedValue.Should().Be(0);
-            _instance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.SelectableRange.Min.Should().Be(-1);
+            _testInstance.SelectableRange.Max.Should().Be(1);
+            _testInstance.SelectedValue.Should().Be(0);
+            _testInstance.NeedsToBeResolved.Should().Be(false);
         }
 
         [Fact]
         public void Should_Return_Correct_Amount_Of_Values_When_Executing_Filter()
         {
-            _instance.NeedsToBeResolved = false;
+            _testInstance.NeedsToBeResolved = false;
             var items = new[]
             {
                 new GenericSource { Int = -2 },
@@ -196,22 +196,22 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 2 }
             };
 
-            _instance.Set(1);
-            _instance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.Set(1);
+            _testInstance.NeedsToBeResolved.Should().Be(true);
 
-            var result1 = _instance.ExecuteFilter(items.AsQueryable());
+            var result1 = _testInstance.ExecuteFilter(items.AsQueryable());
             result1.Should().HaveCount(1);
 
             var expectedItem = items[3];
             result1.First().Should().Be(expectedItem);
 
-            var result2 = _instance.ExecuteFilter(new GenericSource[0].AsQueryable());
+            var result2 = _testInstance.ExecuteFilter(new GenericSource[0].AsQueryable());
             result2.Should().HaveCount(0);
         }
 
-        private class TestComparisonResolver<TSelector> : ComparisonResolver<GenericSource, TSelector> where TSelector : IComparable
+        private class TestComparisonResolver : ComparisonResolver<GenericSource, int>
         {
-            internal TestComparisonResolver(string name, Comparer<GenericSource, TSelector> comparer, Expression<Func<GenericSource, TSelector>> selector) : base(name, comparer, selector) {}
+            internal TestComparisonResolver(string name, Comparer<GenericSource, int> comparer, Expression<Func<GenericSource, int>> selector) : base(name, comparer, selector) {}
         }
 
         private class TestComparer : Comparer<GenericSource, int>
