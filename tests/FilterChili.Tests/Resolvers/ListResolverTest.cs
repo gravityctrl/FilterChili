@@ -34,102 +34,102 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
     {
         private const string TEST_NAME = "TestName";
 
-        private readonly ListResolver<GenericSource, int> _instance;
+        private readonly ListResolver<GenericSource, int> _testInstance;
 
         public ListResolverTest()
         {
-            _instance = new TestListResolver(TEST_NAME, source => source.Int);
+            _testInstance = new TestListResolver(TEST_NAME, source => source.Int);
         }
 
         [Fact]
         public void Should_Initialize_Instance_Correctly()
         {
-            _instance.FilterType.Should().Be("List");
-            _instance.SourceType.Should().Be("GenericSource");
-            _instance.TargetType.Should().Be("Int32");
+            _testInstance.FilterType.Should().Be("List");
+            _testInstance.SourceType.Should().Be("GenericSource");
+            _testInstance.TargetType.Should().Be("Int32");
 
-            _instance.NeedsToBeResolved.Should().BeTrue();
-            _instance.SelectedValues.Should().BeEmpty();
-            _instance.Values.Should().BeEmpty();
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
+            _testInstance.SelectedValues.Should().BeEmpty();
+            _testInstance.Values.Should().BeEmpty();
         }
 
         [Fact]
         public void Should_Set_Values_Correctly_With_Params()
         {
-            _instance.NeedsToBeResolved = false;
-            _instance.Set(-1, 1);
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.Set(-1, 1);
 
-            _instance.SelectedValues.Should().Contain(new[] {-1, 1});
-            _instance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.SelectedValues.Should().Contain(new[] {-1, 1});
+            _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
         [Fact]
         public void Should_Set_Values_Correctly_Without_Params()
         {
-            _instance.NeedsToBeResolved = false;
-            _instance.Set(new List<int> { -1, 1 });
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.Set(new List<int> { -1, 1 });
 
-            _instance.SelectedValues.Should().Contain(new[] { -1, 1 });
-            _instance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.SelectedValues.Should().Contain(new[] { -1, 1 });
+            _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
         [Fact]
         public void Should_Set_Value_With_TrySet_If_JToken_Is_Correct()
         {
-            _instance.NeedsToBeResolved = false;
-            _instance.TrySet(JToken.Parse(@"{ ""values"": [ -2, 2 ] }"));
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.TrySet(JToken.Parse(@"{ ""values"": [ -2, 2 ] }"));
 
-            _instance.SelectedValues.Should().Contain(new[] { -2, 2 });
-            _instance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.SelectedValues.Should().Contain(new[] { -2, 2 });
+            _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
         [Fact]
         public void Should_Set_Value_With_TrySet_If_JToken_Value_Can_Be_Interpreted()
         {
-            _instance.NeedsToBeResolved = false;
-            _instance.TrySet(JToken.Parse(@"{ ""values"": [ ""-3"", ""3"" ] }"));
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.TrySet(JToken.Parse(@"{ ""values"": [ ""-3"", ""3"" ] }"));
 
-            _instance.SelectedValues.Should().Contain(new[] { -3, 3 });
-            _instance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.SelectedValues.Should().Contain(new[] { -3, 3 });
+            _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
         [Fact]
         public void Should_Not_Set_Value_With_TrySet_If_JToken_Value_Cannot_Be_Interpreted()
         {
-            _instance.NeedsToBeResolved = false;
-            Action func = () => _instance.TrySet(JToken.Parse(@"{ ""values"": [ ""-3a"", ""3a"" ] }"));
+            _testInstance.NeedsToBeResolved = false;
+            Action func = () => _testInstance.TrySet(JToken.Parse(@"{ ""values"": [ ""-3a"", ""3a"" ] }"));
 
             func.ShouldThrow<FormatException>();
-            _instance.SelectedValues.Should().BeEmpty();
-            _instance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.SelectedValues.Should().BeEmpty();
+            _testInstance.NeedsToBeResolved.Should().Be(false);
         }
 
         [Fact]
         public void Should_Not_Set_Value_With_TrySet_If_JToken_Has_Invalid_Content()
         {
-            _instance.NeedsToBeResolved = false;
-            _instance.TrySet(JToken.Parse(@"{ ""value"": [ -4, 4 ] }"));
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.TrySet(JToken.Parse(@"{ ""value"": [ -4, 4 ] }"));
 
-            _instance.SelectedValues.Should().BeEmpty();
-            _instance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.SelectedValues.Should().BeEmpty();
+            _testInstance.NeedsToBeResolved.Should().Be(false);
         }
 
         [Fact]
         public async Task Should_Return_Null_For_SetAvailableEntities_If_Queryable_Is_Empty()
         {
-            _instance.NeedsToBeResolved = false;
-            await _instance.SetAvailableEntities(new GenericSource[0].AsQueryable());
+            _testInstance.NeedsToBeResolved = false;
+            await _testInstance.SetAvailableEntities(new GenericSource[0].AsQueryable());
 
-            _instance.Values.Should().BeEmpty();
+            _testInstance.Values.Should().BeEmpty();
         }
 
         [Fact]
         public async Task Should_Return_Null_For_SetSelectableEntities_If_Queryable_Is_Empty()
         {
-            _instance.NeedsToBeResolved = false;
-            await _instance.SetSelectableEntities(new GenericSource[0].AsQueryable());
+            _testInstance.NeedsToBeResolved = false;
+            await _testInstance.SetSelectableEntities(new GenericSource[0].AsQueryable());
 
-            _instance.Values.Should().BeEmpty();
+            _testInstance.Values.Should().BeEmpty();
         }
 
         [Fact]
@@ -144,8 +144,8 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 2 }
             };
 
-            await _instance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(items));
-            await _instance.SetSelectableEntities(items.AsQueryable().Skip(1).Take(3));
+            await _testInstance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(items));
+            await _testInstance.SetSelectableEntities(items.AsQueryable().Skip(1).Take(3));
 
             var expected = new[]
             {
@@ -182,17 +182,17 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             };
 
             var expectedJson = JsonConvert.SerializeObject(expected);
-            JsonConvert.SerializeObject(_instance.Values).Should().Be(expectedJson);
+            JsonConvert.SerializeObject(_testInstance.Values).Should().Be(expectedJson);
 
-            await _instance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(new List<GenericSource>()));
+            await _testInstance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(new List<GenericSource>()));
 
-            _instance.Values.Should().BeEmpty();
+            _testInstance.Values.Should().BeEmpty();
         }
 
         [Fact]
         public async Task Should_Set_TotalRange_On_Calling_SetAvailableEntities()
         {
-            _instance.NeedsToBeResolved = false;
+            _testInstance.NeedsToBeResolved = false;
             var items = new[]
             {
                 new GenericSource { Int = -2 },
@@ -202,8 +202,8 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 2 }
             };
 
-            await _instance.SetAvailableEntities(items.AsQueryable());
-            await _instance.SetSelectableEntities(items.AsQueryable().Skip(1).Take(3));
+            await _testInstance.SetAvailableEntities(items.AsQueryable());
+            await _testInstance.SetSelectableEntities(items.AsQueryable().Skip(1).Take(3));
 
             var expected = new[]
             {
@@ -240,14 +240,14 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             };
 
             var expectedJson = JsonConvert.SerializeObject(expected);
-            JsonConvert.SerializeObject(_instance.Values).Should().Be(expectedJson);
-            _instance.NeedsToBeResolved.Should().Be(false);
+            JsonConvert.SerializeObject(_testInstance.Values).Should().Be(expectedJson);
+            _testInstance.NeedsToBeResolved.Should().Be(false);
         }
 
         [Fact]
         public async Task Should_Not_Set_CanBeSelected_If_There_Are_No_Selectable_Values()
         {
-            _instance.NeedsToBeResolved = false;
+            _testInstance.NeedsToBeResolved = false;
             var items = new[]
             {
                 new GenericSource { Int = -2 },
@@ -257,8 +257,8 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 2 }
             };
 
-            await _instance.SetAvailableEntities(items.AsQueryable());
-            _instance.Set(-1, 2);
+            await _testInstance.SetAvailableEntities(items.AsQueryable());
+            _testInstance.Set(-1, 2);
 
             var expected = new[]
             {
@@ -295,15 +295,15 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             };
 
             var expectedJson = JsonConvert.SerializeObject(expected);
-            JsonConvert.SerializeObject(_instance.Values).Should().Be(expectedJson);
-            _instance.NeedsToBeResolved.Should().Be(true);
+            JsonConvert.SerializeObject(_testInstance.Values).Should().Be(expectedJson);
+            _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
         [Fact]
         public void Should_Get_Values_If_There_Are_Only_Selected_Ones()
         {
-            _instance.NeedsToBeResolved = false;
-            _instance.Set(-1, 2);
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.Set(-1, 2);
 
             var expected = new[]
             {
@@ -322,8 +322,8 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             };
 
             var expectedJson = JsonConvert.SerializeObject(expected);
-            JsonConvert.SerializeObject(_instance.Values).Should().Be(expectedJson);
-            _instance.NeedsToBeResolved.Should().Be(true);
+            JsonConvert.SerializeObject(_testInstance.Values).Should().Be(expectedJson);
+            _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
         private class TestListResolver : ListResolver<GenericSource, int>
