@@ -72,7 +72,6 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         public override bool TrySet(JToken domainToken)
         {
-
             var valuesToken = domainToken.SelectToken("values");
             if (valuesToken == null)
             {
