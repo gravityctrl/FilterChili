@@ -8,7 +8,6 @@ using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Exceptions;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Selectors;
-using GravityCTRL.FilterChili.Tests.Shared.Models;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -141,7 +140,7 @@ namespace GravityCTRL.FilterChili.Tests
         }
 
         [Fact]
-        public async Task Should_Set_All_Values_If_Needsl()
+        public async Task Should_Resolve_Domains_Independent_From_Setting_Filters_Order()
         {
             var filter1 = _testInstance.Filter(source => source.Int).With(domain => domain.GreaterThan("Int"));
             var filter2 = _testInstance.Filter(source => source.Double).With(domain => domain.LessThanOrEqual("Double"));
@@ -163,6 +162,19 @@ namespace GravityCTRL.FilterChili.Tests
             var testResult2 = JsonConvert.SerializeObject(await _testInstance.Domains());
 
             testResult1.Should().Be(testResult2);
+        }
+
+        [Fact]
+        public void Should_Get_Filter_By_Name()
+        {
+            _testInstance.Filter(source => source.Int).With(domain => domain.GreaterThan("Int"));
+            _testInstance.Filter(source => source.Double).With(domain => domain.LessThanOrEqual("Double"));
+            _testInstance.Filter(source => source.Float).With(domain => domain.Range("Float"));
+
+            _testInstance.GetFilter("Int").Domain().Name.Should().Be("Int");
+            _testInstance.GetFilter("Double").Domain().Name.Should().Be("Double");
+            _testInstance.GetFilter("Float").Domain().Name.Should().Be("Float");
+            _testInstance.GetFilter("Byte").Should().BeNull();
         }
 
         private interface ITestDomainResolver
