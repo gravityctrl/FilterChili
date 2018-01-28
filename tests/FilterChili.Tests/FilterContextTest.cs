@@ -146,7 +146,7 @@ namespace GravityCTRL.FilterChili.Tests
             filterContext.TrySet(_notExistingFilterObject).Should().BeFalse();
         }
 
-        private static List<Product> CreateTestProducts()
+        private static IEnumerable<Product> CreateTestProducts()
         {
             Randomizer.Seed = new Random(0);
 

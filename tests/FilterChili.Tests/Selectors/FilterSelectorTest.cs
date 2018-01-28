@@ -22,7 +22,6 @@ using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Exceptions;
 using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers;
-using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json.Linq;
