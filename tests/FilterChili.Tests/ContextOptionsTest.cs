@@ -177,6 +177,23 @@ namespace GravityCTRL.FilterChili.Tests
             _testInstance.GetFilter("Byte").Should().BeNull();
         }
 
+        [Fact]
+        public void Should_Return_Expected_Entities_When_Applying_Filters()
+        {
+            var filter1 = _testInstance.Filter(source => source.Int).With(domain => domain.GreaterThan("Int"));
+            var filter2 = _testInstance.Filter(source => source.Double).With(domain => domain.LessThanOrEqual("Double"));
+            var filter3 = _testInstance.Filter(source => source.Float).With(domain => domain.Range("Float"));
+
+            filter1.Set(3);
+            filter2.Set(15);
+            filter3.Set(5, 25);
+
+            var results = _testInstance.ApplyFilters().ToList();
+            results.Should().NotContain(entity => entity.Int <= 3);
+            results.Should().NotContain(entity => entity.Double > 15);
+            results.Should().NotContain(entity => entity.Float < 5 && entity.Float > 25);
+        }
+
         private interface ITestDomainResolver
         {
             int SetAvailableValuesCallCount { get; }
