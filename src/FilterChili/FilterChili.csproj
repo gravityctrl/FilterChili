@@ -35,7 +35,7 @@
     <FileVersion>1.0.0.0</FileVersion>
     <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
     <Version Condition=" '$(BUILD_BUILDNUMBER)' == '' Or '$(IsRelease)' == 'true' ">1.0.0-rc1</Version>
-    <Version Condition=" '$(BUILD_BUILDNUMBER)' != '' And '$(IsRelease)' != 'true' ">1.0.0-rc$(BUILD_BUILDNUMBER)</Version>
+    <Version Condition=" '$(BUILD_BUILDNUMBER)' != '' And '$(IsRelease)' != 'true' ">1.0.0-beta$(BUILD_BUILDNUMBER)</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
