@@ -63,7 +63,6 @@ options.Filter(product => product.Rating)
 
 The second statement defines a filter for the `Product.Rating` property. Since it stores `int` values, we can use a variety of filters, that can compare numbers. In this case we decided to filter it by using a `Range` of values. The third statement therefore defines a `GreaterThanOrEqual` filter for the `NumberOfReviews` property.
 
-
 ### Using the FilterContext
 
 The code snipped below shows, how easy it is to use the filters.
@@ -121,6 +120,10 @@ var filterContext = new ProductFilterContext(dataContext.Products);
 // Set the product categories, that shall be found.
 filterContext.CategoryFilter.Set("Books", "Magazines", "Newspapers");
 ```
+
+## Future Plans
+
+We are currently creating a demo page which will demonstrate the capabilities of this project in more detail.
 
 ## Contributing
 
