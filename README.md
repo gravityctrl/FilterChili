@@ -26,7 +26,7 @@ This is a first list of features and we intend to provide further documentation 
 
 ### Creating a FilterContext
 
-Juat derive from `FilterContext` and specify the model, which will be used to specify the filters. You then just have to implement the abstract `Configure` method.
+Just derive from `FilterContext` and specify the model, which will be used to define the filters. You then just have to implement the abstract `Configure` method.
 
 ```csharp
 public class ProductFilterContext : FilterContext<Product>
@@ -61,7 +61,7 @@ options.Filter(product => product.Rating)
        .With(domain => domain.Range("Rating"));
 ```
 
-The second statement defines a filter for the `Product.Rating` property. Since it stores `int` values, we can use a variety of filters, that can compare numbers. In this case we decided to filter it by using a `Range` of values. The third statement therefor defines a `GreaterThanOrEqual` filter for the `NumberOfReviews` property.
+The second statement defines a filter for the `Product.Rating` property. Since it stores `int` values, we can use a variety of filters, that can compare numbers. In this case we decided to filter it by using a `Range` of values. The third statement therefore defines a `GreaterThanOrEqual` filter for the `NumberOfReviews` property.
 
 
 ### Using the FilterContext
