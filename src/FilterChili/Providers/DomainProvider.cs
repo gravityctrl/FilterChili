@@ -21,7 +21,7 @@ namespace GravityCTRL.FilterChili.Providers
 {
     public abstract class DomainProvider<TSource, TSelector>
     {
-        protected readonly Expression<Func<TSource, TSelector>> Selector;
+        protected internal readonly Expression<Func<TSource, TSelector>> Selector;
 
         protected internal DomainProvider(Expression<Func<TSource, TSelector>> selector)
         {

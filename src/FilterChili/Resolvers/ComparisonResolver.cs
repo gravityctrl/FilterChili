@@ -23,7 +23,6 @@ using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Models;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Resolvers
@@ -64,16 +63,13 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         public override bool TrySet(JToken domainToken)
         {
-            try
-            {
-                var value = domainToken.Value<TSelector>("value");
-                Set(value);
-            }
-            catch (JsonSerializationException)
+            var token = domainToken.SelectToken("value");
+            if (token == null)
             {
                 return false;
             }
 
+            Set(token.ToObject<TSelector>());
             return true;
         }
 

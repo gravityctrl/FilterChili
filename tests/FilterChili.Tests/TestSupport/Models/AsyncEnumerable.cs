@@ -14,16 +14,23 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using JetBrains.Annotations;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
-namespace GravityCTRL.FilterChili.Models
+namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
 {
-    public class Item<TValue>
+    public class AsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
     {
-        public TValue Value { [UsedImplicitly] get; set; }
+        public AsyncEnumerable(IEnumerable<T> enumerable) : base(enumerable) { }
 
-        public bool CanBeSelected { [UsedImplicitly] get; set; }
+        public AsyncEnumerable(Expression expression) : base(expression) { }
 
-        public bool IsSelected { [UsedImplicitly] get; set; }
+        public IAsyncEnumerator<T> GetEnumerator()
+        {
+            return new AsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
+        }
+
+        IQueryProvider IQueryable.Provider => new AsyncQueryProvider<T>(this);
     }
 }

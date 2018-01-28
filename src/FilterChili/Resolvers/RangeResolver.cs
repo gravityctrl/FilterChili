@@ -22,7 +22,6 @@ using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Models;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Resolvers
@@ -69,17 +68,16 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         public override bool TrySet(JToken domainToken)
         {
-            try
-            {
-                var min = domainToken.Value<TSelector>("min");
-                var max = domainToken.Value<TSelector>("max");
-                Set(min, max);
-            }
-            catch (JsonSerializationException)
+            var minToken = domainToken.SelectToken("min");
+            var maxToken = domainToken.SelectToken("max");
+            if (minToken == null || maxToken == null)
             {
                 return false;
             }
 
+            var min = minToken.ToObject<TSelector>();
+            var max = maxToken.ToObject<TSelector>();
+            Set(min, max);
             return true;
         }
 
@@ -87,7 +85,7 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         protected override Expression<Func<TSource, bool>> FilterExpression()
         {
-            if (_min.CompareTo(SelectedRange.Min) != 0 && _max.CompareTo(SelectedRange.Max) != 0)
+            if (_min.CompareTo(SelectedRange.Min) < 0 && _max.CompareTo(SelectedRange.Max) > 0)
             {
                 var minConstant = Expression.Constant(SelectedRange.Min);
                 var maxConstant = Expression.Constant(SelectedRange.Max);
@@ -97,7 +95,7 @@ namespace GravityCTRL.FilterChili.Resolvers
                 return Expression.Lambda<Func<TSource, bool>>(andExpression, Selector.Parameters);
             }
 
-            if (_max.CompareTo(SelectedRange.Max) != 0)
+            if (_max.CompareTo(SelectedRange.Max) > 0)
             {
                 var maxConstant = Expression.Constant(SelectedRange.Max);
                 var lessThanExpression = Expression.LessThanOrEqual(Selector.Body, maxConstant);
@@ -105,7 +103,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             }
 
             // ReSharper disable once InvertIf
-            if (_min.CompareTo(SelectedRange.Min) != 0)
+            if (_min.CompareTo(SelectedRange.Min) < 0)
             {
                 var minConstant = Expression.Constant(SelectedRange.Min);
                 var greaterThanExpression = Expression.GreaterThanOrEqual(Selector.Body, minConstant);

@@ -22,7 +22,6 @@ using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Models;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Resolvers
@@ -73,20 +72,18 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         public override bool TrySet(JToken domainToken)
         {
-            try
-            {
-                var domain = new Set<TSelector>
-                {
-                    Values = domainToken.SelectToken("values").Values<TSelector>()
-                };
-
-                Set(domain.Values);
-            }
-            catch (JsonSerializationException)
+            var valuesToken = domainToken.SelectToken("values");
+            if (valuesToken == null)
             {
                 return false;
             }
 
+            var domain = new Set<TSelector>
+            {
+                Values = valuesToken.Values<TSelector>()
+            };
+
+            Set(domain.Values);
             return true;
         }
 
@@ -114,7 +111,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         {
             if (_availableValues == null)
             {
-                return SelectedValues.Select(value => new Item<TSelector> { Value = value }).ToList();
+                return SelectedValues.Select(value => new Item<TSelector> { Value = value, IsSelected = true }).ToList();
             }
 
             var entities = _availableValues.ToDictionary(value => value, value => new Item<TSelector> { Value = value });

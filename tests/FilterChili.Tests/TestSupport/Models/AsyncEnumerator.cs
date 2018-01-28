@@ -14,25 +14,31 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System.IO;
-using System.Reflection;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace GravityCTRL.FilterChili.Tests.Utils
+namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
 {
-    public static class ResourceHelper
+    public class AsyncEnumerator<T> : IAsyncEnumerator<T>
     {
-        private const string RESOURCES_NAMESPACE = "GravityCTRL.FilterChili.Tests.Resources";
+        private readonly IEnumerator<T> _inner;
 
-        public static string Load(string resourceName)
+        public AsyncEnumerator(IEnumerator<T> inner)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resource = $"{RESOURCES_NAMESPACE}.{resourceName}";
+            _inner = inner;
+        }
 
-            using (var stream = assembly.GetManifestResourceStream(resource))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
+        public void Dispose()
+        {
+            _inner.Dispose();
+        }
+
+        public T Current => _inner.Current;
+
+        public Task<bool> MoveNext(CancellationToken cancellationToken)
+        {
+            return Task.FromResult(_inner.MoveNext());
         }
     }
 }

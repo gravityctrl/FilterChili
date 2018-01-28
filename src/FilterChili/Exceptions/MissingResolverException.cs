@@ -14,16 +14,12 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using JetBrains.Annotations;
+using System;
 
-namespace GravityCTRL.FilterChili.Models
+namespace GravityCTRL.FilterChili.Exceptions
 {
-    public class Item<TValue>
+    public class MissingResolverException : Exception
     {
-        public TValue Value { [UsedImplicitly] get; set; }
-
-        public bool CanBeSelected { [UsedImplicitly] get; set; }
-
-        public bool IsSelected { [UsedImplicitly] get; set; }
+        public MissingResolverException(string message) : base(message) {}
     }
 }

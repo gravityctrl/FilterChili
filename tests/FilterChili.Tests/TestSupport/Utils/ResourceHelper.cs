@@ -14,16 +14,25 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using JetBrains.Annotations;
+using System.IO;
+using System.Reflection;
 
-namespace GravityCTRL.FilterChili.Models
+namespace GravityCTRL.FilterChili.Tests.TestSupport.Utils
 {
-    public class Item<TValue>
+    public static class ResourceHelper
     {
-        public TValue Value { [UsedImplicitly] get; set; }
+        private const string RESOURCES_NAMESPACE = "GravityCTRL.FilterChili.Tests.Resources";
 
-        public bool CanBeSelected { [UsedImplicitly] get; set; }
+        public static string Load(string resourceName)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resource = $"{RESOURCES_NAMESPACE}.{resourceName}";
 
-        public bool IsSelected { [UsedImplicitly] get; set; }
+            using (var stream = assembly.GetManifestResourceStream(resource))
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
+        }
     }
 }

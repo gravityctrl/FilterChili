@@ -18,7 +18,7 @@ using FluentAssertions;
 using GravityCTRL.FilterChili.Phonetics;
 using Xunit;
 
-namespace GravityCTRL.FilterChili.Tests
+namespace GravityCTRL.FilterChili.Tests.Phonetics
 {
     public class SoundexTest
     {
@@ -49,39 +49,7 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public void Test_Soundex_For_Tuna()
         {
-            "Tun".ToSoundex().Should().Be("T500");
             "Tuna".ToSoundex().Should().Be("T500");
-        }
-
-        [Fact]
-        public void Test_German_Soundex_For_Breschnew()
-        {
-            "Breschnew".ToGermanSoundex().Should().Be("17863");
-        }
-
-        [Fact]
-        public void Test_German_Soundex_For_Luedenscheid()
-        {
-            "Müller-Lüdenscheidt".ToGermanSoundex().Should().Be("657 52682");
-        }
-
-        [Fact]
-        public void Test_German_Soundex_For_Heinz_Classen()
-        {
-            "Heinz Classen".ToGermanSoundex().Should().Be("068 4586");
-        }
-
-        [Fact]
-        public void Test_German_Soundex_For_Wakapodia()
-        {
-            "Wikipedia".ToGermanSoundex().Should().Be("3412");
-        }
-
-        [Fact]
-        public void Test_German_Soundex_For_Tuna()
-        {
-            "Tun".ToGermanSoundex().Should().Be("26");
-            "Tuna".ToGermanSoundex().Should().Be("26");
         }
     }
 }

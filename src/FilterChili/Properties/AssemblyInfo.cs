@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using JetBrains.Annotations;
+using System.Runtime.CompilerServices;
 
-namespace GravityCTRL.FilterChili.Models
-{
-    public class Item<TValue>
-    {
-        public TValue Value { [UsedImplicitly] get; set; }
-
-        public bool CanBeSelected { [UsedImplicitly] get; set; }
-
-        public bool IsSelected { [UsedImplicitly] get; set; }
-    }
-}
+[assembly: InternalsVisibleTo("GravityCTRL.FilterChili.Tests")]

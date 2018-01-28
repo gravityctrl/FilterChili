@@ -188,13 +188,11 @@ namespace GravityCTRL.FilterChili
             async Task ResolveFilterAtIndex(int ignoredIndex)
             {
                 var currentFilter = filters[ignoredIndex];
-                if (!currentFilter.NeedsToBeResolved)
-                {
-                    return;
-                }
-
                 var selectableItems = _queryable.AsQueryable();
-                await currentFilter.SetAvailableEntities(selectableItems);
+                if (currentFilter.NeedsToBeResolved)
+                {
+                    await currentFilter.SetAvailableEntities(selectableItems);
+                }
 
                 if (calculationStrategy == CalculationStrategy.Full)
                 {

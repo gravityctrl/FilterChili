@@ -20,18 +20,15 @@ using System.Linq;
 using Bogus;
 using GravityCTRL.FilterChili.Tests.Shared.Contexts;
 using GravityCTRL.FilterChili.Tests.Shared.Models;
-using GravityCTRL.FilterChili.Tests.Shared.Services;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Tests.TestFixtures
+namespace GravityCTRL.FilterChili.Tests.TestSupport.TestFixtures
 {
     [UsedImplicitly]
     public class DatabaseFixture : IDisposable
     {
         private const int ENTITY_AMOUNT = 100_000;
         private readonly DataContext _context;
-
-        public ProductService Service { get; }
 
         public DatabaseFixture()
         {
@@ -40,10 +37,8 @@ namespace GravityCTRL.FilterChili.Tests.TestFixtures
 
             var products = CreateTestProducts();
 
-            var service = new ProductService(_context);
-            service.AddRange(products.ToList()).Wait();
-
-            Service = service;
+            _context.Products.AddRangeAsync(products.ToList());
+            _context.SaveChanges();
         }
 
         public void Dispose()
