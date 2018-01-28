@@ -34,8 +34,8 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
     <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
-    <Version Condition=" '$(BUILD_BUILDNUMBER)' == '' ">0.1.0-local</Version>
-    <Version Condition=" '$(BUILD_BUILDNUMBER)' != '' ">0.1.0-alpha$(BUILD_BUILDNUMBER)</Version>
+    <Version Condition=" '$(BUILD_BUILDNUMBER)' == '' ">1.0.0-rc1</Version>
+    <Version Condition=" '$(BUILD_BUILDNUMBER)' != '' ">1.0.0-rc$(BUILD_BUILDNUMBER)</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
