@@ -11,13 +11,13 @@ Aims to provide an easy way to create a **collection of filters** inside **.NET 
 FilterChili is available as a NuGet package. You can install it using the NuGet Package Console window:
 
 ```
-PM> Install-Package FilterChili
+PM> Install-Package FilterChili -Version 1.0.0-rc1
 ```
 
 Alternatively you can install it using the .Net CLI using this command:
 
 ```
-> dotnet add package FilterChili
+> dotnet add package FilterChili --version 1.0.0-rc1
 ```
 
 ## Usage
