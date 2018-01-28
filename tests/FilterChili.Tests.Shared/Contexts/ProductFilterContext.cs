@@ -41,7 +41,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
         {
             options.CalculationStrategy = CalculationStrategy.Full;
 
-            NameFilter = options.Filter(product => product.Name).With(domain => domain.List("Name", StringComparisonStrategy.Contains));
+            NameFilter = options.Filter(product => product.Name).With(domain => domain.List("Name"));
             RatingFilter = options.Filter(product => product.Rating).With(domain => domain.Range("Rating"));
             SoldFilter = options.Filter(product => product.Sold).With(domain => domain.GreaterThan("Sold"));
         }
