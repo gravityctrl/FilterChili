@@ -1,5 +1,6 @@
 ﻿# FilterChili
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![NuGet Pre Release](https://img.shields.io/nuget/vpre/FilterChili.svg)](https://www.nuget.org/packages/FilterChili)
 [<img src="https://gravityctrl.visualstudio.com/_apis/public/build/definitions/9e2dfce5-384e-48bb-94c8-08a393f23f51/2/badge"/>](https://gravityctrl.visualstudio.com/FilterChili/_build/index?definitionId=2)
 [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/FilterChili)
 
