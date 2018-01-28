@@ -7,7 +7,17 @@ Aims to provide an easy way to create a **collection of filters** inside **.NET 
 
 ## Getting Started
 
-Currently there is no way to getting started, as this project is just in the bootstrapping phase.
+FilterChili is available as a NuGet package. You can install it using the NuGet Package Console window:
+
+```
+PM> Install-Package FilterChili
+```
+
+Alternatively you can install it using the .Net CLI using this command:
+
+```
+> dotnet add package FilterChili
+```
 
 ## Contributing
 
