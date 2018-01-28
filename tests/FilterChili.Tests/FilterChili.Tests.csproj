@@ -53,7 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="22.0.1" />
+    <PackageReference Include="Bogus" Version="22.0.2" />
     <PackageReference Include="FluentAssertions" Version="4.19.4" />
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
