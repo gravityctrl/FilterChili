@@ -20,8 +20,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Exceptions;
+using GravityCTRL.FilterChili.Extensions;
 using GravityCTRL.FilterChili.Resolvers;
-using GravityCTRL.FilterChili.Utils;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Selectors
