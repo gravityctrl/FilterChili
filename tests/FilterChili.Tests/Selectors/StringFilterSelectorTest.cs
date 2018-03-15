@@ -21,15 +21,15 @@ using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
-namespace GravityCTRL.FilterChili.Tests.Providers
+namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class StringDomainProviderTest
+    public class StringFilterSelectorTest
     {
         private const string TEST_NAME = "TestName";
 
         private readonly StringFilterSelector<GenericSource> _testInstance;
 
-        public StringDomainProviderTest()
+        public StringFilterSelectorTest()
         {
             _testInstance = new StringFilterSelector<GenericSource>(p => p.String);
         }

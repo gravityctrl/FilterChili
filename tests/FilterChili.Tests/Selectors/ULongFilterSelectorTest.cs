@@ -21,15 +21,15 @@ using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
-namespace GravityCTRL.FilterChili.Tests.Providers
+namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class ULongDomainProviderTest
+    public class ULongFilterSelectorTest
     {
         private const string TEST_NAME = "TestName";
 
         private readonly ULongFilterSelector<GenericSource> _testInstance;
 
-        public ULongDomainProviderTest()
+        public ULongFilterSelectorTest()
         {
             _testInstance = new ULongFilterSelector<GenericSource>(p => p.ULong);
         }

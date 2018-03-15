@@ -26,13 +26,13 @@ using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace GravityCTRL.FilterChili.Tests.Providers
+namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class DomainProviderTest
+    public class FilterSelectorTest
     {
         private readonly TestFilterSelector _testInstance;
 
-        public DomainProviderTest()
+        public FilterSelectorTest()
         {
             _testInstance = new TestFilterSelector(source => source.Int);
         }
