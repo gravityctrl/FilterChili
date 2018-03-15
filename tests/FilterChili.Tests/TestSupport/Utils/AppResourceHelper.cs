@@ -19,7 +19,7 @@ using System.Reflection;
 
 namespace GravityCTRL.FilterChili.Tests.TestSupport.Utils
 {
-    public static class ResourceHelper
+    public static class AppResourceHelper
     {
         private const string RESOURCES_NAMESPACE = "GravityCTRL.FilterChili.Tests.Resources";
 

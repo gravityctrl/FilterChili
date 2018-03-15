@@ -43,19 +43,19 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             var queryable = new GenericSource[0].AsQueryable();
 
             Action domainAction = () => _testInstance.Domain();
-            domainAction.ShouldThrow<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
+            domainAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action applyFilterAction = () => _testInstance.ApplyFilter(queryable);
-            applyFilterAction.ShouldThrow<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
+            applyFilterAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action setAvailableEntitiesAction = () => _testInstance.SetAvailableEntities(queryable).Wait();
-            setAvailableEntitiesAction.ShouldThrow<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
+            setAvailableEntitiesAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action setSelectableEntitiesAction = () => _testInstance.SetSelectableEntities(queryable).Wait();
-            setSelectableEntitiesAction.ShouldThrow<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
+            setSelectableEntitiesAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action needsToBeResolvedAction = () => _testInstance.NeedsToBeResolved = true;
-            needsToBeResolvedAction.ShouldThrow<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
+            needsToBeResolvedAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
         }
 
         [Fact]
@@ -78,19 +78,19 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             var queryable = new GenericSource[0].AsQueryable();
 
             Action domainAction = () => _testInstance.Domain();
-            domainAction.ShouldNotThrow<MissingResolverException>();
+            domainAction.Should().NotThrow<MissingResolverException>();
 
             Action applyFilterAction = () => _testInstance.ApplyFilter(queryable);
-            applyFilterAction.ShouldNotThrow<MissingResolverException>();
+            applyFilterAction.Should().NotThrow<MissingResolverException>();
 
             Action setAvailableEntitiesAction = () => _testInstance.SetAvailableEntities(queryable).Wait();
-            setAvailableEntitiesAction.ShouldNotThrow<MissingResolverException>();
+            setAvailableEntitiesAction.Should().NotThrow<MissingResolverException>();
 
             Action setSelectableEntitiesAction = () => _testInstance.SetSelectableEntities(queryable).Wait();
-            setSelectableEntitiesAction.ShouldNotThrow<MissingResolverException>();
+            setSelectableEntitiesAction.Should().NotThrow<MissingResolverException>();
 
             Action needsToBeResolvedAction = () => _testInstance.NeedsToBeResolved = true;
-            needsToBeResolvedAction.ShouldNotThrow<MissingResolverException>();
+            needsToBeResolvedAction.Should().NotThrow<MissingResolverException>();
         }
 
         [Fact]
@@ -155,7 +155,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             _testInstance.TrySet("abc").Should().BeFalse();
             _testInstance.TrySet("abc", "def").Should().BeFalse();
             Action func = () => _testInstance.TrySet(JToken.Parse(@"{ ""value"": ""abc"" }"));
-            func.ShouldThrow<FormatException>();
+            func.Should().Throw<FormatException>();
         }
 
         private class TestFilterSelector : FilterSelector<GenericSource, int>

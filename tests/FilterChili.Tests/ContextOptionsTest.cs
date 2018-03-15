@@ -77,7 +77,7 @@ namespace GravityCTRL.FilterChili.Tests
 
             var domains = await _testInstance.Domains();
             Action enumerateAction = () => domains.ToHashSet();
-            enumerateAction.ShouldThrow<MissingResolverException>().Where(ex => ex.Message.EndsWith("FilterSelector<GenericSource>"));
+            enumerateAction.Should().Throw<MissingResolverException>().Where(ex => ex.Message.EndsWith("FilterSelector<GenericSource>"));
         }
 
         [Fact]

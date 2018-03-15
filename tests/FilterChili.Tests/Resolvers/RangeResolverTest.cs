@@ -91,7 +91,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             Action func = () => _testInstance.TrySet(JToken.Parse(@"{ ""min"": ""-4a"", ""max"": ""4a"" }"));
 
-            func.ShouldThrow<FormatException>();
+            func.Should().Throw<FormatException>();
             _testInstance.SelectedRange.Min.Should().Be(-5);
             _testInstance.SelectedRange.Max.Should().Be(5);
             _testInstance.NeedsToBeResolved.Should().Be(false);

@@ -99,7 +99,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             Action func = () => _testInstance.TrySet(JToken.Parse(@"{ ""values"": [ ""-3a"", ""3a"" ] }"));
 
-            func.ShouldThrow<FormatException>();
+            func.Should().Throw<FormatException>();
             _testInstance.SelectedValues.Should().BeEmpty();
             _testInstance.NeedsToBeResolved.Should().Be(false);
         }
