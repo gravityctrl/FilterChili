@@ -30,31 +30,41 @@ namespace GravityCTRL.FilterChili.Providers
         [UsedImplicitly]
         public DoubleRangeResolver<TSource> Range(string name)
         {
-            return new DoubleRangeResolver<TSource>(name, Selector);
+            var resolver = new DoubleRangeResolver<TSource>(name, Selector);
+            DomainResolver = resolver;
+            return resolver;
         }
 
         [UsedImplicitly]
         public DoubleComparisonResolver<TSource> GreaterThan(string name)
         {
-            return new DoubleComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, double>(double.MinValue), Selector);
+            var resolver = new DoubleComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, double>(double.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
         }
 
         [UsedImplicitly]
         public DoubleComparisonResolver<TSource> LessThan(string name)
         {
-            return new DoubleComparisonResolver<TSource>(name, new LessThanComparer<TSource, double>(double.MaxValue), Selector);
+            var resolver = new DoubleComparisonResolver<TSource>(name, new LessThanComparer<TSource, double>(double.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
         }
 
         [UsedImplicitly]
         public DoubleComparisonResolver<TSource> GreaterThanOrEqual(string name)
         {
-            return new DoubleComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, double>(double.MinValue), Selector);
+            var resolver = new DoubleComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, double>(double.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
         }
 
         [UsedImplicitly]
         public DoubleComparisonResolver<TSource> LessThanOrEqual(string name)
         {
-            return new DoubleComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, double>(double.MaxValue), Selector);
+            var resolver = new DoubleComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, double>(double.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
         }
     }
 }

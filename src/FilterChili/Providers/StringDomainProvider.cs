@@ -29,7 +29,9 @@ namespace GravityCTRL.FilterChili.Providers
         [UsedImplicitly]
         public StringListResolver<TSource> List(string name, StringComparisonStrategy comparisonStrategy = StringComparisonStrategy.Equals)
         {
-            return new StringListResolver<TSource>(name, Selector, comparisonStrategy);
+            var resolver = new StringListResolver<TSource>(name, Selector, comparisonStrategy);
+            DomainResolver = resolver;
+            return resolver;
         }
     }
 }

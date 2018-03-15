@@ -30,31 +30,41 @@ namespace GravityCTRL.FilterChili.Providers
         [UsedImplicitly]
         public UShortRangeResolver<TSource> Range(string name)
         {
-            return new UShortRangeResolver<TSource>(name, Selector);
+            var resolver = new UShortRangeResolver<TSource>(name, Selector);
+            DomainResolver = resolver;
+            return resolver;
         }
 
         [UsedImplicitly]
         public UShortComparisonResolver<TSource> GreaterThan(string name)
         {
-            return new UShortComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, ushort>(ushort.MinValue), Selector);
+            var resolver = new UShortComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, ushort>(ushort.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
         }
 
         [UsedImplicitly]
         public UShortComparisonResolver<TSource> LessThan(string name)
         {
-            return new UShortComparisonResolver<TSource>(name, new LessThanComparer<TSource, ushort>(ushort.MaxValue), Selector);
+            var resolver = new UShortComparisonResolver<TSource>(name, new LessThanComparer<TSource, ushort>(ushort.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
         }
 
         [UsedImplicitly]
         public UShortComparisonResolver<TSource> GreaterThanOrEqual(string name)
         {
-            return new UShortComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, ushort>(ushort.MinValue), Selector);
+            var resolver = new UShortComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, ushort>(ushort.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
         }
 
         [UsedImplicitly]
         public UShortComparisonResolver<TSource> LessThanOrEqual(string name)
         {
-            return new UShortComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, ushort>(ushort.MaxValue), Selector);
+            var resolver = new UShortComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, ushort>(ushort.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
         }
     }
 }

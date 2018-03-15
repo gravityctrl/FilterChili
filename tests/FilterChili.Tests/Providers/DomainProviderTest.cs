@@ -22,20 +22,19 @@ using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Exceptions;
 using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers;
-using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace GravityCTRL.FilterChili.Tests.Selectors
+namespace GravityCTRL.FilterChili.Tests.Providers
 {
-    public class FilterSelectorTest
+    public class DomainProviderTest
     {
-        private readonly TestFilterSelector _testInstance;
+        private readonly TestDomainProvider _testInstance;
 
-        public FilterSelectorTest()
+        public DomainProviderTest()
         {
-            _testInstance = new TestFilterSelector(new TestDomainProvider(source => source.Int));
+            _testInstance = new TestDomainProvider(source => source.Int);
         }
 
         [Fact]
@@ -74,7 +73,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Shoud_Be_Able_To_Call_Filter_Methods_If_Resolver_Is_Set()
         {
-            _testInstance.With(domain => domain.Comparison("TestName"));
+            _testInstance.Comparison("TestName");
 
             var queryable = new GenericSource[0].AsQueryable();
 
@@ -97,7 +96,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void ComparisonResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.With(domain => domain.Comparison("TestName")).Should().BeOfType<TestComparisonResolver>();
+            _testInstance.Comparison("TestName").Should().BeOfType<TestComparisonResolver>();
             _testInstance.Domain().Should().BeOfType<TestComparisonResolver>();
             _testInstance.NeedsToBeResolved = false;
 
@@ -115,7 +114,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void RangeResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.With(domain => domain.Range("TestName")).Should().BeOfType<TestRangeResolver>();
+            _testInstance.Range("TestName").Should().BeOfType<TestRangeResolver>();
             _testInstance.Domain().Should().BeOfType<TestRangeResolver>();
             _testInstance.NeedsToBeResolved = false;
 
@@ -133,7 +132,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void ListResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.With(domain => domain.List("TestName")).Should().BeOfType<TestListResolver>();
+            _testInstance.List("TestName").Should().BeOfType<TestListResolver>();
             _testInstance.Domain().Should().BeOfType<TestListResolver>();
             _testInstance.NeedsToBeResolved = false;
 
@@ -151,19 +150,12 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Shoud_Fail_When_Values_Dont_Have_Correct_Type()
         {
-            _testInstance.With(domain => domain.Comparison("TestName"));
+            _testInstance.Comparison("TestName");
 
             _testInstance.TrySet("abc").Should().BeFalse();
             _testInstance.TrySet("abc", "def").Should().BeFalse();
             Action func = () => _testInstance.TrySet(JToken.Parse(@"{ ""value"": ""abc"" }"));
             func.ShouldThrow<FormatException>();
-        }
-
-        
-
-        private class TestFilterSelector : FilterSelector<GenericSource, int, TestDomainProvider>
-        {
-            internal TestFilterSelector(TestDomainProvider domainProvider) : base(domainProvider) {}
         }
 
         private class TestDomainProvider : DomainProvider<GenericSource, int>
@@ -172,17 +164,23 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
 
             public TestComparisonResolver Comparison(string name)
             {
-                return new TestComparisonResolver(name, new TestComparer(), Selector);
+                var resolver = new TestComparisonResolver(name, new TestComparer(), Selector);
+                DomainResolver = resolver;
+                return resolver;
             }
 
             public TestRangeResolver Range(string name)
             {
-                return new TestRangeResolver(name, Selector);
+                var resolver = new TestRangeResolver(name, Selector);
+                DomainResolver = resolver;
+                return resolver;
             }
 
             public TestListResolver List(string name)
             {
-                return new TestListResolver(name, Selector);
+                var resolver = new TestListResolver(name, Selector);
+                DomainResolver = resolver;
+                return resolver;
             }
         }
 
