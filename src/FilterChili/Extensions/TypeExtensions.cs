@@ -15,40 +15,25 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
 using System.Text;
 
 namespace GravityCTRL.FilterChili.Extensions
 {
     internal static class TypeExtensions
     {
-        private const string START_DELIMITER = "<";
-        private const string END_DELIMITER = ">";
-        private const string SEPARATOR = ",";
         private const string GENERIC_MARKER = "`";
 
-        public static string GetFormattedName(this Type type)
+        public static string FormattedName(this Type type)
         {
             if (!type.IsGenericType)
             {
                 return type.Name;
             }
 
-            var sb = new StringBuilder();
-
-            sb.Append(type.Name.Substring(0, type.Name.LastIndexOf(GENERIC_MARKER, StringComparison.Ordinal)));
-
-            var result = START_DELIMITER;
-            foreach (var genericArgument in type.GetGenericArguments())
-            {
-                var createSeparator = result != START_DELIMITER;
-                var seperator = createSeparator ? SEPARATOR : string.Empty;
-                result = $"{result}{seperator}{genericArgument.GetFormattedName()}";
-            }
-
-            sb.Append(result);
-            sb.Append(END_DELIMITER);
-
-            return sb.ToString();
+            var name = type.Name.Substring(0, type.Name.LastIndexOf(GENERIC_MARKER, StringComparison.Ordinal));
+            var genericArguments = string.Join(",", type.GetGenericArguments().Select(FormattedName));
+            return $"{name}<{genericArguments}>";
         }
     }
 }

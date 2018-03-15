@@ -53,7 +53,7 @@ namespace GravityCTRL.FilterChili.Selectors
 
     public abstract class FilterSelector<TSource, TSelector> : FilterSelector<TSource> where TSelector : IComparable
     {
-        private string Name => GetType().GetFormattedName();
+        private string Name => GetType().FormattedName();
         protected readonly Expression<Func<TSource, TSelector>> Selector;
 
         protected DomainResolver<TSource, TSelector> DomainResolver { private get; set; }
