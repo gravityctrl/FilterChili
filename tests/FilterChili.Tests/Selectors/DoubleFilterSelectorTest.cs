@@ -23,13 +23,13 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class DoubleDomainProviderTest
+    public class DoubleFilterSelectorTest
     {
         private const string TEST_NAME = "TestName";
 
         private readonly DoubleFilterSelector<GenericSource> _testInstance;
 
-        public DoubleDomainProviderTest()
+        public DoubleFilterSelectorTest()
         {
             _testInstance = new DoubleFilterSelector<GenericSource>(p => p.Double);
         }
