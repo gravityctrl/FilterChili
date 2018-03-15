@@ -21,48 +21,48 @@ using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Providers
+namespace GravityCTRL.FilterChili.Selectors
 {
-    public class DoubleDomainProvider<TSource> : DomainProvider<TSource, double>
+    public class SByteFilterSelector<TSource> : FilterSelector<TSource, sbyte>
     {
-        internal DoubleDomainProvider(Expression<Func<TSource, double>> selector) : base(selector) {}
+        internal SByteFilterSelector(Expression<Func<TSource, sbyte>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public DoubleRangeResolver<TSource> Range(string name)
+        public SByteRangeResolver<TSource> Range(string name)
         {
-            var resolver = new DoubleRangeResolver<TSource>(name, Selector);
+            var resolver = new SByteRangeResolver<TSource>(name, Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public DoubleComparisonResolver<TSource> GreaterThan(string name)
+        public SByteComparisonResolver<TSource> GreaterThan(string name)
         {
-            var resolver = new DoubleComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, double>(double.MinValue), Selector);
+            var resolver = new SByteComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, sbyte>(sbyte.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public DoubleComparisonResolver<TSource> LessThan(string name)
+        public SByteComparisonResolver<TSource> LessThan(string name)
         {
-            var resolver = new DoubleComparisonResolver<TSource>(name, new LessThanComparer<TSource, double>(double.MaxValue), Selector);
+            var resolver = new SByteComparisonResolver<TSource>(name, new LessThanComparer<TSource, sbyte>(sbyte.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public DoubleComparisonResolver<TSource> GreaterThanOrEqual(string name)
+        public SByteComparisonResolver<TSource> GreaterThanOrEqual(string name)
         {
-            var resolver = new DoubleComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, double>(double.MinValue), Selector);
+            var resolver = new SByteComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, sbyte>(sbyte.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public DoubleComparisonResolver<TSource> LessThanOrEqual(string name)
+        public SByteComparisonResolver<TSource> LessThanOrEqual(string name)
         {
-            var resolver = new DoubleComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, double>(double.MaxValue), Selector);
+            var resolver = new SByteComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, sbyte>(sbyte.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }

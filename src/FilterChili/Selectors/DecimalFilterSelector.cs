@@ -21,48 +21,48 @@ using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Providers
+namespace GravityCTRL.FilterChili.Selectors
 {
-    public class UShortDomainProvider<TSource> : DomainProvider<TSource, ushort>
+    public class DecimalFilterSelector<TSource> : FilterSelector<TSource, decimal>
     {
-        internal UShortDomainProvider(Expression<Func<TSource, ushort>> selector) : base(selector) {}
+        internal DecimalFilterSelector(Expression<Func<TSource, decimal>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public UShortRangeResolver<TSource> Range(string name)
+        public DecimalRangeResolver<TSource> Range(string name)
         {
-            var resolver = new UShortRangeResolver<TSource>(name, Selector);
+            var resolver = new DecimalRangeResolver<TSource>(name, Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public UShortComparisonResolver<TSource> GreaterThan(string name)
+        public DecimalComparisonResolver<TSource> GreaterThan(string name)
         {
-            var resolver = new UShortComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, ushort>(ushort.MinValue), Selector);
+            var resolver = new DecimalComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, decimal>(decimal.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public UShortComparisonResolver<TSource> LessThan(string name)
+        public DecimalComparisonResolver<TSource> LessThan(string name)
         {
-            var resolver = new UShortComparisonResolver<TSource>(name, new LessThanComparer<TSource, ushort>(ushort.MaxValue), Selector);
+            var resolver = new DecimalComparisonResolver<TSource>(name, new LessThanComparer<TSource, decimal>(decimal.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public UShortComparisonResolver<TSource> GreaterThanOrEqual(string name)
+        public DecimalComparisonResolver<TSource> GreaterThanOrEqual(string name)
         {
-            var resolver = new UShortComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, ushort>(ushort.MinValue), Selector);
+            var resolver = new DecimalComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, decimal>(decimal.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public UShortComparisonResolver<TSource> LessThanOrEqual(string name)
+        public DecimalComparisonResolver<TSource> LessThanOrEqual(string name)
         {
-            var resolver = new UShortComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, ushort>(ushort.MaxValue), Selector);
+            var resolver = new DecimalComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, decimal>(decimal.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }

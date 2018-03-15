@@ -21,48 +21,48 @@ using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Providers
+namespace GravityCTRL.FilterChili.Selectors
 {
-    public class LongDomainProvider<TSource> : DomainProvider<TSource, long>
+    public class ByteFilterSelector<TSource> : FilterSelector<TSource, byte>
     {
-        internal LongDomainProvider(Expression<Func<TSource, long>> selector) : base(selector) {}
+        internal ByteFilterSelector(Expression<Func<TSource, byte>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public LongRangeResolver<TSource> Range(string name)
+        public ByteRangeResolver<TSource> Range(string name)
         {
-            var resolver = new LongRangeResolver<TSource>(name, Selector);
+            var resolver = new ByteRangeResolver<TSource>(name, Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public LongComparisonResolver<TSource> GreaterThan(string name)
+        public ByteComparisonResolver<TSource> GreaterThan(string name)
         {
-            var resolver = new LongComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, long>(long.MinValue), Selector);
+            var resolver = new ByteComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, byte>(byte.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public LongComparisonResolver<TSource> LessThan(string name)
+        public ByteComparisonResolver<TSource> LessThan(string name)
         {
-            var resolver = new LongComparisonResolver<TSource>(name, new LessThanComparer<TSource, long>(long.MaxValue), Selector);
+            var resolver = new ByteComparisonResolver<TSource>(name, new LessThanComparer<TSource, byte>(byte.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public LongComparisonResolver<TSource> GreaterThanOrEqual(string name)
+        public ByteComparisonResolver<TSource> GreaterThanOrEqual(string name)
         {
-            var resolver = new LongComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, long>(long.MinValue), Selector);
+            var resolver = new ByteComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, byte>(byte.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public LongComparisonResolver<TSource> LessThanOrEqual(string name)
+        public ByteComparisonResolver<TSource> LessThanOrEqual(string name)
         {
-            var resolver = new LongComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, long>(long.MaxValue), Selector);
+            var resolver = new ByteComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, byte>(byte.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }

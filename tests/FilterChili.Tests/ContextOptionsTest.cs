@@ -21,7 +21,7 @@ using Bogus;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Exceptions;
-using GravityCTRL.FilterChili.Providers;
+using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json;
 using Xunit;
@@ -61,19 +61,19 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public async Task Should_Be_Able_To_Use_FilterSelectors()
         {
-            _testInstance.Filter(source => source.Byte).Should().BeOfType<ByteDomainProvider<GenericSource>>();
-            _testInstance.Filter(source => source.Char).Should().BeOfType<CharDomainProvider<GenericSource>>();
-            _testInstance.Filter(source => source.Decimal).Should().BeOfType<DecimalDomainProvider<GenericSource>>();
-            _testInstance.Filter(source => source.Double).Should().BeOfType<DoubleDomainProvider<GenericSource>>();
-            _testInstance.Filter(source => source.Float).Should().BeOfType<FloatDomainProvider<GenericSource>>();
-            _testInstance.Filter(source => source.Int).Should().BeOfType<IntDomainProvider<GenericSource>>();
-            _testInstance.Filter(source => source.Long).Should().BeOfType<LongDomainProvider<GenericSource>>();
-            _testInstance.Filter(source => source.SByte).Should().BeOfType<SByteDomainProvider<GenericSource>>();
-            _testInstance.Filter(source => source.Short).Should().BeOfType<ShortDomainProvider<GenericSource>>();
-            _testInstance.Filter(source => source.String).Should().BeOfType<StringDomainProvider<GenericSource>>();
-            _testInstance.Filter(source => source.UInt).Should().BeOfType<UIntDomainProvider<GenericSource>>();
-            _testInstance.Filter(source => source.ULong).Should().BeOfType<ULongDomainProvider<GenericSource>>();
-            _testInstance.Filter(source => source.UShort).Should().BeOfType<UShortDomainProvider<GenericSource>>();
+            _testInstance.Filter(source => source.Byte).Should().BeOfType<ByteFilterSelector<GenericSource>>();
+            _testInstance.Filter(source => source.Char).Should().BeOfType<CharFilterSelector<GenericSource>>();
+            _testInstance.Filter(source => source.Decimal).Should().BeOfType<DecimalFilterSelector<GenericSource>>();
+            _testInstance.Filter(source => source.Double).Should().BeOfType<DoubleFilterSelector<GenericSource>>();
+            _testInstance.Filter(source => source.Float).Should().BeOfType<FloatFilterSelector<GenericSource>>();
+            _testInstance.Filter(source => source.Int).Should().BeOfType<IntFilterSelector<GenericSource>>();
+            _testInstance.Filter(source => source.Long).Should().BeOfType<LongFilterSelector<GenericSource>>();
+            _testInstance.Filter(source => source.SByte).Should().BeOfType<SByteFilterSelector<GenericSource>>();
+            _testInstance.Filter(source => source.Short).Should().BeOfType<ShortFilterSelector<GenericSource>>();
+            _testInstance.Filter(source => source.String).Should().BeOfType<StringFilterSelector<GenericSource>>();
+            _testInstance.Filter(source => source.UInt).Should().BeOfType<UIntFilterSelector<GenericSource>>();
+            _testInstance.Filter(source => source.ULong).Should().BeOfType<ULongFilterSelector<GenericSource>>();
+            _testInstance.Filter(source => source.UShort).Should().BeOfType<UShortFilterSelector<GenericSource>>();
 
             var domains = await _testInstance.Domains();
             Action enumerateAction = () => domains.ToHashSet();

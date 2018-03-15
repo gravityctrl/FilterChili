@@ -20,8 +20,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Enums;
-using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers;
+using GravityCTRL.FilterChili.Selectors;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili
@@ -29,7 +29,7 @@ namespace GravityCTRL.FilterChili
     public class ContextOptions<TSource>
     {
         private readonly IQueryable<TSource> _queryable;
-        private readonly List<DomainProvider<TSource>> _filters;
+        private readonly List<FilterSelector<TSource>> _filters;
 
         [UsedImplicitly]
         public CalculationStrategy CalculationStrategy { get; set; }
@@ -37,112 +37,112 @@ namespace GravityCTRL.FilterChili
         internal ContextOptions(IQueryable<TSource> queryable, Action<ContextOptions<TSource>> configure)
         {
             _queryable = queryable;
-            _filters = new List<DomainProvider<TSource>>();
+            _filters = new List<FilterSelector<TSource>>();
             configure(this);
         }
 
         #region Filters
 
         [UsedImplicitly]
-        public ByteDomainProvider<TSource> Filter(Expression<Func<TSource, byte>> valueSelector)
+        public ByteFilterSelector<TSource> Filter(Expression<Func<TSource, byte>> valueSelector)
         {
-            var filter = new ByteDomainProvider<TSource>(valueSelector);
+            var filter = new ByteFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         [UsedImplicitly]
-        public CharDomainProvider<TSource> Filter(Expression<Func<TSource, char>> valueSelector)
+        public CharFilterSelector<TSource> Filter(Expression<Func<TSource, char>> valueSelector)
         {
-            var filter = new CharDomainProvider<TSource>(valueSelector);
+            var filter = new CharFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         [UsedImplicitly]
-        public DecimalDomainProvider<TSource> Filter(Expression<Func<TSource, decimal>> valueSelector)
+        public DecimalFilterSelector<TSource> Filter(Expression<Func<TSource, decimal>> valueSelector)
         {
-            var filter = new DecimalDomainProvider<TSource>(valueSelector);
+            var filter = new DecimalFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         [UsedImplicitly]
-        public DoubleDomainProvider<TSource> Filter(Expression<Func<TSource, double>> valueSelector)
+        public DoubleFilterSelector<TSource> Filter(Expression<Func<TSource, double>> valueSelector)
         {
-            var filter = new DoubleDomainProvider<TSource>(valueSelector);
+            var filter = new DoubleFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         [UsedImplicitly]
-        public FloatDomainProvider<TSource> Filter(Expression<Func<TSource, float>> valueSelector)
+        public FloatFilterSelector<TSource> Filter(Expression<Func<TSource, float>> valueSelector)
         {
-            var filter = new FloatDomainProvider<TSource>(valueSelector);
+            var filter = new FloatFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         [UsedImplicitly]
-        public IntDomainProvider<TSource> Filter(Expression<Func<TSource, int>> valueSelector)
+        public IntFilterSelector<TSource> Filter(Expression<Func<TSource, int>> valueSelector)
         {
-            var filter = new IntDomainProvider<TSource>(valueSelector);
+            var filter = new IntFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         [UsedImplicitly]
-        public LongDomainProvider<TSource> Filter(Expression<Func<TSource, long>> valueSelector)
+        public LongFilterSelector<TSource> Filter(Expression<Func<TSource, long>> valueSelector)
         {
-            var filter = new LongDomainProvider<TSource>(valueSelector);
+            var filter = new LongFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         [UsedImplicitly]
-        public SByteDomainProvider<TSource> Filter(Expression<Func<TSource, sbyte>> valueSelector)
+        public SByteFilterSelector<TSource> Filter(Expression<Func<TSource, sbyte>> valueSelector)
         {
-            var filter = new SByteDomainProvider<TSource>(valueSelector);
+            var filter = new SByteFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         [UsedImplicitly]
-        public ShortDomainProvider<TSource> Filter(Expression<Func<TSource, short>> valueSelector)
+        public ShortFilterSelector<TSource> Filter(Expression<Func<TSource, short>> valueSelector)
         {
-            var filter = new ShortDomainProvider<TSource>(valueSelector);
+            var filter = new ShortFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         [UsedImplicitly]
-        public StringDomainProvider<TSource> Filter(Expression<Func<TSource, string>> valueSelector)
+        public StringFilterSelector<TSource> Filter(Expression<Func<TSource, string>> valueSelector)
         {
-            var filter = new StringDomainProvider<TSource>(valueSelector);
+            var filter = new StringFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         [UsedImplicitly]
-        public UIntDomainProvider<TSource> Filter(Expression<Func<TSource, uint>> valueSelector)
+        public UIntFilterSelector<TSource> Filter(Expression<Func<TSource, uint>> valueSelector)
         {
-            var filter = new UIntDomainProvider<TSource>(valueSelector);
+            var filter = new UIntFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         [UsedImplicitly]
-        public ULongDomainProvider<TSource> Filter(Expression<Func<TSource, ulong>> valueSelector)
+        public ULongFilterSelector<TSource> Filter(Expression<Func<TSource, ulong>> valueSelector)
         {
-            var filter = new ULongDomainProvider<TSource>(valueSelector);
+            var filter = new ULongFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
 
         [UsedImplicitly]
-        public UShortDomainProvider<TSource> Filter(Expression<Func<TSource, ushort>> valueSelector)
+        public UShortFilterSelector<TSource> Filter(Expression<Func<TSource, ushort>> valueSelector)
         {
-            var filter = new UShortDomainProvider<TSource>(valueSelector);
+            var filter = new UShortFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
             return filter;
         }
@@ -151,7 +151,7 @@ namespace GravityCTRL.FilterChili
 
         #region Internal Methods
 
-        internal DomainProvider<TSource> GetFilter(string name)
+        internal FilterSelector<TSource> GetFilter(string name)
         {
             return _filters.SingleOrDefault(filter => filter.HasName(name));
         }

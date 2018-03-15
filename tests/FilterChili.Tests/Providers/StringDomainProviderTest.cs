@@ -16,8 +16,8 @@
 
 using FluentAssertions;
 using GravityCTRL.FilterChili.Enums;
-using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers.List;
+using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
@@ -27,11 +27,11 @@ namespace GravityCTRL.FilterChili.Tests.Providers
     {
         private const string TEST_NAME = "TestName";
 
-        private readonly StringDomainProvider<GenericSource> _testInstance;
+        private readonly StringFilterSelector<GenericSource> _testInstance;
 
         public StringDomainProviderTest()
         {
-            _testInstance = new StringDomainProvider<GenericSource>(p => p.String);
+            _testInstance = new StringFilterSelector<GenericSource>(p => p.String);
         }
 
         [Fact]

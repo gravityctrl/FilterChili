@@ -20,8 +20,8 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Exceptions;
-using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers;
+using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -30,11 +30,11 @@ namespace GravityCTRL.FilterChili.Tests.Providers
 {
     public class DomainProviderTest
     {
-        private readonly TestDomainProvider _testInstance;
+        private readonly TestFilterSelector _testInstance;
 
         public DomainProviderTest()
         {
-            _testInstance = new TestDomainProvider(source => source.Int);
+            _testInstance = new TestFilterSelector(source => source.Int);
         }
 
         [Fact]
@@ -158,9 +158,9 @@ namespace GravityCTRL.FilterChili.Tests.Providers
             func.ShouldThrow<FormatException>();
         }
 
-        private class TestDomainProvider : DomainProvider<GenericSource, int>
+        private class TestFilterSelector : FilterSelector<GenericSource, int>
         {
-            internal TestDomainProvider(Expression<Func<GenericSource, int>> selector) : base(selector) {}
+            internal TestFilterSelector(Expression<Func<GenericSource, int>> selector) : base(selector) {}
 
             public TestComparisonResolver Comparison(string name)
             {

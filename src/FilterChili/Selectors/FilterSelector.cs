@@ -23,9 +23,9 @@ using GravityCTRL.FilterChili.Exceptions;
 using GravityCTRL.FilterChili.Resolvers;
 using Newtonsoft.Json.Linq;
 
-namespace GravityCTRL.FilterChili.Providers
+namespace GravityCTRL.FilterChili.Selectors
 {
-    public abstract class DomainProvider<TSource>
+    public abstract class FilterSelector<TSource>
     {
         #region Internal Methods
 
@@ -50,7 +50,7 @@ namespace GravityCTRL.FilterChili.Providers
         #endregion
     }
 
-    public abstract class DomainProvider<TSource, TSelector> : DomainProvider<TSource> where TSelector : IComparable
+    public abstract class FilterSelector<TSource, TSelector> : FilterSelector<TSource> where TSelector : IComparable
     {
         protected readonly Expression<Func<TSource, TSelector>> Selector;
 
@@ -63,14 +63,14 @@ namespace GravityCTRL.FilterChili.Providers
             {
                 if (DomainResolver == null)
                 {
-                    throw new MissingResolverException(nameof(DomainProvider<TSource, TSelector>));
+                    throw new MissingResolverException(nameof(FilterSelector<TSource, TSelector>));
                 }
 
                 DomainResolver.NeedsToBeResolved = value;
             }
         }
 
-        protected internal DomainProvider(Expression<Func<TSource, TSelector>> selector)
+        protected internal FilterSelector(Expression<Func<TSource, TSelector>> selector)
         {
             Selector = selector;
         }
@@ -83,7 +83,7 @@ namespace GravityCTRL.FilterChili.Providers
         {
             if (DomainResolver == null)
             {
-                throw new MissingResolverException(nameof(DomainProvider<TSource, TSelector>));
+                throw new MissingResolverException(nameof(FilterSelector<TSource, TSelector>));
             }
 
             return DomainResolver.ExecuteFilter(queryable);
@@ -93,7 +93,7 @@ namespace GravityCTRL.FilterChili.Providers
         {
             if (DomainResolver == null)
             {
-                throw new MissingResolverException(nameof(DomainProvider<TSource, TSelector>));
+                throw new MissingResolverException(nameof(FilterSelector<TSource, TSelector>));
             }
 
             await DomainResolver.SetAvailableEntities(queryable);
@@ -103,7 +103,7 @@ namespace GravityCTRL.FilterChili.Providers
         {
             if (DomainResolver == null)
             {
-                throw new MissingResolverException(nameof(DomainProvider<TSource, TSelector>));
+                throw new MissingResolverException(nameof(FilterSelector<TSource, TSelector>));
             }
 
             await DomainResolver.SetSelectableEntities(selectableItems);
@@ -111,7 +111,7 @@ namespace GravityCTRL.FilterChili.Providers
 
         internal override DomainResolver<TSource> Domain()
         {
-            return DomainResolver ?? throw new MissingResolverException(nameof(DomainProvider<TSource, TSelector>));
+            return DomainResolver ?? throw new MissingResolverException(nameof(FilterSelector<TSource, TSelector>));
         }
 
         internal override bool HasName(string name)

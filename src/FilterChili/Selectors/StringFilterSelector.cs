@@ -20,11 +20,11 @@ using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Resolvers.List;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Providers
+namespace GravityCTRL.FilterChili.Selectors
 {
-    public class StringDomainProvider<TSource> : DomainProvider<TSource, string>
+    public class StringFilterSelector<TSource> : FilterSelector<TSource, string>
     {
-        internal StringDomainProvider(Expression<Func<TSource, string>> selector) : base(selector) {}
+        internal StringFilterSelector(Expression<Func<TSource, string>> selector) : base(selector) {}
 
         [UsedImplicitly]
         public StringListResolver<TSource> List(string name, StringComparisonStrategy comparisonStrategy = StringComparisonStrategy.Equals)

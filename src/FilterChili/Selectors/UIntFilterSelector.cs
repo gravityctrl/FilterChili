@@ -21,11 +21,11 @@ using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Providers
+namespace GravityCTRL.FilterChili.Selectors
 {
-    public class UIntDomainProvider<TSource> : DomainProvider<TSource, uint>
+    public class UIntFilterSelector<TSource> : FilterSelector<TSource, uint>
     {
-        internal UIntDomainProvider(Expression<Func<TSource, uint>> selector) : base(selector) {}
+        internal UIntFilterSelector(Expression<Func<TSource, uint>> selector) : base(selector) {}
 
         [UsedImplicitly]
         public UIntRangeResolver<TSource> Range(string name)

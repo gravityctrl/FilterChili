@@ -15,9 +15,9 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using FluentAssertions;
-using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
+using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
@@ -27,11 +27,11 @@ namespace GravityCTRL.FilterChili.Tests.Providers
     {
         private const string TEST_NAME = "TestName";
 
-        private readonly UShortDomainProvider<GenericSource> _testInstance;
+        private readonly UShortFilterSelector<GenericSource> _testInstance;
 
         public UShortDomainProviderTest()
         {
-            _testInstance = new UShortDomainProvider<GenericSource>(p => p.UShort);
+            _testInstance = new UShortFilterSelector<GenericSource>(p => p.UShort);
         }
 
         [Fact]

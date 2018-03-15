@@ -21,48 +21,48 @@ using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Providers
+namespace GravityCTRL.FilterChili.Selectors
 {
-    public class FloatDomainProvider<TSource> : DomainProvider<TSource, float>
+    public class UShortFilterSelector<TSource> : FilterSelector<TSource, ushort>
     {
-        internal FloatDomainProvider(Expression<Func<TSource, float>> selector) : base(selector) {}
+        internal UShortFilterSelector(Expression<Func<TSource, ushort>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public FloatRangeResolver<TSource> Range(string name)
+        public UShortRangeResolver<TSource> Range(string name)
         {
-            var resolver = new FloatRangeResolver<TSource>(name, Selector);
+            var resolver = new UShortRangeResolver<TSource>(name, Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public FloatComparisonResolver<TSource> GreaterThan(string name)
+        public UShortComparisonResolver<TSource> GreaterThan(string name)
         {
-            var resolver = new FloatComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, float>(float.MinValue), Selector);
+            var resolver = new UShortComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, ushort>(ushort.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public FloatComparisonResolver<TSource> LessThan(string name)
+        public UShortComparisonResolver<TSource> LessThan(string name)
         {
-            var resolver = new FloatComparisonResolver<TSource>(name, new LessThanComparer<TSource, float>(float.MaxValue), Selector);
+            var resolver = new UShortComparisonResolver<TSource>(name, new LessThanComparer<TSource, ushort>(ushort.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public FloatComparisonResolver<TSource> GreaterThanOrEqual(string name)
+        public UShortComparisonResolver<TSource> GreaterThanOrEqual(string name)
         {
-            var resolver = new FloatComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, float>(float.MinValue), Selector);
+            var resolver = new UShortComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, ushort>(ushort.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public FloatComparisonResolver<TSource> LessThanOrEqual(string name)
+        public UShortComparisonResolver<TSource> LessThanOrEqual(string name)
         {
-            var resolver = new FloatComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, float>(float.MaxValue), Selector);
+            var resolver = new UShortComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, ushort>(ushort.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
