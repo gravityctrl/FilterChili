@@ -43,19 +43,19 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             var queryable = new GenericSource[0].AsQueryable();
 
             Action domainAction = () => _testInstance.Domain();
-            domainAction.ShouldThrow<MissingResolverException>();
+            domainAction.ShouldThrow<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action applyFilterAction = () => _testInstance.ApplyFilter(queryable);
-            applyFilterAction.ShouldThrow<MissingResolverException>();
+            applyFilterAction.ShouldThrow<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action setAvailableEntitiesAction = () => _testInstance.SetAvailableEntities(queryable).Wait();
-            setAvailableEntitiesAction.ShouldThrow<MissingResolverException>();
+            setAvailableEntitiesAction.ShouldThrow<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action setSelectableEntitiesAction = () => _testInstance.SetSelectableEntities(queryable).Wait();
-            setSelectableEntitiesAction.ShouldThrow<MissingResolverException>();
+            setSelectableEntitiesAction.ShouldThrow<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action needsToBeResolvedAction = () => _testInstance.NeedsToBeResolved = true;
-            needsToBeResolvedAction.ShouldThrow<MissingResolverException>();
+            needsToBeResolvedAction.ShouldThrow<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
         }
 
         [Fact]

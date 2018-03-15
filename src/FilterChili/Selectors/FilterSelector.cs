@@ -21,6 +21,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Exceptions;
 using GravityCTRL.FilterChili.Resolvers;
+using GravityCTRL.FilterChili.Utils;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Selectors
@@ -52,6 +53,7 @@ namespace GravityCTRL.FilterChili.Selectors
 
     public abstract class FilterSelector<TSource, TSelector> : FilterSelector<TSource> where TSelector : IComparable
     {
+        private string Name => GetType().GetFormattedName();
         protected readonly Expression<Func<TSource, TSelector>> Selector;
 
         protected DomainResolver<TSource, TSelector> DomainResolver { private get; set; }
@@ -63,7 +65,7 @@ namespace GravityCTRL.FilterChili.Selectors
             {
                 if (DomainResolver == null)
                 {
-                    throw new MissingResolverException(nameof(FilterSelector<TSource, TSelector>));
+                    throw new MissingResolverException(Name);
                 }
 
                 DomainResolver.NeedsToBeResolved = value;
@@ -75,15 +77,13 @@ namespace GravityCTRL.FilterChili.Selectors
             Selector = selector;
         }
 
-
-
-        #region Internal Methods
+        #region Overridden Methods
 
         internal override IQueryable<TSource> ApplyFilter(IQueryable<TSource> queryable)
         {
             if (DomainResolver == null)
             {
-                throw new MissingResolverException(nameof(FilterSelector<TSource, TSelector>));
+                throw new MissingResolverException(Name);
             }
 
             return DomainResolver.ExecuteFilter(queryable);
@@ -93,7 +93,7 @@ namespace GravityCTRL.FilterChili.Selectors
         {
             if (DomainResolver == null)
             {
-                throw new MissingResolverException(nameof(FilterSelector<TSource, TSelector>));
+                throw new MissingResolverException(Name);
             }
 
             await DomainResolver.SetAvailableEntities(queryable);
@@ -103,7 +103,7 @@ namespace GravityCTRL.FilterChili.Selectors
         {
             if (DomainResolver == null)
             {
-                throw new MissingResolverException(nameof(FilterSelector<TSource, TSelector>));
+                throw new MissingResolverException(Name);
             }
 
             await DomainResolver.SetSelectableEntities(selectableItems);
@@ -111,7 +111,7 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal override DomainResolver<TSource> Domain()
         {
-            return DomainResolver ?? throw new MissingResolverException(nameof(FilterSelector<TSource, TSelector>));
+            return DomainResolver ?? throw new MissingResolverException(Name);
         }
 
         internal override bool HasName(string name)
