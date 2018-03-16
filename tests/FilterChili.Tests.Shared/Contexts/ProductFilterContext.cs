@@ -37,9 +37,9 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
         {
             options.CalculationStrategy = CalculationStrategy.Full;
 
-            NameFilter = options.Filter(product => product.Name).List();
-            RatingFilter = options.Filter(product => product.Rating).Range();
-            SoldFilter = options.Filter(product => product.Sold).GreaterThan();
+            NameFilter = options.Filter(product => product.Name).WithList();
+            RatingFilter = options.Filter(product => product.Rating).WithRange();
+            SoldFilter = options.Filter(product => product.Sold).WithGreaterThan();
         }
     }
 }

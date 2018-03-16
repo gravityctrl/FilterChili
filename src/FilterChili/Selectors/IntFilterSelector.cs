@@ -26,7 +26,7 @@ namespace GravityCTRL.FilterChili.Selectors
         internal IntFilterSelector(Expression<Func<TSource, int>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public IntRangeResolver<TSource> Range()
+        public IntRangeResolver<TSource> WithRange()
         {
             var resolver = new IntRangeResolver<TSource>(Selector);
             DomainResolver = resolver;
@@ -34,7 +34,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public IntComparisonResolver<TSource> GreaterThan()
+        public IntComparisonResolver<TSource> WithGreaterThan()
         {
             var resolver = new IntComparisonResolver<TSource>(new GreaterThanComparer<TSource, int>(int.MinValue), Selector);
             DomainResolver = resolver;
@@ -42,7 +42,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public IntComparisonResolver<TSource> LessThan()
+        public IntComparisonResolver<TSource> WithLessThan()
         {
             var resolver = new IntComparisonResolver<TSource>(new LessThanComparer<TSource, int>(int.MaxValue), Selector);
             DomainResolver = resolver;
@@ -50,7 +50,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public IntComparisonResolver<TSource> GreaterThanOrEqual()
+        public IntComparisonResolver<TSource> WithGreaterThanOrEqual()
         {
             var resolver = new IntComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, int>(int.MinValue), Selector);
             DomainResolver = resolver;
@@ -58,7 +58,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public IntComparisonResolver<TSource> LessThanOrEqual()
+        public IntComparisonResolver<TSource> WithLessThanOrEqual()
         {
             var resolver = new IntComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, int>(int.MaxValue), Selector);
             DomainResolver = resolver;

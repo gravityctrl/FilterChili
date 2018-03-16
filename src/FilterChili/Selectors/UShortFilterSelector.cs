@@ -26,7 +26,7 @@ namespace GravityCTRL.FilterChili.Selectors
         internal UShortFilterSelector(Expression<Func<TSource, ushort>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public UShortRangeResolver<TSource> Range()
+        public UShortRangeResolver<TSource> WithRange()
         {
             var resolver = new UShortRangeResolver<TSource>(Selector);
             DomainResolver = resolver;
@@ -34,7 +34,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public UShortComparisonResolver<TSource> GreaterThan()
+        public UShortComparisonResolver<TSource> WithGreaterThan()
         {
             var resolver = new UShortComparisonResolver<TSource>(new GreaterThanComparer<TSource, ushort>(ushort.MinValue), Selector);
             DomainResolver = resolver;
@@ -42,7 +42,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public UShortComparisonResolver<TSource> LessThan()
+        public UShortComparisonResolver<TSource> WithLessThan()
         {
             var resolver = new UShortComparisonResolver<TSource>(new LessThanComparer<TSource, ushort>(ushort.MaxValue), Selector);
             DomainResolver = resolver;
@@ -50,7 +50,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public UShortComparisonResolver<TSource> GreaterThanOrEqual()
+        public UShortComparisonResolver<TSource> WithGreaterThanOrEqual()
         {
             var resolver = new UShortComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, ushort>(ushort.MinValue), Selector);
             DomainResolver = resolver;
@@ -58,7 +58,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public UShortComparisonResolver<TSource> LessThanOrEqual()
+        public UShortComparisonResolver<TSource> WithLessThanOrEqual()
         {
             var resolver = new UShortComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, ushort>(ushort.MaxValue), Selector);
             DomainResolver = resolver;

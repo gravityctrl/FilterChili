@@ -26,7 +26,7 @@ namespace GravityCTRL.FilterChili.Selectors
         internal DoubleFilterSelector(Expression<Func<TSource, double>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public DoubleRangeResolver<TSource> Range()
+        public DoubleRangeResolver<TSource> WithRange()
         {
             var resolver = new DoubleRangeResolver<TSource>(Selector);
             DomainResolver = resolver;
@@ -34,7 +34,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public DoubleComparisonResolver<TSource> GreaterThan()
+        public DoubleComparisonResolver<TSource> WithGreaterThan()
         {
             var resolver = new DoubleComparisonResolver<TSource>(new GreaterThanComparer<TSource, double>(double.MinValue), Selector);
             DomainResolver = resolver;
@@ -42,7 +42,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public DoubleComparisonResolver<TSource> LessThan()
+        public DoubleComparisonResolver<TSource> WithLessThan()
         {
             var resolver = new DoubleComparisonResolver<TSource>(new LessThanComparer<TSource, double>(double.MaxValue), Selector);
             DomainResolver = resolver;
@@ -50,7 +50,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public DoubleComparisonResolver<TSource> GreaterThanOrEqual()
+        public DoubleComparisonResolver<TSource> WithGreaterThanOrEqual()
         {
             var resolver = new DoubleComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, double>(double.MinValue), Selector);
             DomainResolver = resolver;
@@ -58,7 +58,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public DoubleComparisonResolver<TSource> LessThanOrEqual()
+        public DoubleComparisonResolver<TSource> WithLessThanOrEqual()
         {
             var resolver = new DoubleComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, double>(double.MaxValue), Selector);
             DomainResolver = resolver;
