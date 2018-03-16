@@ -16,17 +16,14 @@
 
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bogus;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Exceptions;
-using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests
@@ -80,87 +77,15 @@ namespace GravityCTRL.FilterChili.Tests
 
             var domains = await _testInstance.Domains();
             Action enumerateAction = () => domains.ToHashSet();
-            enumerateAction.ShouldThrow<MissingResolverException>();
-        }
-
-        [Fact]
-        public async Task Should_Be_Able_To_Use_FilterSelectors_With_Resolver()
-        {
-            _testInstance.Filter(source => source.Byte).With(domain => new TestDomainResolver<byte>("Byte", domain.Selector));
-            _testInstance.Filter(source => source.Char).With(domain => new TestDomainResolver<char>("Char", domain.Selector));
-            _testInstance.Filter(source => source.Decimal).With(domain => new TestDomainResolver<decimal>("Decimal", domain.Selector));
-            _testInstance.Filter(source => source.Double).With(domain => new TestDomainResolver<double>("Double", domain.Selector));
-            _testInstance.Filter(source => source.Float).With(domain => new TestDomainResolver<float>("Float", domain.Selector));
-            _testInstance.Filter(source => source.Int).With(domain => new TestDomainResolver<int>("Int", domain.Selector));
-            _testInstance.Filter(source => source.Long).With(domain => new TestDomainResolver<long>("Long", domain.Selector));
-            _testInstance.Filter(source => source.SByte).With(domain => new TestDomainResolver<sbyte>("SByte", domain.Selector));
-            _testInstance.Filter(source => source.Short).With(domain => new TestDomainResolver<short>("Short", domain.Selector));
-            _testInstance.Filter(source => source.String).With(domain => new TestDomainResolver<string>("String", domain.Selector));
-            _testInstance.Filter(source => source.UInt).With(domain => new TestDomainResolver<uint>("UInt", domain.Selector));
-            _testInstance.Filter(source => source.ULong).With(domain => new TestDomainResolver<ulong>("ULong", domain.Selector));
-            _testInstance.Filter(source => source.UShort).With(domain => new TestDomainResolver<ushort>("UShort", domain.Selector));
-
-            var domains = await _testInstance.Domains();
-            domains.Should().HaveCount(13);
-        }
-
-        [Fact]
-        public async Task Should_Not_Set_Values_If_NeedsToBeResolved_Is_False()
-        {
-            _testInstance.Filter(source => source.Byte).With(domain => new TestDomainResolver<byte>("Byte", domain.Selector));
-            _testInstance.Filter(source => source.Double).With(domain => new TestDomainResolver<double>("Double", domain.Selector));
-            _testInstance.Filter(source => source.String).With(domain => new TestDomainResolver<string>("String", domain.Selector));
-            _testInstance.CalculationStrategy = CalculationStrategy.WithoutSelectableValues;
-
-            var domains = await _testInstance.Domains();
-
-            foreach (var domain in domains.Cast<ITestDomainResolver>())
-            {
-                domain.SetAvailableValuesCallCount.Should().Be(0);
-                domain.SetSelectableValuesCallCount.Should().Be(0);
-            }
-        }
-
-        [Fact]
-        public async Task Should_Set_AvailableValues_If_NeedsToBeResolved_Is_True_And_CalculationStrategy_Ignores_SelectableValues()
-        {
-            _testInstance.Filter(source => source.Byte).With(domain => new TestDomainResolver<byte>("Byte", domain.Selector) { NeedsToBeResolved = true });
-            _testInstance.Filter(source => source.Double).With(domain => new TestDomainResolver<double>("Double", domain.Selector) { NeedsToBeResolved = true });
-            _testInstance.Filter(source => source.String).With(domain => new TestDomainResolver<string>("String", domain.Selector) { NeedsToBeResolved = true });
-            _testInstance.CalculationStrategy = CalculationStrategy.WithoutSelectableValues;
-
-            var domains = await _testInstance.Domains();
-
-            foreach (var domain in domains.Cast<ITestDomainResolver>())
-            {
-                domain.SetAvailableValuesCallCount.Should().Be(1);
-                domain.SetSelectableValuesCallCount.Should().Be(0);
-            }
-        }
-
-        [Fact]
-        public async Task Should_Set_All_Values_If_NeedsToBeResolved_Is_True_And_CalculationStrategy_Is_Full()
-        {
-            _testInstance.Filter(source => source.Byte).With(domain => new TestDomainResolver<byte>("Byte", domain.Selector) { NeedsToBeResolved = true });
-            _testInstance.Filter(source => source.Double).With(domain => new TestDomainResolver<double>("Double", domain.Selector) { NeedsToBeResolved = true });
-            _testInstance.Filter(source => source.String).With(domain => new TestDomainResolver<string>("String", domain.Selector) { NeedsToBeResolved = true });
-            _testInstance.CalculationStrategy = CalculationStrategy.Full;
-
-            var domains = (await _testInstance.Domains()).ToList();
-
-            foreach (var domain in domains.Cast<ITestDomainResolver>())
-            {
-                domain.SetAvailableValuesCallCount.Should().Be(1);
-                domain.SetSelectableValuesCallCount.Should().Be(1);
-            }
+            enumerateAction.Should().Throw<MissingResolverException>().Where(ex => ex.Message.EndsWith("FilterSelector<GenericSource>"));
         }
 
         [Fact]
         public async Task Should_Resolve_Domains_Independent_From_Setting_Filters_Order()
         {
-            var filter1 = _testInstance.Filter(source => source.Int).With(domain => domain.GreaterThan("Int"));
-            var filter2 = _testInstance.Filter(source => source.Double).With(domain => domain.LessThanOrEqual("Double"));
-            var filter3 = _testInstance.Filter(source => source.Float).With(domain => domain.Range("Float"));
+            var filter1 = _testInstance.Filter(source => source.Int).GreaterThan();
+            var filter2 = _testInstance.Filter(source => source.Double).LessThanOrEqual();
+            var filter3 = _testInstance.Filter(source => source.Float).Range();
             _testInstance.CalculationStrategy = CalculationStrategy.Full;
 
             filter1.Set(1);
@@ -183,9 +108,9 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public void Should_Get_Filter_By_Name()
         {
-            _testInstance.Filter(source => source.Int).With(domain => domain.GreaterThan("Int"));
-            _testInstance.Filter(source => source.Double).With(domain => domain.LessThanOrEqual("Double"));
-            _testInstance.Filter(source => source.Float).With(domain => domain.Range("Float"));
+            _testInstance.Filter(source => source.Int).GreaterThan();
+            _testInstance.Filter(source => source.Double).LessThanOrEqual();
+            _testInstance.Filter(source => source.Float).Range();
 
             _testInstance.GetFilter("Int").Domain().Name.Should().Be("Int");
             _testInstance.GetFilter("Double").Domain().Name.Should().Be("Double");
@@ -196,9 +121,9 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public void Should_Return_Expected_Entities_When_Applying_Filters()
         {
-            var filter1 = _testInstance.Filter(source => source.Int).With(domain => domain.GreaterThan("Int"));
-            var filter2 = _testInstance.Filter(source => source.Double).With(domain => domain.LessThanOrEqual("Double"));
-            var filter3 = _testInstance.Filter(source => source.Float).With(domain => domain.Range("Float"));
+            var filter1 = _testInstance.Filter(source => source.Int).GreaterThan();
+            var filter2 = _testInstance.Filter(source => source.Double).LessThanOrEqual();
+            var filter3 = _testInstance.Filter(source => source.Float).Range();
 
             filter1.Set(3);
             filter2.Set(15);
@@ -208,48 +133,6 @@ namespace GravityCTRL.FilterChili.Tests
             results.Should().NotContain(entity => entity.Int <= 3);
             results.Should().NotContain(entity => entity.Double > 15);
             results.Should().NotContain(entity => entity.Float < 5 && entity.Float > 25);
-        }
-
-        private interface ITestDomainResolver
-        {
-            int SetAvailableValuesCallCount { get; }
-            int SetSelectableValuesCallCount { get; }
-        }
-
-        private class TestDomainResolver<T> : DomainResolver<GenericSource, T>, ITestDomainResolver where T : IComparable
-        {
-            internal override bool NeedsToBeResolved { get; set; }
-            public override string FilterType { get; }
-
-            public int SetAvailableValuesCallCount { get; private set; }
-            public int SetSelectableValuesCallCount { get; private set; }
-
-            internal TestDomainResolver(string name, Expression<Func<GenericSource, T>> selector) : base(name, selector)
-            {
-                FilterType = "TestType";
-            }
-
-            public override bool TrySet(JToken domainToken)
-            {
-                return true;
-            }
-
-            protected override async Task SetAvailableValues(IQueryable<T> allValues)
-            {
-                SetAvailableValuesCallCount++;
-                await Task.FromResult(0);
-            }
-
-            protected override async Task SetSelectableValues(IQueryable<T> selectableItems)
-            {
-                SetSelectableValuesCallCount++;
-                await Task.FromResult(0);
-            }
-
-            protected override Expression<Func<GenericSource, bool>> FilterExpression()
-            {
-                return _ => true;
-            }
         }
     }
 }

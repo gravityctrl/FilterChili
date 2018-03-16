@@ -21,6 +21,6 @@ namespace GravityCTRL.FilterChili.Resolvers.Range
 {
     public class LongRangeResolver<TSource> : RangeResolver<TSource, long>
     {
-        internal LongRangeResolver(string name, Expression<Func<TSource, long>> selector) : base(name, selector, long.MinValue, long.MaxValue) {}
+        internal LongRangeResolver(Expression<Func<TSource, long>> selector) : base(selector, long.MinValue, long.MaxValue) {}
     }
 }

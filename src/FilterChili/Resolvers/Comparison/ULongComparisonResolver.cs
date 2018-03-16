@@ -22,6 +22,6 @@ namespace GravityCTRL.FilterChili.Resolvers.Comparison
 {
     public class ULongComparisonResolver<TSource> : ComparisonResolver<TSource, ulong>
     {
-        internal ULongComparisonResolver(string name, Comparer<TSource, ulong> comparer, Expression<Func<TSource, ulong>> selector) : base(name, comparer, selector) { }
+        internal ULongComparisonResolver(Comparer<TSource, ulong> comparer, Expression<Func<TSource, ulong>> selector) : base(comparer, selector) { }
     }
 }

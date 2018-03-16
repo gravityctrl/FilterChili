@@ -16,12 +16,55 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Providers;
+using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Range;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
 {
-    public class IntFilterSelector<TSource> : FilterSelector<TSource, int, IntDomainProvider<TSource>>
+    public class IntFilterSelector<TSource> : FilterSelector<TSource, int>
     {
-        internal IntFilterSelector(Expression<Func<TSource, int>> valueSelector) : base(new IntDomainProvider<TSource>(valueSelector)) {}
+        internal IntFilterSelector(Expression<Func<TSource, int>> selector) : base(selector) {}
+
+        [UsedImplicitly]
+        public IntRangeResolver<TSource> Range()
+        {
+            var resolver = new IntRangeResolver<TSource>(Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public IntComparisonResolver<TSource> GreaterThan()
+        {
+            var resolver = new IntComparisonResolver<TSource>(new GreaterThanComparer<TSource, int>(int.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public IntComparisonResolver<TSource> LessThan()
+        {
+            var resolver = new IntComparisonResolver<TSource>(new LessThanComparer<TSource, int>(int.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public IntComparisonResolver<TSource> GreaterThanOrEqual()
+        {
+            var resolver = new IntComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, int>(int.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public IntComparisonResolver<TSource> LessThanOrEqual()
+        {
+            var resolver = new IntComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, int>(int.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
     }
 }

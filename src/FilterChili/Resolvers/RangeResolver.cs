@@ -51,7 +51,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         [UsedImplicitly]
         public Range<TSelector> SelectedRange { get; }
 
-        protected internal RangeResolver(string name, Expression<Func<TSource, TSelector>> selector, TSelector min, TSelector max) : base(name, selector)
+        protected internal RangeResolver(Expression<Func<TSource, TSelector>> selector, TSelector min, TSelector max) : base(selector)
         {
             _needsToBeResolved = true;
             _min = min;

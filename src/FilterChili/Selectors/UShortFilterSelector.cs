@@ -16,12 +16,55 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Providers;
+using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Range;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
 {
-    public class UShortFilterSelector<TSource> : FilterSelector<TSource, ushort, UShortDomainProvider<TSource>>
+    public class UShortFilterSelector<TSource> : FilterSelector<TSource, ushort>
     {
-        internal UShortFilterSelector(Expression<Func<TSource, ushort>> valueSelector) : base(new UShortDomainProvider<TSource>(valueSelector)) {}
+        internal UShortFilterSelector(Expression<Func<TSource, ushort>> selector) : base(selector) {}
+
+        [UsedImplicitly]
+        public UShortRangeResolver<TSource> Range()
+        {
+            var resolver = new UShortRangeResolver<TSource>(Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public UShortComparisonResolver<TSource> GreaterThan()
+        {
+            var resolver = new UShortComparisonResolver<TSource>(new GreaterThanComparer<TSource, ushort>(ushort.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public UShortComparisonResolver<TSource> LessThan()
+        {
+            var resolver = new UShortComparisonResolver<TSource>(new LessThanComparer<TSource, ushort>(ushort.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public UShortComparisonResolver<TSource> GreaterThanOrEqual()
+        {
+            var resolver = new UShortComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, ushort>(ushort.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public UShortComparisonResolver<TSource> LessThanOrEqual()
+        {
+            var resolver = new UShortComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, ushort>(ushort.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
     }
 }

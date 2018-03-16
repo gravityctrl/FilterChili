@@ -25,13 +25,11 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers.List
 {
     public class StringListResolverTest
     {
-        private const string TEST_NAME = "TestName";
-
         private readonly StringListResolver<GenericSource> _testInstance;
 
         public StringListResolverTest()
         {
-            _testInstance = new StringListResolver<GenericSource>(TEST_NAME, source => source.String, StringComparisonStrategy.Equals);
+            _testInstance = new StringListResolver<GenericSource>(source => source.String, StringComparisonStrategy.Equals);
         }
 
         [Fact]

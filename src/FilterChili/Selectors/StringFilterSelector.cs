@@ -16,12 +16,22 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Providers;
+using GravityCTRL.FilterChili.Enums;
+using GravityCTRL.FilterChili.Resolvers.List;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
 {
-    public class StringFilterSelector<TSource> : FilterSelector<TSource, string, StringDomainProvider<TSource>>
+    public class StringFilterSelector<TSource> : FilterSelector<TSource, string>
     {
-        internal StringFilterSelector(Expression<Func<TSource, string>> valueSelector) : base(new StringDomainProvider<TSource>(valueSelector)) {}
+        internal StringFilterSelector(Expression<Func<TSource, string>> selector) : base(selector) {}
+
+        [UsedImplicitly]
+        public StringListResolver<TSource> List(StringComparisonStrategy comparisonStrategy = StringComparisonStrategy.Equals)
+        {
+            var resolver = new StringListResolver<TSource>(Selector, comparisonStrategy);
+            DomainResolver = resolver;
+            return resolver;
+        }
     }
 }

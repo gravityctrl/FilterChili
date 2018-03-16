@@ -16,28 +16,28 @@
 
 using FluentAssertions;
 using GravityCTRL.FilterChili.Enums;
-using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers.List;
+using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
-namespace GravityCTRL.FilterChili.Tests.Providers
+namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class StringDomainProviderTest
+    public class StringFilterSelectorTest
     {
-        private const string TEST_NAME = "TestName";
+        private const string TEST_NAME = "String";
 
-        private readonly StringDomainProvider<GenericSource> _testInstance;
+        private readonly StringFilterSelector<GenericSource> _testInstance;
 
-        public StringDomainProviderTest()
+        public StringFilterSelectorTest()
         {
-            _testInstance = new StringDomainProvider<GenericSource>(p => p.String);
+            _testInstance = new StringFilterSelector<GenericSource>(p => p.String);
         }
 
         [Fact]
         public void Should_Return_List_Resolver()
         {
-            var result = _testInstance.List(TEST_NAME);
+            var result = _testInstance.List();
             result.Should().BeOfType<StringListResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("List");
@@ -47,7 +47,7 @@ namespace GravityCTRL.FilterChili.Tests.Providers
         [Fact]
         public void Should_Accept_Other_Comparison_Strategy()
         {
-            var result = _testInstance.List(TEST_NAME, StringComparisonStrategy.Contains);
+            var result = _testInstance.List(StringComparisonStrategy.Contains);
             result.ComparisonStrategy.Should().Be(StringComparisonStrategy.Contains);
         }
     }

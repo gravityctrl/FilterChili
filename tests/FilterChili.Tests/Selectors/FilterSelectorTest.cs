@@ -20,7 +20,6 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Exceptions;
-using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
@@ -35,7 +34,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
 
         public FilterSelectorTest()
         {
-            _testInstance = new TestFilterSelector(new TestDomainProvider(source => source.Int));
+            _testInstance = new TestFilterSelector(source => source.Int);
         }
 
         [Fact]
@@ -44,19 +43,19 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             var queryable = new GenericSource[0].AsQueryable();
 
             Action domainAction = () => _testInstance.Domain();
-            domainAction.ShouldThrow<MissingResolverException>();
+            domainAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action applyFilterAction = () => _testInstance.ApplyFilter(queryable);
-            applyFilterAction.ShouldThrow<MissingResolverException>();
+            applyFilterAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action setAvailableEntitiesAction = () => _testInstance.SetAvailableEntities(queryable).Wait();
-            setAvailableEntitiesAction.ShouldThrow<MissingResolverException>();
+            setAvailableEntitiesAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action setSelectableEntitiesAction = () => _testInstance.SetSelectableEntities(queryable).Wait();
-            setSelectableEntitiesAction.ShouldThrow<MissingResolverException>();
+            setSelectableEntitiesAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action needsToBeResolvedAction = () => _testInstance.NeedsToBeResolved = true;
-            needsToBeResolvedAction.ShouldThrow<MissingResolverException>();
+            needsToBeResolvedAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
         }
 
         [Fact]
@@ -74,30 +73,30 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Shoud_Be_Able_To_Call_Filter_Methods_If_Resolver_Is_Set()
         {
-            _testInstance.With(domain => domain.Comparison("TestName"));
+            _testInstance.Comparison();
 
             var queryable = new GenericSource[0].AsQueryable();
 
             Action domainAction = () => _testInstance.Domain();
-            domainAction.ShouldNotThrow<MissingResolverException>();
+            domainAction.Should().NotThrow<MissingResolverException>();
 
             Action applyFilterAction = () => _testInstance.ApplyFilter(queryable);
-            applyFilterAction.ShouldNotThrow<MissingResolverException>();
+            applyFilterAction.Should().NotThrow<MissingResolverException>();
 
             Action setAvailableEntitiesAction = () => _testInstance.SetAvailableEntities(queryable).Wait();
-            setAvailableEntitiesAction.ShouldNotThrow<MissingResolverException>();
+            setAvailableEntitiesAction.Should().NotThrow<MissingResolverException>();
 
             Action setSelectableEntitiesAction = () => _testInstance.SetSelectableEntities(queryable).Wait();
-            setSelectableEntitiesAction.ShouldNotThrow<MissingResolverException>();
+            setSelectableEntitiesAction.Should().NotThrow<MissingResolverException>();
 
             Action needsToBeResolvedAction = () => _testInstance.NeedsToBeResolved = true;
-            needsToBeResolvedAction.ShouldNotThrow<MissingResolverException>();
+            needsToBeResolvedAction.Should().NotThrow<MissingResolverException>();
         }
 
         [Fact]
         public void ComparisonResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.With(domain => domain.Comparison("TestName")).Should().BeOfType<TestComparisonResolver>();
+            _testInstance.Comparison().Should().BeOfType<TestComparisonResolver>();
             _testInstance.Domain().Should().BeOfType<TestComparisonResolver>();
             _testInstance.NeedsToBeResolved = false;
 
@@ -115,7 +114,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void RangeResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.With(domain => domain.Range("TestName")).Should().BeOfType<TestRangeResolver>();
+            _testInstance.Range().Should().BeOfType<TestRangeResolver>();
             _testInstance.Domain().Should().BeOfType<TestRangeResolver>();
             _testInstance.NeedsToBeResolved = false;
 
@@ -133,7 +132,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void ListResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.With(domain => domain.List("TestName")).Should().BeOfType<TestListResolver>();
+            _testInstance.List().Should().BeOfType<TestListResolver>();
             _testInstance.Domain().Should().BeOfType<TestListResolver>();
             _testInstance.NeedsToBeResolved = false;
 
@@ -151,54 +150,53 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Shoud_Fail_When_Values_Dont_Have_Correct_Type()
         {
-            _testInstance.With(domain => domain.Comparison("TestName"));
+            _testInstance.Comparison();
 
             _testInstance.TrySet("abc").Should().BeFalse();
             _testInstance.TrySet("abc", "def").Should().BeFalse();
             Action func = () => _testInstance.TrySet(JToken.Parse(@"{ ""value"": ""abc"" }"));
-            func.ShouldThrow<FormatException>();
+            func.Should().Throw<FormatException>();
         }
 
-        
-
-        private class TestFilterSelector : FilterSelector<GenericSource, int, TestDomainProvider>
+        private class TestFilterSelector : FilterSelector<GenericSource, int>
         {
-            internal TestFilterSelector(TestDomainProvider domainProvider) : base(domainProvider) {}
-        }
+            internal TestFilterSelector(Expression<Func<GenericSource, int>> selector) : base(selector) {}
 
-        private class TestDomainProvider : DomainProvider<GenericSource, int>
-        {
-            internal TestDomainProvider(Expression<Func<GenericSource, int>> selector) : base(selector) {}
-
-            public TestComparisonResolver Comparison(string name)
+            public TestComparisonResolver Comparison()
             {
-                return new TestComparisonResolver(name, new TestComparer(), Selector);
+                var resolver = new TestComparisonResolver(new TestComparer(), Selector);
+                DomainResolver = resolver;
+                return resolver;
             }
 
-            public TestRangeResolver Range(string name)
+            public TestRangeResolver Range()
             {
-                return new TestRangeResolver(name, Selector);
+                var resolver = new TestRangeResolver(Selector);
+                DomainResolver = resolver;
+                return resolver;
             }
 
-            public TestListResolver List(string name)
+            public TestListResolver List()
             {
-                return new TestListResolver(name, Selector);
+                var resolver = new TestListResolver(Selector);
+                DomainResolver = resolver;
+                return resolver;
             }
         }
 
         private class TestComparisonResolver : ComparisonResolver<GenericSource, int>
         {
-            internal TestComparisonResolver(string name, Comparer<GenericSource, int> comparer, Expression<Func<GenericSource, int>> selector) : base(name, comparer, selector) {}
+            internal TestComparisonResolver(Comparer<GenericSource, int> comparer, Expression<Func<GenericSource, int>> selector) : base(comparer, selector) {}
         }
 
         private class TestRangeResolver : RangeResolver<GenericSource, int>
         {
-            internal TestRangeResolver(string name, Expression<Func<GenericSource, int>> selector) : base(name, selector, int.MinValue, int.MaxValue) {}
+            internal TestRangeResolver(Expression<Func<GenericSource, int>> selector) : base(selector, int.MinValue, int.MaxValue) {}
         }
 
         private class TestListResolver : ListResolver<GenericSource, int>
         {
-            internal TestListResolver(string name, Expression<Func<GenericSource, int>> selector) : base(name, selector) {}
+            internal TestListResolver(Expression<Func<GenericSource, int>> selector) : base(selector) {}
 
             protected override Expression<Func<GenericSource, bool>> FilterExpression()
             {

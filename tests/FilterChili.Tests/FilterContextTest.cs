@@ -41,22 +41,22 @@ namespace GravityCTRL.FilterChili.Tests
 
         public FilterContextTest()
         {
-            var rangeJson = ResourceHelper.Load("rangefilter.json");
+            var rangeJson = AppResourceHelper.Load("rangefilter.json");
             _rangeObject = JObject.Parse(rangeJson);
 
-            var listJson = ResourceHelper.Load("listfilter.json");
+            var listJson = AppResourceHelper.Load("listfilter.json");
             _listObject = JObject.Parse(listJson);
 
-            var greaterThanJson = ResourceHelper.Load("greaterthanfilter.json");
+            var greaterThanJson = AppResourceHelper.Load("greaterthanfilter.json");
             _greaterThanObject = JObject.Parse(greaterThanJson);
 
-            var allFiltersJson = ResourceHelper.Load("allfilters.json");
+            var allFiltersJson = AppResourceHelper.Load("allfilters.json");
             _allArrayObject = JArray.Parse(allFiltersJson);
 
-            var invalidFilterJson = ResourceHelper.Load("invalidfilter.json");
+            var invalidFilterJson = AppResourceHelper.Load("invalidfilter.json");
             _invalidFilterObject = JObject.Parse(invalidFilterJson);
 
-            var notExistingFilterJson = ResourceHelper.Load("notexistingfilter.json");
+            var notExistingFilterJson = AppResourceHelper.Load("notexistingfilter.json");
             _notExistingFilterObject = JObject.Parse(notExistingFilterJson);
 
             _allowedNames = new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" };

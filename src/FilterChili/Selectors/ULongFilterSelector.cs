@@ -16,12 +16,55 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Providers;
+using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Range;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
 {
-    public class ULongFilterSelector<TSource> : FilterSelector<TSource, ulong, ULongDomainProvider<TSource>>
+    public class ULongFilterSelector<TSource> : FilterSelector<TSource, ulong>
     {
-        internal ULongFilterSelector(Expression<Func<TSource, ulong>> valueSelector) : base(new ULongDomainProvider<TSource>(valueSelector)) {}
+        internal ULongFilterSelector(Expression<Func<TSource, ulong>> selector) : base(selector) {}
+
+        [UsedImplicitly]
+        public ULongRangeResolver<TSource> Range()
+        {
+            var resolver = new ULongRangeResolver<TSource>(Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public ULongComparisonResolver<TSource> GreaterThan()
+        {
+            var resolver = new ULongComparisonResolver<TSource>(new GreaterThanComparer<TSource, ulong>(ulong.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public ULongComparisonResolver<TSource> LessThan()
+        {
+            var resolver = new ULongComparisonResolver<TSource>(new LessThanComparer<TSource, ulong>(ulong.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public ULongComparisonResolver<TSource> GreaterThanOrEqual()
+        {
+            var resolver = new ULongComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, ulong>(ulong.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public ULongComparisonResolver<TSource> LessThanOrEqual()
+        {
+            var resolver = new ULongComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, ulong>(ulong.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
     }
 }

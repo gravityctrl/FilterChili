@@ -30,13 +30,11 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 {
     public class ComparisonResolverTest
     {
-        private const string TEST_NAME = "TestName";
-
         private readonly ComparisonResolver<GenericSource, int> _testInstance;
 
         public ComparisonResolverTest()
         {
-            _testInstance = new TestComparisonResolver(TEST_NAME, new TestComparer(), source => source.Int);
+            _testInstance = new TestComparisonResolver(new TestComparer(), source => source.Int);
         }
 
         [Fact]
@@ -88,7 +86,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             Action func = () => _testInstance.TrySet(JToken.Parse(@"{ ""value"": ""3a"" }"));
 
-            func.ShouldThrow<FormatException>();
+            func.Should().Throw<FormatException>();
             _testInstance.SelectedValue.Should().Be(0);
             _testInstance.NeedsToBeResolved.Should().Be(false);
         }
@@ -211,7 +209,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
         private class TestComparisonResolver : ComparisonResolver<GenericSource, int>
         {
-            internal TestComparisonResolver(string name, Comparer<GenericSource, int> comparer, Expression<Func<GenericSource, int>> selector) : base(name, comparer, selector) {}
+            internal TestComparisonResolver(Comparer<GenericSource, int> comparer, Expression<Func<GenericSource, int>> selector) : base(comparer, selector) {}
         }
 
         private class TestComparer : Comparer<GenericSource, int>

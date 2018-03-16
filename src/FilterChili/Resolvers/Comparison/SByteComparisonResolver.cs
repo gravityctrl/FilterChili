@@ -22,6 +22,6 @@ namespace GravityCTRL.FilterChili.Resolvers.Comparison
 {
     public class SByteComparisonResolver<TSource> : ComparisonResolver<TSource, sbyte>
     {
-        internal SByteComparisonResolver(string name, Comparer<TSource, sbyte> comparer, Expression<Func<TSource, sbyte>> selector) : base(name, comparer, selector) { }
+        internal SByteComparisonResolver(Comparer<TSource, sbyte> comparer, Expression<Func<TSource, sbyte>> selector) : base(comparer, selector) { }
     }
 }

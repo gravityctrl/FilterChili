@@ -14,22 +14,25 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Enums;
-using GravityCTRL.FilterChili.Resolvers.List;
-using JetBrains.Annotations;
+using System.IO;
+using System.Reflection;
 
-namespace GravityCTRL.FilterChili.Providers
+namespace GravityCTRL.FilterChili.Tests.TestSupport.Utils
 {
-    public class StringDomainProvider<TSource> : DomainProvider<TSource, string>
+    public static class AppResourceHelper
     {
-        internal StringDomainProvider(Expression<Func<TSource, string>> selector) : base(selector) {}
+        private const string RESOURCES_NAMESPACE = "GravityCTRL.FilterChili.Tests.Resources";
 
-        [UsedImplicitly]
-        public StringListResolver<TSource> List(string name, StringComparisonStrategy comparisonStrategy = StringComparisonStrategy.Equals)
+        public static string Load(string resourceName)
         {
-            return new StringListResolver<TSource>(name, Selector, comparisonStrategy);
+            var assembly = Assembly.GetExecutingAssembly();
+            var resource = $"{RESOURCES_NAMESPACE}.{resourceName}";
+
+            using (var stream = assembly.GetManifestResourceStream(resource))
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
     }
 }

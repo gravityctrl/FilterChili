@@ -32,13 +32,11 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 {
     public class ListResolverTest
     {
-        private const string TEST_NAME = "TestName";
-
         private readonly ListResolver<GenericSource, int> _testInstance;
 
         public ListResolverTest()
         {
-            _testInstance = new TestListResolver(TEST_NAME, source => source.Int);
+            _testInstance = new TestListResolver(source => source.Int);
         }
 
         [Fact]
@@ -99,7 +97,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             Action func = () => _testInstance.TrySet(JToken.Parse(@"{ ""values"": [ ""-3a"", ""3a"" ] }"));
 
-            func.ShouldThrow<FormatException>();
+            func.Should().Throw<FormatException>();
             _testInstance.SelectedValues.Should().BeEmpty();
             _testInstance.NeedsToBeResolved.Should().Be(false);
         }
@@ -328,7 +326,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
         private class TestListResolver : ListResolver<GenericSource, int>
         {
-            internal TestListResolver(string name, Expression<Func<GenericSource, int>> selector) : base(name, selector) {}
+            internal TestListResolver(Expression<Func<GenericSource, int>> selector) : base(selector) {}
 
             protected override Expression<Func<GenericSource, bool>> FilterExpression()
             {

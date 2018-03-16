@@ -15,30 +15,30 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using FluentAssertions;
-using GravityCTRL.FilterChili.Providers;
 using GravityCTRL.FilterChili.Resolvers.Comparison;
 using GravityCTRL.FilterChili.Resolvers.Range;
+using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
-namespace GravityCTRL.FilterChili.Tests.Providers
+namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class FloatDomainProviderTest
+    public class UShortFilterSelectorTest
     {
-        private const string TEST_NAME = "TestName";
+        private const string TEST_NAME = "UShort";
 
-        private readonly FloatDomainProvider<GenericSource> _testInstance;
+        private readonly UShortFilterSelector<GenericSource> _testInstance;
 
-        public FloatDomainProviderTest()
+        public UShortFilterSelectorTest()
         {
-            _testInstance = new FloatDomainProvider<GenericSource>(p => p.Float);
+            _testInstance = new UShortFilterSelector<GenericSource>(p => p.UShort);
         }
 
         [Fact]
         public void Should_Return_Range_Resolver()
         {
-            var result = _testInstance.Range(TEST_NAME);
-            result.Should().BeOfType<FloatRangeResolver<GenericSource>>();
+            var result = _testInstance.Range();
+            result.Should().BeOfType<UShortRangeResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("Range");
         }
@@ -46,8 +46,8 @@ namespace GravityCTRL.FilterChili.Tests.Providers
         [Fact]
         public void Should_Return_GreaterThan_Resolver()
         {
-            var result = _testInstance.GreaterThan(TEST_NAME);
-            result.Should().BeOfType<FloatComparisonResolver<GenericSource>>();
+            var result = _testInstance.GreaterThan();
+            result.Should().BeOfType<UShortComparisonResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("GreaterThan");
         }
@@ -55,8 +55,8 @@ namespace GravityCTRL.FilterChili.Tests.Providers
         [Fact]
         public void Should_Return_LessThan_Resolver()
         {
-            var result = _testInstance.LessThan(TEST_NAME);
-            result.Should().BeOfType<FloatComparisonResolver<GenericSource>>();
+            var result = _testInstance.LessThan();
+            result.Should().BeOfType<UShortComparisonResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("LessThan");
         }
@@ -64,8 +64,8 @@ namespace GravityCTRL.FilterChili.Tests.Providers
         [Fact]
         public void Should_Return_GreaterThanOrEqual_Resolver()
         {
-            var result = _testInstance.GreaterThanOrEqual(TEST_NAME);
-            result.Should().BeOfType<FloatComparisonResolver<GenericSource>>();
+            var result = _testInstance.GreaterThanOrEqual();
+            result.Should().BeOfType<UShortComparisonResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("GreaterThanOrEqual");
         }
@@ -73,8 +73,8 @@ namespace GravityCTRL.FilterChili.Tests.Providers
         [Fact]
         public void Should_Return_LessThanOrEqual_Resolver()
         {
-            var result = _testInstance.LessThanOrEqual(TEST_NAME);
-            result.Should().BeOfType<FloatComparisonResolver<GenericSource>>();
+            var result = _testInstance.LessThanOrEqual();
+            result.Should().BeOfType<UShortComparisonResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("LessThanOrEqual");
         }

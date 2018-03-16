@@ -16,12 +16,55 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Providers;
+using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Range;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
 {
-    public class FloatFilterSelector<TSource> : FilterSelector<TSource, float, FloatDomainProvider<TSource>>
+    public class FloatFilterSelector<TSource> : FilterSelector<TSource, float>
     {
-        internal FloatFilterSelector(Expression<Func<TSource, float>> valueSelector) : base(new FloatDomainProvider<TSource>(valueSelector)) {}
+        internal FloatFilterSelector(Expression<Func<TSource, float>> selector) : base(selector) {}
+
+        [UsedImplicitly]
+        public FloatRangeResolver<TSource> Range()
+        {
+            var resolver = new FloatRangeResolver<TSource>(Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public FloatComparisonResolver<TSource> GreaterThan()
+        {
+            var resolver = new FloatComparisonResolver<TSource>(new GreaterThanComparer<TSource, float>(float.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public FloatComparisonResolver<TSource> LessThan()
+        {
+            var resolver = new FloatComparisonResolver<TSource>(new LessThanComparer<TSource, float>(float.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public FloatComparisonResolver<TSource> GreaterThanOrEqual()
+        {
+            var resolver = new FloatComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, float>(float.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public FloatComparisonResolver<TSource> LessThanOrEqual()
+        {
+            var resolver = new FloatComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, float>(float.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
     }
 }

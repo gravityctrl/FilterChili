@@ -16,12 +16,55 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Providers;
+using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Range;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
 {
-    public class ByteFilterSelector<TSource> : FilterSelector<TSource, byte, ByteDomainProvider<TSource>>
+    public class ByteFilterSelector<TSource> : FilterSelector<TSource, byte>
     {
-        internal ByteFilterSelector(Expression<Func<TSource, byte>> valueSelector) : base(new ByteDomainProvider<TSource>(valueSelector)) {}
+        internal ByteFilterSelector(Expression<Func<TSource, byte>> selector) : base(selector) {}
+
+        [UsedImplicitly]
+        public ByteRangeResolver<TSource> Range()
+        {
+            var resolver = new ByteRangeResolver<TSource>(Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public ByteComparisonResolver<TSource> GreaterThan()
+        {
+            var resolver = new ByteComparisonResolver<TSource>(new GreaterThanComparer<TSource, byte>(byte.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public ByteComparisonResolver<TSource> LessThan()
+        {
+            var resolver = new ByteComparisonResolver<TSource>(new LessThanComparer<TSource, byte>(byte.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public ByteComparisonResolver<TSource> GreaterThanOrEqual()
+        {
+            var resolver = new ByteComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, byte>(byte.MinValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [UsedImplicitly]
+        public ByteComparisonResolver<TSource> LessThanOrEqual()
+        {
+            var resolver = new ByteComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, byte>(byte.MaxValue), Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
     }
 }
