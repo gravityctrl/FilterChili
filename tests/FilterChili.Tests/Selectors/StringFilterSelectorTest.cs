@@ -15,8 +15,6 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using FluentAssertions;
-using GravityCTRL.FilterChili.Enums;
-using GravityCTRL.FilterChili.Resolvers.List;
 using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;

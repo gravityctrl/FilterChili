@@ -14,13 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq.Expressions;
+using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Resolvers.Range
+namespace GravityCTRL.FilterChili
 {
-    public class CharRangeResolver<TSource> : RangeResolver<TSource, char>
+    public enum StringComparisonStrategy
     {
-        internal CharRangeResolver(Expression<Func<TSource, char>> selector) : base(selector, char.MinValue, char.MaxValue) {}
+        [UsedImplicitly]
+        Equals = 0,
+
+        [UsedImplicitly]
+        Contains,
+
+        [UsedImplicitly]
+        Soundex,
+
+        [UsedImplicitly]
+        GermanSoundex
     }
 }

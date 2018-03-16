@@ -16,8 +16,6 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Enums;
-using GravityCTRL.FilterChili.Resolvers.List;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors

@@ -19,7 +19,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
 using FluentAssertions;
-using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Exceptions;
 using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
