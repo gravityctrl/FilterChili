@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Selectors;
 using JetBrains.Annotations;

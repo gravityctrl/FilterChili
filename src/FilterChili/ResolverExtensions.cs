@@ -14,13 +14,18 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Resolvers;
+using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Resolvers.Range
+namespace GravityCTRL.FilterChili
 {
-    public class DecimalRangeResolver<TSource> : RangeResolver<TSource, decimal>
+    public static class ResolverExtensions
     {
-        internal DecimalRangeResolver(Expression<Func<TSource, decimal>> selector) : base(selector, decimal.MinValue, decimal.MaxValue) {}
+        [UsedImplicitly]
+        public static TDomainResolver UseName<TDomainResolver>(this TDomainResolver resolver, string name) where TDomainResolver : DomainResolver
+        {
+            resolver.Name = name;
+            return resolver;
+        }
     }
 }

@@ -16,8 +16,6 @@
 
 using System.Linq;
 using FluentAssertions;
-using GravityCTRL.FilterChili.Enums;
-using GravityCTRL.FilterChili.Resolvers.List;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 

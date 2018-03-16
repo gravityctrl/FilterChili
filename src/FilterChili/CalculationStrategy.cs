@@ -16,7 +16,7 @@
 
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Enums
+namespace GravityCTRL.FilterChili
 {
     /// <summary>
     /// Specifies in which detail the filterable values are reported.

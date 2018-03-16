@@ -17,7 +17,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GravityCTRL.FilterChili.Enums;
 using GravityCTRL.FilterChili.Resolvers;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
