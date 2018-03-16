@@ -35,7 +35,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Should_Return_List_Resolver()
         {
-            var result = _testInstance.List();
+            var result = _testInstance.WithList();
             result.Should().BeOfType<StringListResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("List");
@@ -45,7 +45,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Should_Accept_Other_Comparison_Strategy()
         {
-            var result = _testInstance.List(StringComparisonStrategy.Contains);
+            var result = _testInstance.WithList(StringComparisonStrategy.Contains);
             result.ComparisonStrategy.Should().Be(StringComparisonStrategy.Contains);
         }
     }

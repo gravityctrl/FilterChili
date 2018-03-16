@@ -26,7 +26,7 @@ namespace GravityCTRL.FilterChili.Selectors
         internal ByteFilterSelector(Expression<Func<TSource, byte>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public ByteRangeResolver<TSource> Range()
+        public ByteRangeResolver<TSource> WithRange()
         {
             var resolver = new ByteRangeResolver<TSource>(Selector);
             DomainResolver = resolver;
@@ -34,7 +34,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public ByteComparisonResolver<TSource> GreaterThan()
+        public ByteComparisonResolver<TSource> WithGreaterThan()
         {
             var resolver = new ByteComparisonResolver<TSource>(new GreaterThanComparer<TSource, byte>(byte.MinValue), Selector);
             DomainResolver = resolver;
@@ -42,7 +42,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public ByteComparisonResolver<TSource> LessThan()
+        public ByteComparisonResolver<TSource> WithLessThan()
         {
             var resolver = new ByteComparisonResolver<TSource>(new LessThanComparer<TSource, byte>(byte.MaxValue), Selector);
             DomainResolver = resolver;
@@ -50,7 +50,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public ByteComparisonResolver<TSource> GreaterThanOrEqual()
+        public ByteComparisonResolver<TSource> WithGreaterThanOrEqual()
         {
             var resolver = new ByteComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, byte>(byte.MinValue), Selector);
             DomainResolver = resolver;
@@ -58,7 +58,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public ByteComparisonResolver<TSource> LessThanOrEqual()
+        public ByteComparisonResolver<TSource> WithLessThanOrEqual()
         {
             var resolver = new ByteComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, byte>(byte.MaxValue), Selector);
             DomainResolver = resolver;

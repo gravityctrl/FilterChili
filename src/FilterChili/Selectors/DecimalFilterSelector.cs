@@ -26,7 +26,7 @@ namespace GravityCTRL.FilterChili.Selectors
         internal DecimalFilterSelector(Expression<Func<TSource, decimal>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public DecimalRangeResolver<TSource> Range()
+        public DecimalRangeResolver<TSource> WithRange()
         {
             var resolver = new DecimalRangeResolver<TSource>(Selector);
             DomainResolver = resolver;
@@ -34,7 +34,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public DecimalComparisonResolver<TSource> GreaterThan()
+        public DecimalComparisonResolver<TSource> WithGreaterThan()
         {
             var resolver = new DecimalComparisonResolver<TSource>(new GreaterThanComparer<TSource, decimal>(decimal.MinValue), Selector);
             DomainResolver = resolver;
@@ -42,7 +42,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public DecimalComparisonResolver<TSource> LessThan()
+        public DecimalComparisonResolver<TSource> WithLessThan()
         {
             var resolver = new DecimalComparisonResolver<TSource>(new LessThanComparer<TSource, decimal>(decimal.MaxValue), Selector);
             DomainResolver = resolver;
@@ -50,7 +50,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public DecimalComparisonResolver<TSource> GreaterThanOrEqual()
+        public DecimalComparisonResolver<TSource> WithGreaterThanOrEqual()
         {
             var resolver = new DecimalComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, decimal>(decimal.MinValue), Selector);
             DomainResolver = resolver;
@@ -58,7 +58,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public DecimalComparisonResolver<TSource> LessThanOrEqual()
+        public DecimalComparisonResolver<TSource> WithLessThanOrEqual()
         {
             var resolver = new DecimalComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, decimal>(decimal.MaxValue), Selector);
             DomainResolver = resolver;

@@ -26,7 +26,7 @@ namespace GravityCTRL.FilterChili.Selectors
         internal ULongFilterSelector(Expression<Func<TSource, ulong>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public ULongRangeResolver<TSource> Range()
+        public ULongRangeResolver<TSource> WithRange()
         {
             var resolver = new ULongRangeResolver<TSource>(Selector);
             DomainResolver = resolver;
@@ -34,7 +34,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public ULongComparisonResolver<TSource> GreaterThan()
+        public ULongComparisonResolver<TSource> WithGreaterThan()
         {
             var resolver = new ULongComparisonResolver<TSource>(new GreaterThanComparer<TSource, ulong>(ulong.MinValue), Selector);
             DomainResolver = resolver;
@@ -42,7 +42,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public ULongComparisonResolver<TSource> LessThan()
+        public ULongComparisonResolver<TSource> WithLessThan()
         {
             var resolver = new ULongComparisonResolver<TSource>(new LessThanComparer<TSource, ulong>(ulong.MaxValue), Selector);
             DomainResolver = resolver;
@@ -50,7 +50,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public ULongComparisonResolver<TSource> GreaterThanOrEqual()
+        public ULongComparisonResolver<TSource> WithGreaterThanOrEqual()
         {
             var resolver = new ULongComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, ulong>(ulong.MinValue), Selector);
             DomainResolver = resolver;
@@ -58,7 +58,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public ULongComparisonResolver<TSource> LessThanOrEqual()
+        public ULongComparisonResolver<TSource> WithLessThanOrEqual()
         {
             var resolver = new ULongComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, ulong>(ulong.MaxValue), Selector);
             DomainResolver = resolver;

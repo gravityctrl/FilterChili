@@ -35,7 +35,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Should_Return_Range_Resolver()
         {
-            var result = _testInstance.Range();
+            var result = _testInstance.WithRange();
             result.Should().BeOfType<CharRangeResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("Range");
@@ -44,7 +44,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Should_Return_GreaterThan_Resolver()
         {
-            var result = _testInstance.GreaterThan();
+            var result = _testInstance.WithGreaterThan();
             result.Should().BeOfType<CharComparisonResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("GreaterThan");
@@ -53,7 +53,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Should_Return_LessThan_Resolver()
         {
-            var result = _testInstance.LessThan();
+            var result = _testInstance.WithLessThan();
             result.Should().BeOfType<CharComparisonResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("LessThan");
@@ -62,7 +62,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Should_Return_GreaterThanOrEqual_Resolver()
         {
-            var result = _testInstance.GreaterThanOrEqual();
+            var result = _testInstance.WithGreaterThanOrEqual();
             result.Should().BeOfType<CharComparisonResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("GreaterThanOrEqual");
@@ -71,7 +71,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Should_Return_LessThanOrEqual_Resolver()
         {
-            var result = _testInstance.LessThanOrEqual();
+            var result = _testInstance.WithLessThanOrEqual();
             result.Should().BeOfType<CharComparisonResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("LessThanOrEqual");
