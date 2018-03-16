@@ -29,13 +29,11 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 {
     public class RangeResolverTest
     {
-        private const string TEST_NAME = "TestName";
-
         private readonly RangeResolver<GenericSource, int> _testInstance;
 
         public RangeResolverTest()
         {
-            _testInstance = new TestRangeResolver(TEST_NAME, source => source.Int);
+            _testInstance = new TestRangeResolver(source => source.Int);
         }
 
         [Fact]
@@ -287,7 +285,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
         private class TestRangeResolver : RangeResolver<GenericSource, int>
         {
-            internal TestRangeResolver(string name, Expression<Func<GenericSource, int>> selector) : base(name, selector, -5, 5) {}
+            internal TestRangeResolver(Expression<Func<GenericSource, int>> selector) : base(selector, -5, 5) {}
         }
     }
 }

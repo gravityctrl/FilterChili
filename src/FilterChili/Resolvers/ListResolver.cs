@@ -50,7 +50,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         [UsedImplicitly]
         public IReadOnlyList<Item<TSelector>> Values => CombineLists();
 
-        protected internal ListResolver(string name, Expression<Func<TSource, TSelector>> selector) : base(name, selector)
+        protected internal ListResolver(Expression<Func<TSource, TSelector>> selector) : base(selector)
         {
             _needsToBeResolved = true;
             SelectedValues = new List<TSelector>();

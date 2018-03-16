@@ -16,6 +16,7 @@
 
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace GravityCTRL.FilterChili.Extensions
 {
@@ -33,6 +34,12 @@ namespace GravityCTRL.FilterChili.Extensions
             var name = type.Name.Substring(0, type.Name.LastIndexOf(GENERIC_MARKER, StringComparison.Ordinal));
             var genericArguments = string.Join(',', type.GetGenericArguments().Select(FormattedName));
             return $"{name}<{genericArguments}>";
+        }
+
+        public static string Name<TSource, TSelector>(this Expression<Func<TSource, TSelector>> selector)
+        {
+            var memberExpression = selector.Body as MemberExpression;
+            return memberExpression?.Member.Name;
         }
     }
 }

@@ -22,6 +22,6 @@ namespace GravityCTRL.FilterChili.Resolvers.Comparison
 {
     public class UShortComparisonResolver<TSource> : ComparisonResolver<TSource, ushort>
     {
-        internal UShortComparisonResolver(string name, Comparer<TSource, ushort> comparer, Expression<Func<TSource, ushort>> selector) : base(name, comparer, selector) { }
+        internal UShortComparisonResolver(Comparer<TSource, ushort> comparer, Expression<Func<TSource, ushort>> selector) : base(comparer, selector) { }
     }
 }

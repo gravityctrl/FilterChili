@@ -28,41 +28,41 @@ namespace GravityCTRL.FilterChili.Selectors
         internal IntFilterSelector(Expression<Func<TSource, int>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public IntRangeResolver<TSource> Range(string name)
+        public IntRangeResolver<TSource> Range()
         {
-            var resolver = new IntRangeResolver<TSource>(name, Selector);
+            var resolver = new IntRangeResolver<TSource>(Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public IntComparisonResolver<TSource> GreaterThan(string name)
+        public IntComparisonResolver<TSource> GreaterThan()
         {
-            var resolver = new IntComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, int>(int.MinValue), Selector);
+            var resolver = new IntComparisonResolver<TSource>(new GreaterThanComparer<TSource, int>(int.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public IntComparisonResolver<TSource> LessThan(string name)
+        public IntComparisonResolver<TSource> LessThan()
         {
-            var resolver = new IntComparisonResolver<TSource>(name, new LessThanComparer<TSource, int>(int.MaxValue), Selector);
+            var resolver = new IntComparisonResolver<TSource>(new LessThanComparer<TSource, int>(int.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public IntComparisonResolver<TSource> GreaterThanOrEqual(string name)
+        public IntComparisonResolver<TSource> GreaterThanOrEqual()
         {
-            var resolver = new IntComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, int>(int.MinValue), Selector);
+            var resolver = new IntComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, int>(int.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public IntComparisonResolver<TSource> LessThanOrEqual(string name)
+        public IntComparisonResolver<TSource> LessThanOrEqual()
         {
-            var resolver = new IntComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, int>(int.MaxValue), Selector);
+            var resolver = new IntComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, int>(int.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }

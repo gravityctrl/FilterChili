@@ -29,7 +29,7 @@ namespace GravityCTRL.FilterChili.Resolvers.List
         [UsedImplicitly]
         public StringComparisonStrategy ComparisonStrategy { get; set; }
 
-        internal StringListResolver(string name, Expression<Func<TSource, string>> selector, StringComparisonStrategy comparisonStrategy) : base(name, selector)
+        internal StringListResolver(Expression<Func<TSource, string>> selector, StringComparisonStrategy comparisonStrategy) : base(selector)
         {
             ComparisonStrategy = comparisonStrategy;
         }

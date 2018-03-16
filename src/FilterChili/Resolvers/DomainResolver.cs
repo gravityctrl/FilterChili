@@ -18,19 +18,28 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Extensions;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Resolvers
 {
-    public abstract class DomainResolver<TSource>
+    public abstract class DomainResolver
+    {
+        public string Name { get; internal set; }
+
+        protected DomainResolver(string name)
+        {
+            Name = name;
+        }
+    }
+
+    public abstract class DomainResolver<TSource> : DomainResolver
     {
         private readonly Type _sourceType;
         private readonly Type _selectorType;
 
         internal abstract bool NeedsToBeResolved { get; set; }
-
-        public string Name { get; }
 
         [UsedImplicitly]
         public abstract string FilterType { get; }
@@ -41,11 +50,10 @@ namespace GravityCTRL.FilterChili.Resolvers
         [UsedImplicitly]
         public string TargetType => _selectorType.Name;
 
-        protected DomainResolver(string name, Type type)
+        protected DomainResolver(string name, Type type) : base(name)
         {
             _sourceType = typeof(TSource);
             _selectorType = type;
-            Name = name;
         }
 
         public abstract bool TrySet(JToken domainToken);
@@ -55,7 +63,7 @@ namespace GravityCTRL.FilterChili.Resolvers
     {
         protected Expression<Func<TSource, TSelector>> Selector { get; }
 
-        protected internal DomainResolver(string name, Expression<Func<TSource, TSelector>> selector) : base(name, typeof(TSelector))
+        protected internal DomainResolver(Expression<Func<TSource, TSelector>> selector) : base(selector.Name(), typeof(TSelector))
         {
             Selector = selector;
         }

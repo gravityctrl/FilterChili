@@ -28,41 +28,41 @@ namespace GravityCTRL.FilterChili.Selectors
         internal CharFilterSelector(Expression<Func<TSource, char>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public CharRangeResolver<TSource> Range(string name)
+        public CharRangeResolver<TSource> Range()
         {
-            var resolver = new CharRangeResolver<TSource>(name, Selector);
+            var resolver = new CharRangeResolver<TSource>(Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public CharComparisonResolver<TSource> GreaterThan(string name)
+        public CharComparisonResolver<TSource> GreaterThan()
         {
-            var resolver = new CharComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, char>(char.MinValue), Selector);
+            var resolver = new CharComparisonResolver<TSource>(new GreaterThanComparer<TSource, char>(char.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public CharComparisonResolver<TSource> LessThan(string name)
+        public CharComparisonResolver<TSource> LessThan()
         {
-            var resolver = new CharComparisonResolver<TSource>(name, new LessThanComparer<TSource, char>(char.MaxValue), Selector);
+            var resolver = new CharComparisonResolver<TSource>(new LessThanComparer<TSource, char>(char.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public CharComparisonResolver<TSource> GreaterThanOrEqual(string name)
+        public CharComparisonResolver<TSource> GreaterThanOrEqual()
         {
-            var resolver = new CharComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, char>(char.MinValue), Selector);
+            var resolver = new CharComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, char>(char.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public CharComparisonResolver<TSource> LessThanOrEqual(string name)
+        public CharComparisonResolver<TSource> LessThanOrEqual()
         {
-            var resolver = new CharComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, char>(char.MaxValue), Selector);
+            var resolver = new CharComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, char>(char.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }

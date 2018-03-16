@@ -21,6 +21,6 @@ namespace GravityCTRL.FilterChili.Resolvers.Range
 {
     public class DecimalRangeResolver<TSource> : RangeResolver<TSource, decimal>
     {
-        internal DecimalRangeResolver(string name, Expression<Func<TSource, decimal>> selector) : base(name, selector, decimal.MinValue, decimal.MaxValue) {}
+        internal DecimalRangeResolver(Expression<Func<TSource, decimal>> selector) : base(selector, decimal.MinValue, decimal.MaxValue) {}
     }
 }

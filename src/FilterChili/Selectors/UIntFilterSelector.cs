@@ -28,41 +28,41 @@ namespace GravityCTRL.FilterChili.Selectors
         internal UIntFilterSelector(Expression<Func<TSource, uint>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public UIntRangeResolver<TSource> Range(string name)
+        public UIntRangeResolver<TSource> Range()
         {
-            var resolver = new UIntRangeResolver<TSource>(name, Selector);
+            var resolver = new UIntRangeResolver<TSource>(Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public UIntComparisonResolver<TSource> GreaterThan(string name)
+        public UIntComparisonResolver<TSource> GreaterThan()
         {
-            var resolver = new UIntComparisonResolver<TSource>(name, new GreaterThanComparer<TSource, uint>(uint.MinValue), Selector);
+            var resolver = new UIntComparisonResolver<TSource>(new GreaterThanComparer<TSource, uint>(uint.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public UIntComparisonResolver<TSource> LessThan(string name)
+        public UIntComparisonResolver<TSource> LessThan()
         {
-            var resolver = new UIntComparisonResolver<TSource>(name, new LessThanComparer<TSource, uint>(uint.MaxValue), Selector);
+            var resolver = new UIntComparisonResolver<TSource>(new LessThanComparer<TSource, uint>(uint.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public UIntComparisonResolver<TSource> GreaterThanOrEqual(string name)
+        public UIntComparisonResolver<TSource> GreaterThanOrEqual()
         {
-            var resolver = new UIntComparisonResolver<TSource>(name, new GreaterThanOrEqualComparer<TSource, uint>(uint.MinValue), Selector);
+            var resolver = new UIntComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, uint>(uint.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
         [UsedImplicitly]
-        public UIntComparisonResolver<TSource> LessThanOrEqual(string name)
+        public UIntComparisonResolver<TSource> LessThanOrEqual()
         {
-            var resolver = new UIntComparisonResolver<TSource>(name, new LessThanOrEqualComparer<TSource, uint>(uint.MaxValue), Selector);
+            var resolver = new UIntComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, uint>(uint.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }

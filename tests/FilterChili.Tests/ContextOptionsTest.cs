@@ -83,9 +83,9 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public async Task Should_Resolve_Domains_Independent_From_Setting_Filters_Order()
         {
-            var filter1 = _testInstance.Filter(source => source.Int).GreaterThan("Int");
-            var filter2 = _testInstance.Filter(source => source.Double).LessThanOrEqual("Double");
-            var filter3 = _testInstance.Filter(source => source.Float).Range("Float");
+            var filter1 = _testInstance.Filter(source => source.Int).GreaterThan();
+            var filter2 = _testInstance.Filter(source => source.Double).LessThanOrEqual();
+            var filter3 = _testInstance.Filter(source => source.Float).Range();
             _testInstance.CalculationStrategy = CalculationStrategy.Full;
 
             filter1.Set(1);
@@ -108,9 +108,9 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public void Should_Get_Filter_By_Name()
         {
-            _testInstance.Filter(source => source.Int).GreaterThan("Int");
-            _testInstance.Filter(source => source.Double).LessThanOrEqual("Double");
-            _testInstance.Filter(source => source.Float).Range("Float");
+            _testInstance.Filter(source => source.Int).GreaterThan();
+            _testInstance.Filter(source => source.Double).LessThanOrEqual();
+            _testInstance.Filter(source => source.Float).Range();
 
             _testInstance.GetFilter("Int").Domain().Name.Should().Be("Int");
             _testInstance.GetFilter("Double").Domain().Name.Should().Be("Double");
@@ -121,9 +121,9 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public void Should_Return_Expected_Entities_When_Applying_Filters()
         {
-            var filter1 = _testInstance.Filter(source => source.Int).GreaterThan("Int");
-            var filter2 = _testInstance.Filter(source => source.Double).LessThanOrEqual("Double");
-            var filter3 = _testInstance.Filter(source => source.Float).Range("Float");
+            var filter1 = _testInstance.Filter(source => source.Int).GreaterThan();
+            var filter2 = _testInstance.Filter(source => source.Double).LessThanOrEqual();
+            var filter3 = _testInstance.Filter(source => source.Float).Range();
 
             filter1.Set(3);
             filter2.Set(15);

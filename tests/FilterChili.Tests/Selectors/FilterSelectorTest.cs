@@ -73,7 +73,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Shoud_Be_Able_To_Call_Filter_Methods_If_Resolver_Is_Set()
         {
-            _testInstance.Comparison("TestName");
+            _testInstance.Comparison();
 
             var queryable = new GenericSource[0].AsQueryable();
 
@@ -96,7 +96,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void ComparisonResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.Comparison("TestName").Should().BeOfType<TestComparisonResolver>();
+            _testInstance.Comparison().Should().BeOfType<TestComparisonResolver>();
             _testInstance.Domain().Should().BeOfType<TestComparisonResolver>();
             _testInstance.NeedsToBeResolved = false;
 
@@ -114,7 +114,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void RangeResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.Range("TestName").Should().BeOfType<TestRangeResolver>();
+            _testInstance.Range().Should().BeOfType<TestRangeResolver>();
             _testInstance.Domain().Should().BeOfType<TestRangeResolver>();
             _testInstance.NeedsToBeResolved = false;
 
@@ -132,7 +132,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void ListResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.List("TestName").Should().BeOfType<TestListResolver>();
+            _testInstance.List().Should().BeOfType<TestListResolver>();
             _testInstance.Domain().Should().BeOfType<TestListResolver>();
             _testInstance.NeedsToBeResolved = false;
 
@@ -150,7 +150,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Shoud_Fail_When_Values_Dont_Have_Correct_Type()
         {
-            _testInstance.Comparison("TestName");
+            _testInstance.Comparison();
 
             _testInstance.TrySet("abc").Should().BeFalse();
             _testInstance.TrySet("abc", "def").Should().BeFalse();
@@ -162,23 +162,23 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         {
             internal TestFilterSelector(Expression<Func<GenericSource, int>> selector) : base(selector) {}
 
-            public TestComparisonResolver Comparison(string name)
+            public TestComparisonResolver Comparison()
             {
-                var resolver = new TestComparisonResolver(name, new TestComparer(), Selector);
+                var resolver = new TestComparisonResolver(new TestComparer(), Selector);
                 DomainResolver = resolver;
                 return resolver;
             }
 
-            public TestRangeResolver Range(string name)
+            public TestRangeResolver Range()
             {
-                var resolver = new TestRangeResolver(name, Selector);
+                var resolver = new TestRangeResolver(Selector);
                 DomainResolver = resolver;
                 return resolver;
             }
 
-            public TestListResolver List(string name)
+            public TestListResolver List()
             {
-                var resolver = new TestListResolver(name, Selector);
+                var resolver = new TestListResolver(Selector);
                 DomainResolver = resolver;
                 return resolver;
             }
@@ -186,17 +186,17 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
 
         private class TestComparisonResolver : ComparisonResolver<GenericSource, int>
         {
-            internal TestComparisonResolver(string name, Comparer<GenericSource, int> comparer, Expression<Func<GenericSource, int>> selector) : base(name, comparer, selector) {}
+            internal TestComparisonResolver(Comparer<GenericSource, int> comparer, Expression<Func<GenericSource, int>> selector) : base(comparer, selector) {}
         }
 
         private class TestRangeResolver : RangeResolver<GenericSource, int>
         {
-            internal TestRangeResolver(string name, Expression<Func<GenericSource, int>> selector) : base(name, selector, int.MinValue, int.MaxValue) {}
+            internal TestRangeResolver(Expression<Func<GenericSource, int>> selector) : base(selector, int.MinValue, int.MaxValue) {}
         }
 
         private class TestListResolver : ListResolver<GenericSource, int>
         {
-            internal TestListResolver(string name, Expression<Func<GenericSource, int>> selector) : base(name, selector) {}
+            internal TestListResolver(Expression<Func<GenericSource, int>> selector) : base(selector) {}
 
             protected override Expression<Func<GenericSource, bool>> FilterExpression()
             {

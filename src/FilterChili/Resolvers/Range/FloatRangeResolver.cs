@@ -21,6 +21,6 @@ namespace GravityCTRL.FilterChili.Resolvers.Range
 {
     public class FloatRangeResolver<TSource> : RangeResolver<TSource, float>
     {
-        internal FloatRangeResolver(string name, Expression<Func<TSource, float>> selector) : base(name, selector, float.MinValue, float.MaxValue) {}
+        internal FloatRangeResolver(Expression<Func<TSource, float>> selector) : base(selector, float.MinValue, float.MaxValue) {}
     }
 }

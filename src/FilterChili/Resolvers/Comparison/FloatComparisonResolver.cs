@@ -22,6 +22,6 @@ namespace GravityCTRL.FilterChili.Resolvers.Comparison
 {
     public class FloatComparisonResolver<TSource> : ComparisonResolver<TSource, float>
     {
-        internal FloatComparisonResolver(string name, Comparer<TSource, float> comparer, Expression<Func<TSource, float>> selector) : base(name, comparer, selector) { }
+        internal FloatComparisonResolver(Comparer<TSource, float> comparer, Expression<Func<TSource, float>> selector) : base(comparer, selector) { }
     }
 }

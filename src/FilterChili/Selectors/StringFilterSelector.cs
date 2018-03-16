@@ -27,9 +27,9 @@ namespace GravityCTRL.FilterChili.Selectors
         internal StringFilterSelector(Expression<Func<TSource, string>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public StringListResolver<TSource> List(string name, StringComparisonStrategy comparisonStrategy = StringComparisonStrategy.Equals)
+        public StringListResolver<TSource> List(StringComparisonStrategy comparisonStrategy = StringComparisonStrategy.Equals)
         {
-            var resolver = new StringListResolver<TSource>(name, Selector, comparisonStrategy);
+            var resolver = new StringListResolver<TSource>(Selector, comparisonStrategy);
             DomainResolver = resolver;
             return resolver;
         }
