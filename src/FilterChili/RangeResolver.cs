@@ -19,17 +19,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Models;
+using GravityCTRL.FilterChili.Resolvers;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 
-namespace GravityCTRL.FilterChili.Resolvers
+namespace GravityCTRL.FilterChili
 {
-    public abstract class ComparisonResolver<TSource, TSelector> : DomainResolver<ComparisonResolver<TSource, TSelector>, TSource, TSelector> where TSelector : IComparable
+    public abstract class RangeResolver<TSource, TSelector> : DomainResolver<RangeResolver<TSource, TSelector>, TSource, TSelector> where TSelector : IComparable
     {
-        private readonly Comparer<TSource, TSelector> _comparer;
         private bool _needsToBeResolved;
 
         internal override bool NeedsToBeResolved
@@ -38,7 +37,11 @@ namespace GravityCTRL.FilterChili.Resolvers
             set => _needsToBeResolved = value;
         }
 
-        public override string FilterType => _comparer.FilterType;
+        private readonly TSelector _min;
+
+        private readonly TSelector _max;
+
+        public override string FilterType { get; } = "Range";
 
         [UsedImplicitly]
         public Range<TSelector> TotalRange { get; private set; }
@@ -47,29 +50,35 @@ namespace GravityCTRL.FilterChili.Resolvers
         public Range<TSelector> SelectableRange { get; private set; }
 
         [UsedImplicitly]
-        public TSelector SelectedValue { get; private set; }
+        public Range<TSelector> SelectedRange { get; }
 
-        protected internal ComparisonResolver(Comparer<TSource, TSelector> comparer, Expression<Func<TSource, TSelector>> selector) : base(selector)
+        protected internal RangeResolver(Expression<Func<TSource, TSelector>> selector, TSelector min, TSelector max) : base(selector)
         {
-            _comparer = comparer;
             _needsToBeResolved = true;
+            _min = min;
+            _max = max;
+            SelectedRange = new Range<TSelector>(min, max);
         }
 
-        public void Set(TSelector value)
+        public void Set(TSelector min, TSelector max)
         {
-            SelectedValue = value;
+            SelectedRange.Min = min;
+            SelectedRange.Max = max;
             _needsToBeResolved = true;
         }
 
         public override bool TrySet(JToken domainToken)
         {
-            var token = domainToken.SelectToken("value");
-            if (token == null)
+            var minToken = domainToken.SelectToken("min");
+            var maxToken = domainToken.SelectToken("max");
+            if (minToken == null || maxToken == null)
             {
                 return false;
             }
 
-            Set(token.ToObject<TSelector>());
+            var min = minToken.ToObject<TSelector>();
+            var max = maxToken.ToObject<TSelector>();
+            Set(min, max);
             return true;
         }
 
@@ -77,7 +86,32 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         protected override Expression<Func<TSource, bool>> FilterExpression()
         {
-            return _comparer.FilterExpression(Selector, SelectedValue);
+            if (_min.CompareTo(SelectedRange.Min) < 0 && _max.CompareTo(SelectedRange.Max) > 0)
+            {
+                var minConstant = Expression.Constant(SelectedRange.Min);
+                var maxConstant = Expression.Constant(SelectedRange.Max);
+                var greaterThanExpression = Expression.GreaterThanOrEqual(Selector.Body, minConstant);
+                var lessThanExpression = Expression.LessThanOrEqual(Selector.Body, maxConstant);
+                var andExpression = Expression.And(greaterThanExpression, lessThanExpression);
+                return Expression.Lambda<Func<TSource, bool>>(andExpression, Selector.Parameters);
+            }
+
+            if (_max.CompareTo(SelectedRange.Max) > 0)
+            {
+                var maxConstant = Expression.Constant(SelectedRange.Max);
+                var lessThanExpression = Expression.LessThanOrEqual(Selector.Body, maxConstant);
+                return Expression.Lambda<Func<TSource, bool>>(lessThanExpression, Selector.Parameters);
+            }
+
+            // ReSharper disable once InvertIf
+            if (_min.CompareTo(SelectedRange.Min) < 0)
+            {
+                var minConstant = Expression.Constant(SelectedRange.Min);
+                var greaterThanExpression = Expression.GreaterThanOrEqual(Selector.Body, minConstant);
+                return Expression.Lambda<Func<TSource, bool>>(greaterThanExpression, Selector.Parameters);
+            }
+
+            return null;
         }
 
         protected override async Task SetAvailableValues(IQueryable<TSelector> allValues)
@@ -118,7 +152,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             {
                 return null;
             }
-
+            
             var min = await queryable.MinAsync();
             var max = await queryable.MaxAsync();
             return new Range<TSelector>(min, max);

@@ -17,7 +17,6 @@
 using System;
 using System.Linq.Expressions;
 using FluentAssertions;
-using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 

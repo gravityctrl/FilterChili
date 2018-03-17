@@ -100,8 +100,8 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         public TDomainResolver UseName(string name)
         {
-            this.Name = name;
-            return this as TDomainResolver;
+            Name = name;
+            return (TDomainResolver)this;
         }
     }
 }

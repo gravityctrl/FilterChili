@@ -15,7 +15,6 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System.Linq;
-using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Tests.Shared.Models;
 using JetBrains.Annotations;
 
@@ -38,7 +37,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
         {
             options.CalculationStrategy = CalculationStrategy.Full;
 
-            NameFilter = options.Filter(product => product.Name).WithList();
+            NameFilter = options.Filter(product => product.Name).WithList().UseName("Name");
             RatingFilter = options.Filter(product => product.Rating).WithRange();
             SoldFilter = options.Filter(product => product.Sold).WithGreaterThan();
         }

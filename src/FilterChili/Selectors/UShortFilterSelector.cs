@@ -17,7 +17,8 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Comparison;
-using GravityCTRL.FilterChili.Resolvers;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
