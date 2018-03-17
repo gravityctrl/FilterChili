@@ -20,7 +20,6 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Exceptions;
-using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json.Linq;

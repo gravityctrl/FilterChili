@@ -16,21 +16,12 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Resolvers.List;
-using JetBrains.Annotations;
+using GravityCTRL.FilterChili.Comparison;
 
-namespace GravityCTRL.FilterChili.Selectors
+namespace GravityCTRL.FilterChili.Resolvers.Comparison
 {
-    public class StringFilterSelector<TSource> : FilterSelector<TSource, string>
+    public class DoubleComparisonResolver<TSource> : ComparisonResolver<TSource, double>
     {
-        internal StringFilterSelector(Expression<Func<TSource, string>> selector) : base(selector) {}
-
-        [UsedImplicitly]
-        public ListResolver<TSource, string> WithList(StringComparisonStrategy comparisonStrategy = StringComparisonStrategy.Equals)
-        {
-            var resolver = new StringListResolver<TSource>(Selector, comparisonStrategy);
-            DomainResolver = resolver;
-            return resolver;
-        }
+        internal DoubleComparisonResolver(Comparer<TSource, double> comparer, Expression<Func<TSource, double>> selector) : base(comparer, selector) { }
     }
 }

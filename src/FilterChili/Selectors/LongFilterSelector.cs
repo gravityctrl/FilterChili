@@ -17,6 +17,8 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
@@ -26,7 +28,7 @@ namespace GravityCTRL.FilterChili.Selectors
         internal LongFilterSelector(Expression<Func<TSource, long>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public LongRangeResolver<TSource> WithRange()
+        public RangeResolver<TSource, long> WithRange()
         {
             var resolver = new LongRangeResolver<TSource>(Selector);
             DomainResolver = resolver;
@@ -34,7 +36,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public LongComparisonResolver<TSource> WithGreaterThan()
+        public ComparisonResolver<TSource, long> WithGreaterThan()
         {
             var resolver = new LongComparisonResolver<TSource>(new GreaterThanComparer<TSource, long>(long.MinValue), Selector);
             DomainResolver = resolver;
@@ -42,7 +44,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public LongComparisonResolver<TSource> WithLessThan()
+        public ComparisonResolver<TSource, long> WithLessThan()
         {
             var resolver = new LongComparisonResolver<TSource>(new LessThanComparer<TSource, long>(long.MaxValue), Selector);
             DomainResolver = resolver;
@@ -50,7 +52,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public LongComparisonResolver<TSource> WithGreaterThanOrEqual()
+        public ComparisonResolver<TSource, long> WithGreaterThanOrEqual()
         {
             var resolver = new LongComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, long>(long.MinValue), Selector);
             DomainResolver = resolver;
@@ -58,7 +60,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public LongComparisonResolver<TSource> WithLessThanOrEqual()
+        public ComparisonResolver<TSource, long> WithLessThanOrEqual()
         {
             var resolver = new LongComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, long>(long.MaxValue), Selector);
             DomainResolver = resolver;

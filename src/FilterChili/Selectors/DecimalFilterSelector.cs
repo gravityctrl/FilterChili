@@ -17,6 +17,8 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Comparison;
+using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
@@ -26,7 +28,7 @@ namespace GravityCTRL.FilterChili.Selectors
         internal DecimalFilterSelector(Expression<Func<TSource, decimal>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public DecimalRangeResolver<TSource> WithRange()
+        public RangeResolver<TSource, decimal> WithRange()
         {
             var resolver = new DecimalRangeResolver<TSource>(Selector);
             DomainResolver = resolver;
@@ -34,7 +36,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public DecimalComparisonResolver<TSource> WithGreaterThan()
+        public ComparisonResolver<TSource, decimal> WithGreaterThan()
         {
             var resolver = new DecimalComparisonResolver<TSource>(new GreaterThanComparer<TSource, decimal>(decimal.MinValue), Selector);
             DomainResolver = resolver;
@@ -42,7 +44,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public DecimalComparisonResolver<TSource> WithLessThan()
+        public ComparisonResolver<TSource, decimal> WithLessThan()
         {
             var resolver = new DecimalComparisonResolver<TSource>(new LessThanComparer<TSource, decimal>(decimal.MaxValue), Selector);
             DomainResolver = resolver;
@@ -50,7 +52,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public DecimalComparisonResolver<TSource> WithGreaterThanOrEqual()
+        public ComparisonResolver<TSource, decimal> WithGreaterThanOrEqual()
         {
             var resolver = new DecimalComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, decimal>(decimal.MinValue), Selector);
             DomainResolver = resolver;
@@ -58,7 +60,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public DecimalComparisonResolver<TSource> WithLessThanOrEqual()
+        public ComparisonResolver<TSource, decimal> WithLessThanOrEqual()
         {
             var resolver = new DecimalComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, decimal>(decimal.MaxValue), Selector);
             DomainResolver = resolver;

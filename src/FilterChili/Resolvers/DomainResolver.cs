@@ -26,7 +26,7 @@ namespace GravityCTRL.FilterChili.Resolvers
 {
     public abstract class DomainResolver
     {
-        public string Name { get; internal set; }
+        public string Name { get; protected set; }
 
         protected DomainResolver(string name)
         {
@@ -91,5 +91,17 @@ namespace GravityCTRL.FilterChili.Resolvers
         protected abstract Task SetSelectableValues(IQueryable<TSelector> selectableItems);
 
         protected abstract Expression<Func<TSource, bool>> FilterExpression();
+    }
+
+    public abstract class DomainResolver<TDomainResolver, TSource, TSelector> : DomainResolver<TSource, TSelector>
+        where TSelector : IComparable where TDomainResolver : DomainResolver<TDomainResolver, TSource, TSelector>
+    {
+        protected DomainResolver(Expression<Func<TSource, TSelector>> selector) : base(selector) {}
+
+        public TDomainResolver UseName(string name)
+        {
+            Name = name;
+            return (TDomainResolver)this;
+        }
     }
 }

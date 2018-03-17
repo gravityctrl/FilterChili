@@ -14,18 +14,14 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using GravityCTRL.FilterChili.Resolvers;
-using JetBrains.Annotations;
+using System;
+using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Comparison;
 
-namespace GravityCTRL.FilterChili
+namespace GravityCTRL.FilterChili.Resolvers.Comparison
 {
-    public static class ResolverExtensions
+    public class LongComparisonResolver<TSource> : ComparisonResolver<TSource, long>
     {
-        [UsedImplicitly]
-        public static TDomainResolver UseName<TDomainResolver>(this TDomainResolver resolver, string name) where TDomainResolver : DomainResolver
-        {
-            resolver.Name = name;
-            return resolver;
-        }
+        internal LongComparisonResolver(Comparer<TSource, long> comparer, Expression<Func<TSource, long>> selector) : base(comparer, selector) { }
     }
 }

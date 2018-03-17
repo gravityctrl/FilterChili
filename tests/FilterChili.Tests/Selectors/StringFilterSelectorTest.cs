@@ -15,6 +15,7 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using FluentAssertions;
+using GravityCTRL.FilterChili.Resolvers.List;
 using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
@@ -35,7 +36,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Should_Return_List_Resolver()
         {
-            var result = _testInstance.WithList();
+            var result = (StringListResolver<GenericSource>)_testInstance.WithList();
             result.Should().BeOfType<StringListResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("List");
@@ -45,7 +46,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Should_Accept_Other_Comparison_Strategy()
         {
-            var result = _testInstance.WithList(StringComparisonStrategy.Contains);
+            var result = (StringListResolver<GenericSource>)_testInstance.WithList(StringComparisonStrategy.Contains);
             result.ComparisonStrategy.Should().Be(StringComparisonStrategy.Contains);
         }
     }

@@ -22,7 +22,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Expressions;
 using GravityCTRL.FilterChili.Models;
-using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

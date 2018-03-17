@@ -19,10 +19,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Expressions;
 using GravityCTRL.FilterChili.Phonetics;
-using GravityCTRL.FilterChili.Resolvers;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili
+namespace GravityCTRL.FilterChili.Resolvers.List
 {
     public class StringListResolver<TSource> : ListResolver<TSource, string>
     {
