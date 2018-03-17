@@ -39,14 +39,14 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             result.Should().BeOfType<StringListResolver<GenericSource>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("List");
-            result.ComparisonStrategy.Should().Be(StringComparisonStrategy.Equals);
+            (result as StringListResolver<GenericSource>).ComparisonStrategy.Should().Be(StringComparisonStrategy.Equals);
         }
 
         [Fact]
         public void Should_Accept_Other_Comparison_Strategy()
         {
             var result = _testInstance.WithList(StringComparisonStrategy.Contains);
-            result.ComparisonStrategy.Should().Be(StringComparisonStrategy.Contains);
+            (result as StringListResolver<GenericSource>).ComparisonStrategy.Should().Be(StringComparisonStrategy.Contains);
         }
     }
 }

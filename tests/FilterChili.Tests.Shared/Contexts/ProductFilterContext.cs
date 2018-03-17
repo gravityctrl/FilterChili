@@ -15,6 +15,7 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System.Linq;
+using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Tests.Shared.Models;
 using JetBrains.Annotations;
 
@@ -23,13 +24,13 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
     public class ProductFilterContext : FilterContext<Product>
     {
         [UsedImplicitly]
-        public StringListResolver<Product> NameFilter { get; set; }
+        public ListResolver<Product, string> NameFilter { get; set; }
 
         [UsedImplicitly]
-        public IntComparisonResolver<Product> SoldFilter { get; set; }
+        public ComparisonResolver<Product, int> SoldFilter { get; set; }
 
         [UsedImplicitly]
-        public IntRangeResolver<Product> RatingFilter { get; set; }
+        public RangeResolver<Product, int> RatingFilter { get; set; }
 
         public ProductFilterContext(IQueryable<Product> queryable) : base(queryable) {}
 

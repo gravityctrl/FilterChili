@@ -17,6 +17,7 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Resolvers;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
@@ -26,7 +27,7 @@ namespace GravityCTRL.FilterChili.Selectors
         internal SByteFilterSelector(Expression<Func<TSource, sbyte>> selector) : base(selector) {}
 
         [UsedImplicitly]
-        public SByteRangeResolver<TSource> WithRange()
+        public RangeResolver<TSource, sbyte> WithRange()
         {
             var resolver = new SByteRangeResolver<TSource>(Selector);
             DomainResolver = resolver;
@@ -34,7 +35,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public SByteComparisonResolver<TSource> WithGreaterThan()
+        public ComparisonResolver<TSource, sbyte> WithGreaterThan()
         {
             var resolver = new SByteComparisonResolver<TSource>(new GreaterThanComparer<TSource, sbyte>(sbyte.MinValue), Selector);
             DomainResolver = resolver;
@@ -42,7 +43,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public SByteComparisonResolver<TSource> WithLessThan()
+        public ComparisonResolver<TSource, sbyte> WithLessThan()
         {
             var resolver = new SByteComparisonResolver<TSource>(new LessThanComparer<TSource, sbyte>(sbyte.MaxValue), Selector);
             DomainResolver = resolver;
@@ -50,7 +51,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public SByteComparisonResolver<TSource> WithGreaterThanOrEqual()
+        public ComparisonResolver<TSource, sbyte> WithGreaterThanOrEqual()
         {
             var resolver = new SByteComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, sbyte>(sbyte.MinValue), Selector);
             DomainResolver = resolver;
@@ -58,7 +59,7 @@ namespace GravityCTRL.FilterChili.Selectors
         }
 
         [UsedImplicitly]
-        public SByteComparisonResolver<TSource> WithLessThanOrEqual()
+        public ComparisonResolver<TSource, sbyte> WithLessThanOrEqual()
         {
             var resolver = new SByteComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, sbyte>(sbyte.MaxValue), Selector);
             DomainResolver = resolver;
