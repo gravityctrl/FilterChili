@@ -68,16 +68,6 @@ namespace GravityCTRL.FilterChili.Resolvers
             Selector = selector;
         }
 
-        internal async Task SetAvailableEntities(IQueryable<TSource> queryable)
-        {
-            await SetAvailableValues(queryable.Select(Selector));
-        }
-
-        internal async Task SetSelectableEntities(IQueryable<TSource> queryable)
-        {
-            await SetSelectableValues(queryable.Select(Selector));
-        }
-
         internal IQueryable<TSource> ExecuteFilter(IQueryable<TSource> queryable)
         {
             var expression = FilterExpression();
@@ -86,9 +76,9 @@ namespace GravityCTRL.FilterChili.Resolvers
                 : queryable.Where(expression);
         }
 
-        protected abstract Task SetAvailableValues(IQueryable<TSelector> allValues);
+        internal abstract Task SetAvailableEntities(IQueryable<TSource> queryable);
 
-        protected abstract Task SetSelectableValues(IQueryable<TSelector> selectableItems);
+        internal abstract Task SetSelectableEntities(IQueryable<TSource> queryable);
 
         protected abstract Expression<Func<TSource, bool>> FilterExpression();
     }

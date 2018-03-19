@@ -90,18 +90,18 @@ namespace GravityCTRL.FilterChili
 
         #region Internal Methods
 
-        protected override async Task SetAvailableValues(IQueryable<TSelector> queryable)
+        internal override async Task SetAvailableEntities(IQueryable<TSource> queryable)
         {
-            _availableValues = queryable is IAsyncEnumerable<TSelector>
-                ? await queryable.Distinct().ToListAsync()
-                : queryable.Distinct().ToList();
+            _availableValues = queryable is IAsyncEnumerable<TSource>
+                ? await queryable.Select(Selector).Distinct().ToListAsync()
+                : queryable.Select(Selector).Distinct().ToList();
         }
 
-        protected override async Task SetSelectableValues(IQueryable<TSelector> queryable)
+        internal override async Task SetSelectableEntities(IQueryable<TSource> queryable)
         {
-            _selectableValues = queryable is IAsyncEnumerable<TSelector>
-                ? await queryable.Distinct().ToListAsync()
-                : queryable.Distinct().ToList();
+            _selectableValues = queryable is IAsyncEnumerable<TSource>
+                ? await queryable.Select(Selector).Distinct().ToListAsync()
+                : queryable.Select(Selector).Distinct().ToList();
         }
 
         #endregion

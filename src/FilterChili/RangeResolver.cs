@@ -114,14 +114,14 @@ namespace GravityCTRL.FilterChili
             return null;
         }
 
-        protected override async Task SetAvailableValues(IQueryable<TSelector> allValues)
+        internal override async Task SetAvailableEntities(IQueryable<TSource> queryable)
         {
-            TotalRange = await SetRange(allValues);
+            TotalRange = await SetRange(queryable.Select(Selector));
         }
 
-        protected override async Task SetSelectableValues(IQueryable<TSelector> selectableItems)
+        internal override async Task SetSelectableEntities(IQueryable<TSource> queryable)
         {
-            SelectableRange = await SetRange(selectableItems);
+            SelectableRange = await SetRange(queryable.Select(Selector));
         }
 
         private static async Task<Range<TSelector>> SetRange(IQueryable<TSelector> queryable)
