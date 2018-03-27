@@ -31,6 +31,9 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
             testInstance.Name.Should().Be(null);
 
             testInstance.UseName("SomeName").Should().Be(testInstance);
+            testInstance.Name.Should().Be(null);
+
+            testInstance.ApplyBehaviors();
             testInstance.Name.Should().Be("SomeName");
         }
 
