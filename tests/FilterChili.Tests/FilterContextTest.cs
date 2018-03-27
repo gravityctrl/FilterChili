@@ -153,6 +153,7 @@ namespace GravityCTRL.FilterChili.Tests
             testProducts.RuleFor(product => product.Sold, faker => faker.Random.Int(0, 1000));
             testProducts.RuleFor(product => product.Rating, faker => faker.Random.Int(1, 10));
             testProducts.RuleFor(product => product.Name, faker => faker.Commerce.Product());
+            testProducts.RuleFor(product => product.Category, faker => faker.Commerce.ProductMaterial());
             return testProducts.GenerateLazy(100).ToList();
         }
     }

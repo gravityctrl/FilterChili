@@ -22,6 +22,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Models
     {
         public int Id { get; [UsedImplicitly] set; }
         public string Name { get; [UsedImplicitly] set; }
+        public string Category { get; [UsedImplicitly] set; }
         public int Rating { get; [UsedImplicitly] set; }
         public int Sold { get; [UsedImplicitly] set; }
     }
