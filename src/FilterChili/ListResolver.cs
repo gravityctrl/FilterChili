@@ -82,12 +82,8 @@ namespace GravityCTRL.FilterChili
                 return false;
             }
 
-            var domain = new Set<TSelector>
-            {
-                Values = valuesToken.Values<TSelector>()
-            };
-
-            Set(domain.Values);
+            var values = valuesToken.Values<TSelector>();
+            Set(values);
             return true;
         }
 
