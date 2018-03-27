@@ -23,7 +23,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
     public class ProductFilterContext : FilterContext<Product>
     {
         [UsedImplicitly]
-        public ListResolver<Product, string> NameFilter { get; set; }
+        public GroupResolver<Product, string, string> NameFilter { get; set; }
 
         [UsedImplicitly]
         public ComparisonResolver<Product, int> SoldFilter { get; set; }
@@ -37,7 +37,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
         {
             options.CalculationStrategy = CalculationStrategy.Full;
 
-            NameFilter = options.Filter(product => product.Name).WithList();
+            NameFilter = options.Filter(product => product.Name).WithGroup(product => product.Category);
             RatingFilter = options.Filter(product => product.Rating).WithRange();
             SoldFilter = options.Filter(product => product.Sold).WithGreaterThan();
         }
