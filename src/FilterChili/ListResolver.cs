@@ -21,13 +21,16 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Resolvers;
+using GravityCTRL.FilterChili.Resolvers.Interfaces;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
 {
-    public abstract class ListResolver<TSource, TSelector> : DomainResolver<ListResolver<TSource, TSelector>, TSource, TSelector> where TSelector : IComparable
+    public abstract class ListResolver<TSource, TSelector> 
+        : DomainResolver<ListResolver<TSource, TSelector>, TSource, TSelector>, IListResolver<TSelector>
+            where TSelector : IComparable
     {
         private bool _needsToBeResolved;
 
