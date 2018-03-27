@@ -15,9 +15,11 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Behaviors;
 using GravityCTRL.FilterChili.Extensions;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
@@ -36,7 +38,8 @@ namespace GravityCTRL.FilterChili.Resolvers
 
     public abstract class DomainResolver<TSource> : DomainResolver
     {
-        private readonly Type _sourceType;
+        // ReSharper disable once StaticMemberInGenericType
+        protected static readonly Type GenericSourceType;
         private readonly Type _selectorType;
 
         internal abstract bool NeedsToBeResolved { get; set; }
@@ -45,14 +48,18 @@ namespace GravityCTRL.FilterChili.Resolvers
         public abstract string FilterType { get; }
 
         [UsedImplicitly]
-        public string SourceType => _sourceType.Name;
+        public string SourceType => GenericSourceType.Name;
 
         [UsedImplicitly]
         public string TargetType => _selectorType.Name;
 
+        static DomainResolver()
+        {
+            GenericSourceType = typeof(TSource);
+        }
+
         protected DomainResolver(string name, Type type) : base(name)
         {
-            _sourceType = typeof(TSource);
             _selectorType = type;
         }
 
