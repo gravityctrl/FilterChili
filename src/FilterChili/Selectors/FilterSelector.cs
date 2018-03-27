@@ -112,7 +112,9 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal override DomainResolver<TSource> Domain()
         {
-            return DomainResolver ?? throw new MissingResolverException(Name);
+            var resolver = DomainResolver ?? throw new MissingResolverException(Name);
+            resolver.ApplyBehaviors();
+            return resolver;
         }
 
         internal override bool HasName(string name)

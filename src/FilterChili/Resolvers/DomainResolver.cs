@@ -26,7 +26,7 @@ namespace GravityCTRL.FilterChili.Resolvers
 {
     public abstract class DomainResolver
     {
-        public string Name { get; protected set; }
+        public string Name { get; internal set; }
 
         protected DomainResolver(string name)
         {
@@ -57,6 +57,8 @@ namespace GravityCTRL.FilterChili.Resolvers
         }
 
         public abstract bool TrySet(JToken domainToken);
+
+        internal abstract void ApplyBehaviors();
     }
 
     public abstract class DomainResolver<TSource, TSelector> : DomainResolver<TSource> where TSelector : IComparable
@@ -86,12 +88,39 @@ namespace GravityCTRL.FilterChili.Resolvers
     public abstract class DomainResolver<TDomainResolver, TSource, TSelector> : DomainResolver<TSource, TSelector>
         where TSelector : IComparable where TDomainResolver : DomainResolver<TDomainResolver, TSource, TSelector>
     {
-        protected DomainResolver(Expression<Func<TSource, TSelector>> selector) : base(selector) {}
+        private readonly List<IBehavior<TSource, TSelector>> _behaviors;
+        private readonly TDomainResolver _this;
+
+        protected DomainResolver(Expression<Func<TSource, TSelector>> selector) : base(selector)
+        {
+            _behaviors = new List<IBehavior<TSource, TSelector>>();
+            _this = (TDomainResolver)this;
+        }
 
         public TDomainResolver UseName(string name)
         {
-            Name = name;
-            return (TDomainResolver)this;
+            var behavior = new ReplaceNameBehavior<TSource, TSelector>(name);
+            AddBehavior(behavior);
+            return _this;
+        }
+
+        internal override void ApplyBehaviors()
+        {
+            var resolver = (TDomainResolver)this;
+            _behaviors.ForEach(behavior => behavior.Apply(resolver));
+        }
+
+        private void AddBehavior<TBehavior>(TBehavior behavior) where TBehavior : IBehavior<TSource, TSelector>
+        {
+            var index = _behaviors.FindIndex(existingBehavior => existingBehavior is TBehavior);
+            if (index > -1)
+            {
+                _behaviors[index] = behavior;
+            }
+            else
+            {
+                _behaviors.Add(behavior);
+            }
         }
     }
 }
