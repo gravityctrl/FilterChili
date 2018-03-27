@@ -37,7 +37,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
         {
             options.CalculationStrategy = CalculationStrategy.Full;
 
-            NameFilter = options.Filter(product => product.Name).WithGroup(product => product.Category);
+            NameFilter = options.Filter(product => product.Name).WithGroup(product => product.Category).UseDefaultGroup("Unknown");
             RatingFilter = options.Filter(product => product.Rating).WithRange();
             SoldFilter = options.Filter(product => product.Sold).WithGreaterThan();
         }
