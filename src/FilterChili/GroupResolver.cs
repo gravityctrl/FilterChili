@@ -47,7 +47,9 @@ namespace GravityCTRL.FilterChili
         private bool _needsToBeResolved;
         private IReadOnlyList<KeyValuePair> _availableValues;
         private IReadOnlyList<TSelector> _selectableValues;
-        private IReadOnlyList<TSelector> _selectedValues;
+        private Option<TGroupSelector> _defaultGroupIdentifier;
+
+        internal IReadOnlyList<TSelector> SelectedValues;
 
         public override string FilterType { get; } = "Group";
 
@@ -73,7 +75,9 @@ namespace GravityCTRL.FilterChili
 
         protected GroupResolver(Expression<Func<TSource, TSelector>> selector, Expression<Func<TSource, TGroupSelector>> groupSelector) : base(selector)
         {
-            _selectedValues = new List<TSelector>();
+            SelectedValues = new List<TSelector>();
+
+            _defaultGroupIdentifier = Option.None<TGroupSelector>();
             _needsToBeResolved = true;
 
             var memberBindings = new List<MemberBinding>
@@ -93,30 +97,46 @@ namespace GravityCTRL.FilterChili
 
         public void Set(IEnumerable<TSelector> selectedValues)
         {
-            _selectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
+            SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
             _selectableValues = null;
             _needsToBeResolved = true;
         }
 
         public void Set(params TSelector[] selectedValues)
         {
-            _selectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
+            SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
             _selectableValues = null;
             _needsToBeResolved = true;
         }
 
         public void SetGroups(IEnumerable<TGroupSelector> selectedValues)
         {
-            _selectedValues = _availableValues.Where(group => selectedValues.Contains(group.GroupIdentifier)).Select(group => group.Value).ToList();
+            if (_availableValues == null)
+            {
+                return;
+            }
+
+            SelectedValues = _availableValues.Where(group => selectedValues.Contains(group.GroupIdentifier)).Select(group => group.Value).ToList();
             _selectableValues = null;
             _needsToBeResolved = true;
         }
 
         public void SetGroups(params TGroupSelector[] selectedValues)
         {
-            _selectedValues = _availableValues.Where(group => selectedValues.Contains(group.GroupIdentifier)).Select(group => group.Value).ToList();
+            if (_availableValues == null)
+            {
+                return;
+            }
+
+            SelectedValues = _availableValues.Where(group => selectedValues.Contains(@group.GroupIdentifier)).Select(group => @group.Value).ToList();
             _selectableValues = null;
             _needsToBeResolved = true;
+        }
+
+        public GroupResolver<TSource, TSelector, TGroupSelector> UseDefaultGroup(TGroupSelector defaultGroupIdentifier)
+        {
+            _defaultGroupIdentifier = Option.Some(defaultGroupIdentifier);
+            return this;
         }
 
         #endregion
@@ -149,12 +169,12 @@ namespace GravityCTRL.FilterChili
 
         protected override Expression<Func<TSource, bool>> FilterExpression()
         {
-            if (!_selectedValues.Any())
+            if (!SelectedValues.Any())
             {
                 return null;
             }
 
-            var selectedValueExpressions = _selectedValues.Select(selector => Expression.Constant(selector));
+            var selectedValueExpressions = SelectedValues.Select(selector => Expression.Constant(selector));
             var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Equal(expression, Selector.Body));
             var orExpression = equalsExpressions.Or();
             return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
@@ -179,33 +199,66 @@ namespace GravityCTRL.FilterChili
 
         private IReadOnlyList<Group<TGroupSelector, TSelector>> CombineLists()
         {
+            if (_availableValues == null)
+            {
+                var list = new List<Group<TGroupSelector, TSelector>>();
+
+                if (SelectedValues.Count <= 0 || !_defaultGroupIdentifier.TryGetValue(out var identifier))
+                {
+                    return list;
+                }
+
+                var group = new Group<TGroupSelector, TSelector>
+                {
+                    Identifier = identifier,
+                    Values = SelectedValues.Select(value => new Item<TSelector> { Value = value, IsSelected = true }).ToList()
+                };
+
+                list.Add(group);
+
+                return list;
+            }
+
             var groupDictionary = CreateGroupDictionary();
-            SetSelectedStatus(_selectedValues, groupDictionary);
+            SetSelectedStatus(SelectedValues, groupDictionary);
             if (_selectableValues != null)
             {
                 SetSelectableStatus(_selectableValues, groupDictionary);
             }
 
-            return groupDictionary.Select(kv =>
-                new Group<TGroupSelector, TSelector>
-                {
-                    Identifier = kv.Key,
-                    Values = kv.Value.Values.ToList()
-                }).ToList();
+            return groupDictionary.Select(kv => new Group<TGroupSelector, TSelector>
+            {
+                Identifier = kv.Key,
+                Values = kv.Value.Values.ToList()
+            }).ToList();
         }
 
         private IReadOnlyDictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>> CreateGroupDictionary()
         {
+            var useDefaultIdentifier = _defaultGroupIdentifier.TryGetValue(out var identifier);
             var dictionary = new Dictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>>();
+
             foreach (var availableValue in _availableValues)
             {
                 var key = availableValue.GroupIdentifier;
-                var value = availableValue.Value;
-
-                var item = new Item<TSelector> { Value = value };
-                if (!dictionary.ContainsKey(availableValue.GroupIdentifier))
+                if (key == null)
                 {
-                    var valueDictionary = new Dictionary<TSelector, Item<TSelector>> { {value, item} };
+                    if (useDefaultIdentifier)
+                    {
+                        key = identifier;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                var value = availableValue.Value;
+                var item = new Item<TSelector> { Value = value };
+
+                if (!dictionary.ContainsKey(key))
+                {
+                    var valueDictionary = new Dictionary<TSelector, Item<TSelector>> { { value, item } };
                     dictionary.Add(key, valueDictionary);
                 }
                 else
