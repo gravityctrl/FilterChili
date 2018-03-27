@@ -14,32 +14,25 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq.Expressions;
 using FluentAssertions;
+using GravityCTRL.FilterChili.Behaviors;
+using GravityCTRL.FilterChili.Resolvers.Range;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
-namespace GravityCTRL.FilterChili.Tests.Extensions
+namespace GravityCTRL.FilterChili.Tests.Behaviors
 {
-    public class ResolverExtensionsTest
+    public class ReplaceNameBehaviorTest
     {
         [Fact]
         public void Should_Update_Name_Of_Resolver_When_Calling_Use_Name_And_Return_Same_Instance()
         {
-            var testInstance = new TestResolver(_ => 1);
-            testInstance.Name.Should().Be(null);
+            RangeResolver<GenericSource, int> testResolver = new IntRangeResolver<GenericSource>(source => source.Int);
+            var testInstance = new ReplaceNameBehavior<GenericSource, int>("SomeName");
+            testResolver.Name.Should().Be("Int");
 
-            testInstance.UseName("SomeName").Should().Be(testInstance);
-            testInstance.Name.Should().Be(null);
-
-            testInstance.ApplyBehaviors();
-            testInstance.Name.Should().Be("SomeName");
-        }
-
-        private class TestResolver : RangeResolver<GenericSource, int>
-        {
-            internal TestResolver(Expression<Func<GenericSource, int>> selector) : base(selector, 1, 2) { }
+            testInstance.Apply(testResolver);
+            testResolver.Name.Should().Be("SomeName");
         }
     }
 }
