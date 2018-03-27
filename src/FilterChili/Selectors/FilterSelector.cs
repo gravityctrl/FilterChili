@@ -202,6 +202,11 @@ namespace GravityCTRL.FilterChili.Selectors
                     listTarget.Set(values);
                     return true;
                 }
+                case IGroupResolver<TSelector> groupTarget:
+                {
+                    groupTarget.Set(values);
+                    return true;
+                }
                 default:
                 {
                     return false;
