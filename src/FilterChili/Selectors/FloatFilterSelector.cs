@@ -17,8 +17,6 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Comparison;
-using GravityCTRL.FilterChili.Resolvers.Comparison;
-using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
@@ -30,7 +28,7 @@ namespace GravityCTRL.FilterChili.Selectors
         [UsedImplicitly]
         public RangeResolver<TSource, float> WithRange()
         {
-            var resolver = new FloatRangeResolver<TSource>(Selector);
+            var resolver = new RangeResolver<TSource, float>(Selector, float.MinValue, float.MaxValue);
             DomainResolver = resolver;
             return resolver;
         }
@@ -38,7 +36,7 @@ namespace GravityCTRL.FilterChili.Selectors
         [UsedImplicitly]
         public ComparisonResolver<TSource, float> WithGreaterThan()
         {
-            var resolver = new FloatComparisonResolver<TSource>(new GreaterThanComparer<TSource, float>(float.MinValue), Selector);
+            var resolver = new ComparisonResolver<TSource, float>(new GreaterThanComparer<TSource, float>(float.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
@@ -46,7 +44,7 @@ namespace GravityCTRL.FilterChili.Selectors
         [UsedImplicitly]
         public ComparisonResolver<TSource, float> WithLessThan()
         {
-            var resolver = new FloatComparisonResolver<TSource>(new LessThanComparer<TSource, float>(float.MaxValue), Selector);
+            var resolver = new ComparisonResolver<TSource, float>(new LessThanComparer<TSource, float>(float.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
@@ -54,7 +52,7 @@ namespace GravityCTRL.FilterChili.Selectors
         [UsedImplicitly]
         public ComparisonResolver<TSource, float> WithGreaterThanOrEqual()
         {
-            var resolver = new FloatComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, float>(float.MinValue), Selector);
+            var resolver = new ComparisonResolver<TSource, float>(new GreaterThanOrEqualComparer<TSource, float>(float.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
@@ -62,7 +60,7 @@ namespace GravityCTRL.FilterChili.Selectors
         [UsedImplicitly]
         public ComparisonResolver<TSource, float> WithLessThanOrEqual()
         {
-            var resolver = new FloatComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, float>(float.MaxValue), Selector);
+            var resolver = new ComparisonResolver<TSource, float>(new LessThanOrEqualComparer<TSource, float>(float.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }

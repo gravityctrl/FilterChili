@@ -16,7 +16,6 @@
 
 using FluentAssertions;
 using GravityCTRL.FilterChili.Behaviors;
-using GravityCTRL.FilterChili.Resolvers.Range;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
@@ -27,7 +26,7 @@ namespace GravityCTRL.FilterChili.Tests.Behaviors
         [Fact]
         public void Should_Update_Name_Of_Resolver_When_Calling_Use_Name_And_Return_Same_Instance()
         {
-            RangeResolver<GenericSource, int> testResolver = new IntRangeResolver<GenericSource>(source => source.Int);
+            var testResolver = new RangeResolver<GenericSource, int>(source => source.Int, int.MinValue, int.MaxValue);
             var testInstance = new ReplaceNameBehavior<GenericSource, int>("SomeName");
             testResolver.Name.Should().Be("Int");
 

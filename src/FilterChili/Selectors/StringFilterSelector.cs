@@ -16,8 +16,7 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Resolvers.Group;
-using GravityCTRL.FilterChili.Resolvers.List;
+using GravityCTRL.FilterChili.Resolvers;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
@@ -37,7 +36,7 @@ namespace GravityCTRL.FilterChili.Selectors
         [UsedImplicitly]
         public GroupResolver<TSource, string, TGroupSelector> WithGroup<TGroupSelector>(Expression<Func<TSource, TGroupSelector>> groupSelector) where TGroupSelector : IComparable
         {
-            var resolver = new StringGroupResolver<TSource, TGroupSelector>(Selector, groupSelector);
+            var resolver = new GroupResolver<TSource, string, TGroupSelector>(Selector, groupSelector);
             DomainResolver = resolver;
             return resolver;
         }

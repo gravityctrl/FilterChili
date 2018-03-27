@@ -21,7 +21,7 @@ using GravityCTRL.FilterChili.Expressions;
 using GravityCTRL.FilterChili.Phonetics;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Resolvers.List
+namespace GravityCTRL.FilterChili.Resolvers
 {
     public class StringListResolver<TSource> : ListResolver<TSource, string>
     {

@@ -30,7 +30,7 @@ using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
 {
-    public abstract class GroupResolver<TSource, TSelector, TGroupSelector> 
+    public class GroupResolver<TSource, TSelector, TGroupSelector> 
         : DomainResolver<GroupResolver<TSource, TSelector, TGroupSelector>, TSource, TSelector>, IGroupResolver<TSelector> 
             where TSelector : IComparable 
             where TGroupSelector : IComparable
@@ -73,7 +73,7 @@ namespace GravityCTRL.FilterChili
             ParameterExpression = Expression.Parameter(GenericSourceType);
         }
 
-        protected GroupResolver(Expression<Func<TSource, TSelector>> selector, Expression<Func<TSource, TGroupSelector>> groupSelector) : base(selector)
+        internal GroupResolver(Expression<Func<TSource, TSelector>> selector, Expression<Func<TSource, TGroupSelector>> groupSelector) : base(selector)
         {
             SelectedValues = new List<TSelector>();
 
@@ -128,7 +128,7 @@ namespace GravityCTRL.FilterChili
                 return;
             }
 
-            SelectedValues = _availableValues.Where(group => selectedValues.Contains(@group.GroupIdentifier)).Select(group => @group.Value).ToList();
+            SelectedValues = _availableValues.Where(group => selectedValues.Contains(group.GroupIdentifier)).Select(group => group.Value).ToList();
             _selectableValues = null;
             _needsToBeResolved = true;
         }
