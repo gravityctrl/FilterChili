@@ -153,6 +153,16 @@ namespace GravityCTRL.FilterChili.Tests
             filterContext.TrySet(_notExistingFilterObject).Should().BeFalse();
         }
 
+        [Fact]
+        public void Should_Return_Expected_Entities_When_Applying_Search()
+        {
+            var filterContext = new ProductFilterContext(CreateTestProducts().AsQueryable());
+            filterContext.SetSearch("cheese");
+
+            var results = filterContext.ApplyFilters();
+            results.Should().OnlyContain(result => result.Name.ToLowerInvariant() == "cheese");
+        }
+
         [NotNull]
         private static IEnumerable<Product> CreateTestProducts()
         {

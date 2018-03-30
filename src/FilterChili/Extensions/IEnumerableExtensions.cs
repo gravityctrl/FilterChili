@@ -14,15 +14,30 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Extensions
 {
     internal static class EnumerableExtensions
     {
-        public static Expression Or(this IEnumerable<Expression> expressions)
+        [CanBeNull]
+        public static Expression Or([NotNull] this IEnumerable<Expression> expressions)
+        {
+            return CreateExpression(Expression.Or, expressions);
+        }
+
+        [CanBeNull]
+        public static Expression And([NotNull] this IEnumerable<Expression> expressions)
+        {
+            return CreateExpression(Expression.AndAlso, expressions);
+        }
+
+        [CanBeNull]
+        private static Expression CreateExpression(Func<Expression, Expression, BinaryExpression> binaryExpression, [NotNull] IEnumerable<Expression> expressions)
         {
             var expressionList = expressions as IList<Expression> ?? expressions.ToList();
 
@@ -39,7 +54,7 @@ namespace GravityCTRL.FilterChili.Extensions
 
             for (var index = 1; index < expressionList.Count; index++)
             {
-                expression = Expression.Or(expression, expressionList[index]);
+                expression = binaryExpression(expressionList[index], expression);
             }
 
             return expression;

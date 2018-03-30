@@ -18,6 +18,7 @@ using System;
 using System.Linq.Expressions;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Resolvers
@@ -49,7 +50,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
         private sealed class TestResolver : RangeResolver<GenericSource, int>
         {
-            internal TestResolver(Expression<Func<GenericSource, int>> selector) : base(selector, 1, 2) { }
+            internal TestResolver([NotNull] Expression<Func<GenericSource, int>> selector) : base(selector, 1, 2) { }
         }
     }
 }

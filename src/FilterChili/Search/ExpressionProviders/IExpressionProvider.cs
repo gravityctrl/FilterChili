@@ -15,13 +15,16 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Reflection;
+using System.Linq.Expressions;
+using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Expressions
+namespace GravityCTRL.FilterChili.Search.ExpressionProviders
 {
-    internal static class MethodExpressions
+    internal interface IExpressionProvider<TSource>
     {
-        public static readonly MethodInfo StringContainsExpression = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-        public static readonly MethodInfo ToLowerExpression = typeof(string).GetMethod("ToLower", new Type[] {});
+        bool AcceptsMultipleSearchInputs { get; }
+
+        [NotNull]
+        Expression SearchExpression([NotNull] Expression<Func<TSource, string>> searchSelector, string search);
     }
 }

@@ -54,6 +54,7 @@ namespace GravityCTRL.FilterChili
 
         public override string FilterType { get; } = "Group";
 
+        [NotNull]
         [UsedImplicitly]
         public IReadOnlyList<Group<TGroupSelector, TSelector>> Groups => CombineLists();
 
@@ -97,7 +98,7 @@ namespace GravityCTRL.FilterChili
         #region Public Methods
 
         [UsedImplicitly]
-        public void Set(IEnumerable<TSelector> selectedValues)
+        public void Set([NotNull] IEnumerable<TSelector> selectedValues)
         {
             SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
             _selectableValues = null;
@@ -195,7 +196,7 @@ namespace GravityCTRL.FilterChili
             return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
         }
 
-        internal override async Task SetAvailableEntities(IQueryable<TSource> queryable)
+        internal override async Task SetAvailableEntities([NotNull] IQueryable<TSource> queryable)
         {
             var groupQueryable = queryable.Select(_selectKeyValuePairExpression);
             _availableValues = groupQueryable is IAsyncEnumerable<KeyValuePair>
@@ -203,7 +204,7 @@ namespace GravityCTRL.FilterChili
                 : groupQueryable.Distinct().ToList();
         }
 
-        internal override async Task SetSelectableEntities(IQueryable<TSource> queryable)
+        internal override async Task SetSelectableEntities([NotNull] IQueryable<TSource> queryable)
         {
             _selectableValues = queryable is IAsyncEnumerable<TSource>
                 ? await queryable.Select(Selector).Distinct().ToListAsync()
@@ -214,6 +215,7 @@ namespace GravityCTRL.FilterChili
 
         #region Private Methods
 
+        [NotNull]
         private IReadOnlyList<Group<TGroupSelector, TSelector>> CombineLists()
         {
             if (_availableValues == null)
@@ -259,6 +261,8 @@ namespace GravityCTRL.FilterChili
             foreach (var availableValue in _availableValues)
             {
                 var key = availableValue.GroupIdentifier;
+                
+                // ReSharper disable once CompareNonConstrainedGenericWithNull
                 if (key == null)
                 {
                     if (useDefaultIdentifier)

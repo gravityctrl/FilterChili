@@ -23,6 +23,21 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
     public sealed class ProductFilterContext : FilterContext<Product>
     {
         [UsedImplicitly]
+        public SearchSpecification<Product> NameSearch { get; set; }
+
+        [UsedImplicitly]
+        public SearchSpecification<Product> CategorySearch { get; set; }
+
+        [UsedImplicitly]
+        public SearchSpecification<Product> IdSearch { get; set; }
+
+        [UsedImplicitly]
+        public SearchSpecification<Product> RatingSearch { get; set; }
+
+        [UsedImplicitly]
+        public SearchSpecification<Product> SoldSearch { get; set; }
+
+        [UsedImplicitly]
         public GroupResolver<Product, string, string> NameFilter { get; set; }
 
         [UsedImplicitly]
@@ -36,6 +51,12 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
         protected override void Configure(ContextOptions<Product> options)
         {
             options.CalculationStrategy = CalculationStrategy.Full;
+
+            NameSearch = options.Search(product => product.Name);
+            CategorySearch = options.Search(product => product.Category);
+            IdSearch = options.Search(product => product.Id.ToString()).UseEquals();
+            RatingSearch = options.Search(product => product.Rating.ToString()).UseEquals();
+            SoldSearch = options.Search(product => product.Sold.ToString()).UseEquals();
 
             NameFilter = options.Filter(product => product.Name).WithGroup(product => product.Category).UseDefaultGroup("Unknown");
             RatingFilter = options.Filter(product => product.Rating).WithRange();

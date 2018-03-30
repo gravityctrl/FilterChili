@@ -53,7 +53,7 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public TSelector SelectedValue { get; private set; }
 
-        internal ComparisonResolver(Comparer<TSource, TSelector> comparer, Expression<Func<TSource, TSelector>> selector) : base(selector)
+        internal ComparisonResolver(Comparer<TSource, TSelector> comparer, [NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector)
         {
             _comparer = comparer;
             _needsToBeResolved = true;
@@ -84,12 +84,12 @@ namespace GravityCTRL.FilterChili
             return _comparer.FilterExpression(Selector, SelectedValue);
         }
 
-        internal override async Task SetAvailableEntities(IQueryable<TSource> queryable)
+        internal override async Task SetAvailableEntities([NotNull] IQueryable<TSource> queryable)
         {
             TotalRange = await SetRange(queryable.Select(Selector));
         }
 
-        internal override async Task SetSelectableEntities(IQueryable<TSource> queryable)
+        internal override async Task SetSelectableEntities([NotNull] IQueryable<TSource> queryable)
         {
             SelectableRange = await SetRange(queryable.Select(Selector));
         }

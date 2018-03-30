@@ -17,6 +17,7 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Extensions
 {
@@ -24,7 +25,7 @@ namespace GravityCTRL.FilterChili.Extensions
     {
         private const string GENERIC_MARKER = "`";
 
-        public static string FormattedName(this Type type)
+        public static string FormattedName([NotNull] this Type type)
         {
             if (!type.IsGenericType)
             {
@@ -36,10 +37,33 @@ namespace GravityCTRL.FilterChili.Extensions
             return $"{name}<{genericArguments}>";
         }
 
-        public static string Name<TSource, TSelector>(this Expression<Func<TSource, TSelector>> selector)
+        [CanBeNull]
+        public static string Name<TSource, TSelector>([NotNull] this Expression<Func<TSource, TSelector>> selector)
         {
-            var memberExpression = selector.Body as MemberExpression;
-            return memberExpression?.Member.Name;
+            return ExtractExpressionName(selector.Body);
+        }
+
+        private static string ExtractExpressionName(Expression expression)
+        {
+            while (true)
+            {
+                switch (expression)
+                {
+                    case MemberExpression memberExpression:
+                    {
+                        return memberExpression.Member.Name;
+                    }
+                    case MethodCallExpression methodCallExpression:
+                    {
+                        expression = methodCallExpression.Object;
+                        continue;
+                    }
+                    default:
+                    {
+                        return null;
+                    }
+                }
+            }
         }
     }
 }

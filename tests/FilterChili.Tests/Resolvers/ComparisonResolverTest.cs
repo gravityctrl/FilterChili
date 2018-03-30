@@ -209,7 +209,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
         private sealed class TestComparisonResolver : ComparisonResolver<GenericSource, int>
         {
-            internal TestComparisonResolver(Comparer<GenericSource, int> comparer, Expression<Func<GenericSource, int>> selector) : base(comparer, selector) {}
+            internal TestComparisonResolver(Comparer<GenericSource, int> comparer, [NotNull] Expression<Func<GenericSource, int>> selector) : base(comparer, selector) {}
         }
 
         private sealed class TestComparer : Comparer<GenericSource, int>

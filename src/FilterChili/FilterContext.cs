@@ -53,6 +53,12 @@ namespace GravityCTRL.FilterChili
         }
 
         [UsedImplicitly]
+        public void SetSearch(string search)
+        {
+            _contextOptions.SetSearch(search);
+        }
+
+        [UsedImplicitly]
         public bool TrySet([CanBeNull] JArray filterTokens)
         {
             return filterTokens?.All(TrySet) ?? false;
@@ -61,12 +67,7 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public bool TrySet([CanBeNull] JToken filterToken)
         {
-            if (filterToken == null)
-            {
-                return false;
-            }
-
-            var name = filterToken.Value<string>("name");
+            var name = filterToken?.Value<string>("name");
             if (string.IsNullOrWhiteSpace(name))
             {
                 return false;

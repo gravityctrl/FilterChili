@@ -15,13 +15,20 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Reflection;
+using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Phonetics;
 
-namespace GravityCTRL.FilterChili.Expressions
+namespace GravityCTRL.FilterChili.Search.ExpressionProviders
 {
-    internal static class MethodExpressions
+    internal sealed class GermanSoundexExpressionProvider<TSource> : IExpressionProvider<TSource>
     {
-        public static readonly MethodInfo StringContainsExpression = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-        public static readonly MethodInfo ToLowerExpression = typeof(string).GetMethod("ToLower", new Type[] {});
+        public bool AcceptsMultipleSearchInputs { get; } = true;
+
+        public Expression SearchExpression(Expression<Func<TSource, string>> searchSelector, string search)
+        {
+            var compiledExpression = searchSelector.Compile();
+            Expression<Func<TSource, bool>> expression = entity => compiledExpression(entity).ToGermanSoundex().Contains(search.ToGermanSoundex());
+            return expression.Body;
+        }
     }
 }

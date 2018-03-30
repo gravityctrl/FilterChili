@@ -15,13 +15,16 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System.Linq.Expressions;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Expressions
 {
     internal static class PredicateRewriter
     {
-        public static Expression Rewrite(ParameterExpression parameterExpression, Expression expression)
+        [NotNull]
+        public static Expression Rewrite([NotNull] ParameterExpression parameterExpression, [NotNull] Expression expression)
         {
+            // ReSharper disable once AssignNullToNotNullAttribute
             return new PredicateRewriterVisitor(parameterExpression).Visit(expression);
         }
 

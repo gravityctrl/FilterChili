@@ -24,6 +24,7 @@ using GravityCTRL.FilterChili.Tests.Shared.Models;
 using GravityCTRL.FilterChili.Tests.Shared.Services;
 using GravityCTRL.FilterChili.Tests.Shared.Utils;
 using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace GravityCTRL.FilterChili.TestConsole
 {
@@ -31,8 +32,9 @@ namespace GravityCTRL.FilterChili.TestConsole
     // ReSharper disable once MemberCanBeInternal
     public class Program
     {
-        private const int MAX_PRINTED_RESULTS = 5;
-        private const int ENTITY_AMOUNT = 100_000;
+        private const int MAX_PRINTED_RESULTS = 10;
+        private const int ENTITY_AMOUNT = 10_000;
+        private const bool SET_FILTERS = true;
 
         public static void Main()
         {
@@ -43,22 +45,55 @@ namespace GravityCTRL.FilterChili.TestConsole
                 var service = new ProductService(dataContext);
                 service.AddRange(CreateTestProducts()).Wait();
 
-                var filterContext = new ProductFilterContext(service.Entities);
-
-                var duration = Benchmark.Measure(() =>
+                string readline = null;
+                do
                 {
-                    filterContext.TrySet("Rating", 1, 7);
-                    filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
-                    filterContext.TrySet("Sold", 600);
-                    PerformAnalysis(filterContext).Wait();
-                });
+                    var input = readline;
+                    Console.Clear();
+                    if (string.Equals(input, "exit", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
 
-                Console.WriteLine("Duration {0}", duration);
+                    var filterContext = new ProductFilterContext(service.Entities);
+
+                    var duration1 = Benchmark.Measure(() =>
+                    {
+                        filterContext.SetSearch(input);
+
+                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                        // ReSharper disable once InvertIf
+                        if (SET_FILTERS)
+                        {
+                            filterContext.TrySet("Rating", 1, 7);
+                            filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
+                            filterContext.TrySet("Sold", 600);
+                        }
+                    });
+
+                    // ReSharper disable once ImplicitlyCapturedClosure
+                    var duration2 = Benchmark.Measure(() =>
+                    {
+                        PerformResultAnalysis(filterContext).Wait();
+                    });
+
+                    // ReSharper disable once ImplicitlyCapturedClosure
+                    var duration3 = Benchmark.Measure(() =>
+                    {
+                        PerformFilterAnalysis(filterContext).Wait();
+                    });
+
+                    Console.WriteLine("Duration {0}", duration1);
+                    Console.WriteLine("Duration {0}", duration2);
+                    Console.WriteLine("Duration {0}", duration3);
+
+                    Console.Write($"{Environment.NewLine}ENTER SEARCH TERMS: ");
+                    readline = Console.ReadLine()?.ToLowerInvariant();
+                }
+                while (!string.Equals(readline, "exit", StringComparison.OrdinalIgnoreCase));
 
                 dataContext.Delete();
             }
-
-            Console.ReadLine();
         }
 
         private static IEnumerable<Product> CreateTestProducts()
@@ -73,12 +108,15 @@ namespace GravityCTRL.FilterChili.TestConsole
             return testProducts.GenerateLazy(ENTITY_AMOUNT);
         }
 
-        private static async Task PerformAnalysis([NotNull] ProductFilterContext context)
+        private static async Task PerformResultAnalysis([NotNull] ProductFilterContext context)
         {
             var filterResults = context.ApplyFilters().Take(MAX_PRINTED_RESULTS);
-            var evaluatedFilterResults = filterResults.ToList();
+            var evaluatedFilterResults = await filterResults.ToListAsync();
             Console.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
+        }
 
+        private static async Task PerformFilterAnalysis([NotNull] ProductFilterContext context)
+        {
             var domains = await context.Domains();
             Console.WriteLine(JsonUtils.Convert(domains));
         }
