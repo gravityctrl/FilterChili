@@ -29,7 +29,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         [UsedImplicitly]
         public string Name { get; protected set; }
 
-        protected DomainResolver(string name)
+        internal DomainResolver(string name)
         {
             Name = name;
         }
@@ -57,7 +57,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             GenericSourceType = typeof(TSource);
         }
 
-        protected DomainResolver(string name, Type type) : base(name)
+        internal DomainResolver(string name, Type type) : base(name)
         {
             _selectorType = type;
         }
@@ -69,7 +69,7 @@ namespace GravityCTRL.FilterChili.Resolvers
     {
         protected Expression<Func<TSource, TSelector>> Selector { get; }
 
-        protected internal DomainResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector.Name(), typeof(TSelector))
+        internal DomainResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector.Name(), typeof(TSelector))
         {
             Selector = selector;
         }
@@ -95,7 +95,7 @@ namespace GravityCTRL.FilterChili.Resolvers
     {
         private readonly TDomainResolver _this;
 
-        protected DomainResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector)
+        internal DomainResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector)
         {
             _this = (TDomainResolver)this;
         }

@@ -50,6 +50,8 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal abstract bool TrySet(JToken domainToken);
 
+        internal FilterSelector() {}
+
         #endregion
     }
 
@@ -75,7 +77,7 @@ namespace GravityCTRL.FilterChili.Selectors
             }
         }
 
-        protected internal FilterSelector(Expression<Func<TSource, TSelector>> selector)
+        internal FilterSelector(Expression<Func<TSource, TSelector>> selector)
         {
             Selector = selector;
         }
