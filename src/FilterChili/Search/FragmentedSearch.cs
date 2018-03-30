@@ -39,9 +39,9 @@ namespace GravityCTRL.FilterChili.Search
         {
             var stringBuilder = new StringBuilder();
 
-            var waitForEndQuote = false;
             var shallExclude = false;
             string propertyName = null;
+            var quoteCount = 0;
 
             Fragment CreateClassifiedFragment()
             {
@@ -62,10 +62,10 @@ namespace GravityCTRL.FilterChili.Search
                     
                     if (shallExclude)
                     {
-                        if (waitForEndQuote)
+                        if (quoteCount > 0)
                         {
                             fragment = new ConstrainedExcludeFragment(FragmentType.Phrase, phrase, propertyName);
-                            waitForEndQuote = false;
+                            quoteCount = 0;
                         }
                         else
                         {
@@ -76,10 +76,10 @@ namespace GravityCTRL.FilterChili.Search
                     }
                     else
                     {
-                        if (waitForEndQuote)
+                        if (quoteCount > 0)
                         {
                             fragment = new ConstrainedIncludeFragment(FragmentType.Phrase, phrase, propertyName);
-                            waitForEndQuote = false;
+                            quoteCount = 0;
                         }
                         else
                         {
@@ -93,10 +93,10 @@ namespace GravityCTRL.FilterChili.Search
                 {
                     if (shallExclude)
                     {
-                        if (waitForEndQuote)
+                        if (quoteCount > 0)
                         {
                             fragment = new ExcludeFragment(FragmentType.Phrase, phrase);
-                            waitForEndQuote = false;
+                            quoteCount = 0;
                         }
                         else
                         {
@@ -107,10 +107,10 @@ namespace GravityCTRL.FilterChili.Search
                     }
                     else
                     {
-                        if (waitForEndQuote)
+                        if (quoteCount > 0)
                         {
                             fragment = new IncludeFragment(FragmentType.Phrase, phrase);
-                            waitForEndQuote = false;
+                            quoteCount = 0;
                         }
                         else
                         {
@@ -130,11 +130,7 @@ namespace GravityCTRL.FilterChili.Search
                     var character = Convert.ToChar(readCharacter);
                     if (character == DOUBLE_QUOTE)
                     {
-                        if (!waitForEndQuote)
-                        {
-                            waitForEndQuote = true;
-                        }
-                        else
+                        if (quoteCount == 2)
                         {
                             var fragment = CreateClassifiedFragment();
                             if (fragment != null)
@@ -142,10 +138,12 @@ namespace GravityCTRL.FilterChili.Search
                                 yield return fragment;
                             }
                         }
+
+                        quoteCount++;
                         continue;
                     }
 
-                    if (waitForEndQuote)
+                    if (quoteCount == 1)
                     {
                         stringBuilder.Append(character);
                         continue;
@@ -156,12 +154,22 @@ namespace GravityCTRL.FilterChili.Search
                     {
                         case EXCLUDE_CHARACTER:
                         {
+                            if (quoteCount == 2)
+                            {
+                                var fragment = CreateClassifiedFragment();
+                                if (fragment != null)
+                                {
+                                    yield return fragment;
+                                }
+                            }
+
                             shallExclude = true;
                             continue;
                         }
                         case ACTION_CHARACTER:
-                        { 
+                        {
                             propertyName = ExtractPhrase(stringBuilder);
+                            quoteCount = 0;
                             continue;
                         }
                     }
