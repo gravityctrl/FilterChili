@@ -67,12 +67,7 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public bool TrySet([CanBeNull] JToken filterToken)
         {
-            if (filterToken == null)
-            {
-                return false;
-            }
-
-            var name = filterToken.Value<string>("name");
+            var name = filterToken?.Value<string>("name");
             if (string.IsNullOrWhiteSpace(name))
             {
                 return false;

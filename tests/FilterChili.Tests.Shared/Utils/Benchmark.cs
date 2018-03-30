@@ -16,12 +16,13 @@
 
 using System;
 using System.Diagnostics;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Tests.Shared.Utils
 {
     public static class Benchmark
     {
-        public static TimeSpan Measure(Action action)
+        public static TimeSpan Measure([NotNull] Action action)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();

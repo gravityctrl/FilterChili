@@ -175,6 +175,7 @@ namespace GravityCTRL.FilterChili
 
         #region Internal Methods
 
+        [CanBeNull]
         internal FilterSelector<TSource> GetFilter(string name)
         {
             return _filters.SingleOrDefault(filter => filter.HasName(name));

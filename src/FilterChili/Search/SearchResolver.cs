@@ -71,6 +71,7 @@ namespace GravityCTRL.FilterChili.Search
             _searchers.Add(searchSelector);
         }
 
+        [CanBeNull]
         private Expression<Func<TSource, bool>> SetSearchExpression(FragmentedSearch fragmentedSearch)
         {
             if (!_searchers.Any())
@@ -177,7 +178,8 @@ namespace GravityCTRL.FilterChili.Search
                 }
             }
 
-            return Expression.Not(CreateExcludeExpressions().Or());
+            var expression = CreateExcludeExpressions().Or();
+            return expression == null ? null : Expression.Not(expression);
         }
     }
 }

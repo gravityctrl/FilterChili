@@ -41,11 +41,13 @@ namespace GravityCTRL.FilterChili.Search
             UseContains();
         }
 
+        [NotNull]
         internal Expression IncludeExpression(string search)
         {
             return _includeExpressionProvider.SearchExpression(_selector, search);
         }
 
+        [NotNull]
         internal Expression ExcludeExpression(string search)
         {
             return _excludeExpressionProvider.SearchExpression(_selector, search);
@@ -100,6 +102,7 @@ namespace GravityCTRL.FilterChili.Search
     {
         bool AcceptsMultipleSearchInputs { get; }
 
+        [NotNull]
         Expression SearchExpression([NotNull] Expression<Func<TSource, string>> searchSelector, string search);
     }
 

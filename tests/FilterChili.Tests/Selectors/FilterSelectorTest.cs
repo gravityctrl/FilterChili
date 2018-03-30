@@ -189,12 +189,12 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
 
         private sealed class TestComparisonResolver : ComparisonResolver<GenericSource, int>
         {
-            internal TestComparisonResolver(Comparer<GenericSource, int> comparer, Expression<Func<GenericSource, int>> selector) : base(comparer, selector) {}
+            internal TestComparisonResolver(Comparer<GenericSource, int> comparer, [NotNull] Expression<Func<GenericSource, int>> selector) : base(comparer, selector) {}
         }
 
         private sealed class TestRangeResolver : RangeResolver<GenericSource, int>
         {
-            internal TestRangeResolver(Expression<Func<GenericSource, int>> selector) : base(selector, int.MinValue, int.MaxValue) {}
+            internal TestRangeResolver([NotNull] Expression<Func<GenericSource, int>> selector) : base(selector, int.MinValue, int.MaxValue) {}
         }
 
         private sealed class TestComparer : Comparer<GenericSource, int>

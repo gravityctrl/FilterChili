@@ -25,19 +25,19 @@ namespace GravityCTRL.FilterChili.Extensions
     internal static class EnumerableExtensions
     {
         [CanBeNull]
-        public static Expression Or(this IEnumerable<Expression> expressions)
+        public static Expression Or([NotNull] this IEnumerable<Expression> expressions)
         {
             return CreateExpression(Expression.Or, expressions);
         }
 
         [CanBeNull]
-        public static Expression And(this IEnumerable<Expression> expressions)
+        public static Expression And([NotNull] this IEnumerable<Expression> expressions)
         {
             return CreateExpression(Expression.And, expressions);
         }
 
         [CanBeNull]
-        private static Expression CreateExpression(Func<Expression, Expression, BinaryExpression> binaryExpression, IEnumerable<Expression> expressions)
+        private static Expression CreateExpression(Func<Expression, Expression, BinaryExpression> binaryExpression, [NotNull] IEnumerable<Expression> expressions)
         {
             var expressionList = expressions as IList<Expression> ?? expressions.ToList();
 

@@ -55,7 +55,7 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public Range<TSelector> SelectedRange { get; }
 
-        protected internal RangeResolver(Expression<Func<TSource, TSelector>> selector, TSelector min, TSelector max) : base(selector)
+        protected internal RangeResolver([NotNull] Expression<Func<TSource, TSelector>> selector, TSelector min, TSelector max) : base(selector)
         {
             _needsToBeResolved = true;
             _min = min;
@@ -122,12 +122,12 @@ namespace GravityCTRL.FilterChili
             return null;
         }
 
-        internal override async Task SetAvailableEntities(IQueryable<TSource> queryable)
+        internal override async Task SetAvailableEntities([NotNull] IQueryable<TSource> queryable)
         {
             TotalRange = await SetRange(queryable.Select(Selector));
         }
 
-        internal override async Task SetSelectableEntities(IQueryable<TSource> queryable)
+        internal override async Task SetSelectableEntities([NotNull] IQueryable<TSource> queryable)
         {
             SelectableRange = await SetRange(queryable.Select(Selector));
         }

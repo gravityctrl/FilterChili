@@ -113,9 +113,12 @@ namespace GravityCTRL.FilterChili.Tests
             _testInstance.Filter(source => source.Double).WithLessThanOrEqual();
             _testInstance.Filter(source => source.Float).WithRange();
 
+            // ReSharper disable PossibleNullReferenceException
             _testInstance.GetFilter("Int").Domain().Name.Should().Be("Int");
             _testInstance.GetFilter("Double").Domain().Name.Should().Be("Double");
             _testInstance.GetFilter("Float").Domain().Name.Should().Be("Float");
+            // ReSharper restore PossibleNullReferenceException
+
             _testInstance.GetFilter("Byte").Should().BeNull();
         }
 

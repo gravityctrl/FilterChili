@@ -52,10 +52,11 @@ namespace GravityCTRL.FilterChili
         [CanBeNull]
         private IReadOnlyList<TSelector> _availableValues;
 
+        [NotNull]
         [UsedImplicitly]
         public IReadOnlyList<Item<TSelector>> Values => CombineLists();
 
-        public ListResolver(Expression<Func<TSource, TSelector>> selector) : base(selector)
+        public ListResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector)
         {
             _needsToBeResolved = true;
             SelectedValues = new List<TSelector>();
@@ -64,7 +65,7 @@ namespace GravityCTRL.FilterChili
         #region Public Methods
 
         [UsedImplicitly]
-        public void Set(IEnumerable<TSelector> selectedValues)
+        public void Set([NotNull] IEnumerable<TSelector> selectedValues)
         {
             SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
             _selectableValues = null;
@@ -114,14 +115,14 @@ namespace GravityCTRL.FilterChili
             return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
         }
 
-        internal override async Task SetAvailableEntities(IQueryable<TSource> queryable)
+        internal override async Task SetAvailableEntities([NotNull] IQueryable<TSource> queryable)
         {
             _availableValues = queryable is IAsyncEnumerable<TSource>
                 ? await queryable.Select(Selector).Distinct().ToListAsync()
                 : queryable.Select(Selector).Distinct().ToList();
         }
 
-        internal override async Task SetSelectableEntities(IQueryable<TSource> queryable)
+        internal override async Task SetSelectableEntities([NotNull] IQueryable<TSource> queryable)
         {
             _selectableValues = queryable is IAsyncEnumerable<TSource>
                 ? await queryable.Select(Selector).Distinct().ToListAsync()
@@ -132,6 +133,7 @@ namespace GravityCTRL.FilterChili
 
         #region Private Methods
 
+        [NotNull]
         private IReadOnlyList<Item<TSelector>> CombineLists()
         {
             if (_availableValues == null)

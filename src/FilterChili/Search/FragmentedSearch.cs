@@ -29,13 +29,13 @@ namespace GravityCTRL.FilterChili.Search
         private const char ACTION_CHARACTER = ':';
         private const char EXCLUDE_CHARACTER = '-';
 
-        public FragmentedSearch(string searchString)
+        public FragmentedSearch([NotNull] string searchString)
         {
             var phrases = CreateClassifiedFragments(searchString);
             AddRange(phrases);
         }
 
-        private static IEnumerable<Fragment> CreateClassifiedFragments(string text)
+        private static IEnumerable<Fragment> CreateClassifiedFragments([NotNull] string text)
         {
             var stringBuilder = new StringBuilder();
 
