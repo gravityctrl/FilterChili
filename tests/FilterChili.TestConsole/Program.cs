@@ -23,10 +23,12 @@ using GravityCTRL.FilterChili.Tests.Shared.Contexts;
 using GravityCTRL.FilterChili.Tests.Shared.Models;
 using GravityCTRL.FilterChili.Tests.Shared.Services;
 using GravityCTRL.FilterChili.Tests.Shared.Utils;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.TestConsole
 {
     // ReSharper disable once ClassNeverInstantiated.Global
+    // ReSharper disable once MemberCanBeInternal
     public class Program
     {
         private const int MAX_PRINTED_RESULTS = 5;
@@ -67,10 +69,11 @@ namespace GravityCTRL.FilterChili.TestConsole
             testProducts.RuleFor(product => product.Sold, faker => faker.Random.Int(0, 1000));
             testProducts.RuleFor(product => product.Rating, faker => faker.Random.Int(1, 10));
             testProducts.RuleFor(product => product.Name, faker => faker.Commerce.Product());
+            testProducts.RuleFor(product => product.Category, faker => faker.Commerce.ProductMaterial());
             return testProducts.GenerateLazy(ENTITY_AMOUNT);
         }
 
-        private static async Task PerformAnalysis(ProductFilterContext context)
+        private static async Task PerformAnalysis([NotNull] ProductFilterContext context)
         {
             var filterResults = context.ApplyFilters().Take(MAX_PRINTED_RESULTS);
             var evaluatedFilterResults = filterResults.ToList();

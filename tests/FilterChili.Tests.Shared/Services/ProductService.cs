@@ -18,11 +18,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Tests.Shared.Contexts;
 using GravityCTRL.FilterChili.Tests.Shared.Models;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace GravityCTRL.FilterChili.Tests.Shared.Services
 {
-    public class ProductService
+    public sealed class ProductService
     {
         private readonly DataContext _context;
 
@@ -33,7 +34,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Services
             _context = context;
         }
 
-        public async Task AddRange(IEnumerable<Product> products)
+        public async Task AddRange([NotNull] IEnumerable<Product> products)
         {
             await Entities.AddRangeAsync(products);
             await _context.SaveChangesAsync();

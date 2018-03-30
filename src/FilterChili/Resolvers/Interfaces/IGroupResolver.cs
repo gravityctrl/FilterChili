@@ -15,13 +15,12 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Comparison;
+using System.Collections.Generic;
 
-namespace GravityCTRL.FilterChili.Resolvers.Comparison
+namespace GravityCTRL.FilterChili.Resolvers.Interfaces
 {
-    public class LongComparisonResolver<TSource> : ComparisonResolver<TSource, long>
+    internal interface IGroupResolver<in TSelector> where TSelector : IComparable
     {
-        internal LongComparisonResolver(Comparer<TSource, long> comparer, Expression<Func<TSource, long>> selector) : base(comparer, selector) { }
+        void Set(IEnumerable<TSelector> selectedValues);
     }
 }

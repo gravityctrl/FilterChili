@@ -14,35 +14,30 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace GravityCTRL.FilterChili.Expressions
 {
-    public static class EnumerableExtensions
+    internal static class PredicateRewriter
     {
-        public static Expression Or(this IEnumerable<Expression> expressions)
+        public static Expression Rewrite(ParameterExpression parameterExpression, Expression expression)
         {
-            var expressionList = expressions as IList<Expression> ?? expressions.ToList();
+            return new PredicateRewriterVisitor(parameterExpression).Visit(expression);
+        }
 
-            if (expressionList.Count == 0)
+        private sealed class PredicateRewriterVisitor : ExpressionVisitor
+        {
+            private readonly ParameterExpression _parameterExpression;
+
+            public PredicateRewriterVisitor(ParameterExpression parameterExpression)
             {
-                return null;
+                _parameterExpression = parameterExpression;
             }
 
-            var expression = expressionList[0];
-            if (expressionList.Count == 1)
+            protected override Expression VisitParameter(ParameterExpression node)
             {
-                return expression;
+                return _parameterExpression;
             }
-
-            for (var index = 1; index < expressionList.Count; index++)
-            {
-                expression = Expression.Or(expression, expressionList[index]);
-            }
-
-            return expression;
         }
     }
 }

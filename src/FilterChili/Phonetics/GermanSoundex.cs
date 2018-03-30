@@ -17,10 +17,11 @@
 using System;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Phonetics
 {
-    public static class GermanSoundex
+    internal static class GermanSoundex
     {
         public static string ToGermanSoundex(this string word)
         {
@@ -28,10 +29,10 @@ namespace GravityCTRL.FilterChili.Phonetics
 
             var splitters = word.Where(character => !char.IsLetter(character));
             var words = word.Split(splitters.ToArray(), StringSplitOptions.RemoveEmptyEntries);
-            return string.Join(' ', words.Select(GermanSoundexForWord));
+            return string.Join(" ", words.Select(GermanSoundexForWord));
         }
 
-        private static string GermanSoundexForWord(string word)
+        private static string GermanSoundexForWord([NotNull] string word)
         {
             var sb = new StringBuilder();
             var length = word.Length;

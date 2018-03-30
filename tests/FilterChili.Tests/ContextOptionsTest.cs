@@ -27,7 +27,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests
 {
-    public class ContextOptionsTest
+    public sealed class ContextOptionsTest
     {
         private readonly ContextOptions<GenericSource> _testInstance;
 
@@ -75,8 +75,10 @@ namespace GravityCTRL.FilterChili.Tests
             _testInstance.Filter(source => source.UShort).Should().BeOfType<UShortFilterSelector<GenericSource>>();
 
             var domains = await _testInstance.Domains();
-            Action enumerateAction = () => domains.ToHashSet();
-            enumerateAction.Should().Throw<MissingResolverException>().Where(ex => ex.Message.EndsWith("FilterSelector<GenericSource>"));
+
+            // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+            Action enumerateAction = () => domains.ToList();
+            enumerateAction.Should().Throw<MissingResolverException>().Where(ex => ex.Message.EndsWith("FilterSelector<GenericSource>", StringComparison.Ordinal));
         }
 
         [Fact]

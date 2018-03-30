@@ -23,12 +23,13 @@ using FluentAssertions;
 using GravityCTRL.FilterChili.Tests.Shared.Contexts;
 using GravityCTRL.FilterChili.Tests.Shared.Models;
 using GravityCTRL.FilterChili.Tests.TestSupport.Utils;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests
 {
-    public class FilterContextTest
+    public sealed class FilterContextTest
     {
         private readonly JObject _rangeObject;
         private readonly JObject _listObject;
@@ -132,6 +133,13 @@ namespace GravityCTRL.FilterChili.Tests
         }
 
         [Fact]
+        public void Should_Not_Be_Able_To_Set_Null_Filter()
+        {
+            var filterContext = new ProductFilterContext(CreateTestProducts().AsQueryable());
+            filterContext.TrySet((JToken)null).Should().BeFalse();
+        }
+
+        [Fact]
         public void Should_Not_Be_Able_To_Set_Invalid_Filter()
         {
             var filterContext = new ProductFilterContext(CreateTestProducts().AsQueryable());
@@ -145,6 +153,7 @@ namespace GravityCTRL.FilterChili.Tests
             filterContext.TrySet(_notExistingFilterObject).Should().BeFalse();
         }
 
+        [NotNull]
         private static IEnumerable<Product> CreateTestProducts()
         {
             Randomizer.Seed = new Random(0);
@@ -153,6 +162,7 @@ namespace GravityCTRL.FilterChili.Tests
             testProducts.RuleFor(product => product.Sold, faker => faker.Random.Int(0, 1000));
             testProducts.RuleFor(product => product.Rating, faker => faker.Random.Int(1, 10));
             testProducts.RuleFor(product => product.Name, faker => faker.Commerce.Product());
+            testProducts.RuleFor(product => product.Category, faker => faker.Commerce.ProductMaterial());
             return testProducts.GenerateLazy(100).ToList();
         }
     }

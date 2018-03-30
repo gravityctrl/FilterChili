@@ -21,7 +21,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Comparison
 {
-    public class GreaterThanComparerTest
+    public sealed class GreaterThanComparerTest
     {
         private readonly GreaterThanComparer<Product, int> _testInstance;
 

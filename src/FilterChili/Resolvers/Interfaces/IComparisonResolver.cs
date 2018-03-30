@@ -15,12 +15,11 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq.Expressions;
 
-namespace GravityCTRL.FilterChili.Resolvers.Range
+namespace GravityCTRL.FilterChili.Resolvers.Interfaces
 {
-    public class ByteRangeResolver<TSource> : RangeResolver<TSource, byte>
+    internal interface IComparisonResolver<in TSelector> where TSelector : IComparable
     {
-        internal ByteRangeResolver(Expression<Func<TSource, byte>> selector) : base(selector, byte.MinValue, byte.MaxValue) {}
+        void Set(TSelector value);
     }
 }

@@ -19,15 +19,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Extensions;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Resolvers;
+using GravityCTRL.FilterChili.Resolvers.Interfaces;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
 {
-    public abstract class ListResolver<TSource, TSelector> : DomainResolver<ListResolver<TSource, TSelector>, TSource, TSelector> where TSelector : IComparable
+    public sealed class ListResolver<TSource, TSelector> 
+        : DomainResolver<ListResolver<TSource, TSelector>, TSource, TSelector>, IListResolver<TSelector>
+            where TSelector : IComparable
     {
         private bool _needsToBeResolved;
 
@@ -51,12 +55,15 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public IReadOnlyList<Item<TSelector>> Values => CombineLists();
 
-        protected internal ListResolver(Expression<Func<TSource, TSelector>> selector) : base(selector)
+        public ListResolver(Expression<Func<TSource, TSelector>> selector) : base(selector)
         {
             _needsToBeResolved = true;
             SelectedValues = new List<TSelector>();
         }
 
+        #region Public Methods
+
+        [UsedImplicitly]
         public void Set(IEnumerable<TSelector> selectedValues)
         {
             SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
@@ -64,6 +71,7 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
+        [UsedImplicitly]
         public void Set(params TSelector[] selectedValues)
         {
             SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
@@ -71,24 +79,40 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
-        public override bool TrySet(JToken domainToken)
+        #endregion
+
+        #region Public Overrides
+
+        [UsedImplicitly]
+        public override bool TrySet([CanBeNull] JToken domainToken)
         {
-            var valuesToken = domainToken.SelectToken("values");
+            var valuesToken = domainToken?.SelectToken("values");
             if (valuesToken == null)
             {
                 return false;
             }
 
-            var domain = new Set<TSelector>
-            {
-                Values = valuesToken.Values<TSelector>()
-            };
-
-            Set(domain.Values);
+            var values = valuesToken.Values<TSelector>();
+            Set(values);
             return true;
         }
 
+        #endregion
+
         #region Internal Methods
+
+        protected override Expression<Func<TSource, bool>> FilterExpression()
+        {
+            if (!SelectedValues.Any())
+            {
+                return null;
+            }
+
+            var selectedValueExpressions = SelectedValues.Select(selector => Expression.Constant(selector));
+            var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Equal(expression, Selector.Body));
+            var orExpression = equalsExpressions.Or();
+            return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
+        }
 
         internal override async Task SetAvailableEntities(IQueryable<TSource> queryable)
         {
@@ -125,7 +149,7 @@ namespace GravityCTRL.FilterChili
             return entities.Values.ToList();
         }
 
-        private static void SetSelectedStatus(IEnumerable<TSelector> selectedValues, IReadOnlyDictionary<TSelector, Item<TSelector>> dictionary)
+        private static void SetSelectedStatus([NotNull] IEnumerable<TSelector> selectedValues, IReadOnlyDictionary<TSelector, Item<TSelector>> dictionary)
         {
             foreach (var selectedValue in selectedValues)
             {
@@ -136,7 +160,7 @@ namespace GravityCTRL.FilterChili
             }
         }
 
-        private static void SetSelectableStatus(IEnumerable<TSelector> selectableValues, Dictionary<TSelector, Item<TSelector>> dictionary)
+        private static void SetSelectableStatus([NotNull] IEnumerable<TSelector> selectableValues, [NotNull] Dictionary<TSelector, Item<TSelector>> dictionary)
         {
             foreach (var selectable in dictionary.Values)
             {

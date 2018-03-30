@@ -38,12 +38,14 @@ namespace GravityCTRL.FilterChili
             return _contextOptions.ApplyFilters();
         }
 
+        [ItemNotNull]
         [UsedImplicitly]
         public async Task<IEnumerable<DomainResolver<TSource>>> Domains()
         {
             return await _contextOptions.Domains();
         }
 
+        [ItemNotNull]
         [UsedImplicitly]
         public async Task<IEnumerable<DomainResolver<TSource>>> Domains(CalculationStrategy calculationStrategy)
         {
@@ -51,14 +53,19 @@ namespace GravityCTRL.FilterChili
         }
 
         [UsedImplicitly]
-        public bool TrySet(JArray filterTokens)
+        public bool TrySet([CanBeNull] JArray filterTokens)
         {
-            return filterTokens.All(TrySet);
+            return filterTokens?.All(TrySet) ?? false;
         }
 
         [UsedImplicitly]
-        public bool TrySet(JToken filterToken)
+        public bool TrySet([CanBeNull] JToken filterToken)
         {
+            if (filterToken == null)
+            {
+                return false;
+            }
+
             var name = filterToken.Value<string>("name");
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -87,6 +94,6 @@ namespace GravityCTRL.FilterChili
             return _contextOptions.GetFilter(name)?.TrySet(min, max) ?? false;
         }
 
-        protected abstract void Configure(ContextOptions<TSource> options);
+        protected abstract void Configure([NotNull] ContextOptions<TSource> options);
     }
 }

@@ -22,12 +22,13 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Resolvers
 {
-    public class ComparisonResolverTest
+    public sealed class ComparisonResolverTest
     {
         private readonly ComparisonResolver<GenericSource, int> _testInstance;
 
@@ -206,15 +207,16 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             result2.Should().HaveCount(0);
         }
 
-        private class TestComparisonResolver : ComparisonResolver<GenericSource, int>
+        private sealed class TestComparisonResolver : ComparisonResolver<GenericSource, int>
         {
             internal TestComparisonResolver(Comparer<GenericSource, int> comparer, Expression<Func<GenericSource, int>> selector) : base(comparer, selector) {}
         }
 
-        private class TestComparer : Comparer<GenericSource, int>
+        private sealed class TestComparer : Comparer<GenericSource, int>
         {
             public override string FilterType { get; } = "TestComparer";
 
+            [NotNull]
             public override Expression<Func<GenericSource, bool>> FilterExpression(Expression<Func<GenericSource, int>> selector, int selectedValue)
             {
                 var valueConstant = Expression.Constant(selectedValue);

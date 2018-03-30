@@ -25,7 +25,7 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili
 {
-    public class ContextOptions<TSource>
+    public sealed class ContextOptions<TSource>
     {
         private readonly IQueryable<TSource> _queryable;
         private readonly List<FilterSelector<TSource>> _filters;
@@ -33,7 +33,7 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public CalculationStrategy CalculationStrategy { get; set; }
 
-        internal ContextOptions(IQueryable<TSource> queryable, Action<ContextOptions<TSource>> configure)
+        internal ContextOptions(IQueryable<TSource> queryable, [NotNull] Action<ContextOptions<TSource>> configure)
         {
             _queryable = queryable;
             _filters = new List<FilterSelector<TSource>>();
@@ -42,6 +42,7 @@ namespace GravityCTRL.FilterChili
 
         #region Filters
 
+        [NotNull]
         [UsedImplicitly]
         public ByteFilterSelector<TSource> Filter(Expression<Func<TSource, byte>> valueSelector)
         {
@@ -50,6 +51,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public CharFilterSelector<TSource> Filter(Expression<Func<TSource, char>> valueSelector)
         {
@@ -58,6 +60,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public DecimalFilterSelector<TSource> Filter(Expression<Func<TSource, decimal>> valueSelector)
         {
@@ -66,6 +69,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public DoubleFilterSelector<TSource> Filter(Expression<Func<TSource, double>> valueSelector)
         {
@@ -74,6 +78,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public FloatFilterSelector<TSource> Filter(Expression<Func<TSource, float>> valueSelector)
         {
@@ -82,6 +87,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public IntFilterSelector<TSource> Filter(Expression<Func<TSource, int>> valueSelector)
         {
@@ -90,6 +96,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public LongFilterSelector<TSource> Filter(Expression<Func<TSource, long>> valueSelector)
         {
@@ -98,6 +105,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public SByteFilterSelector<TSource> Filter(Expression<Func<TSource, sbyte>> valueSelector)
         {
@@ -106,6 +114,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public ShortFilterSelector<TSource> Filter(Expression<Func<TSource, short>> valueSelector)
         {
@@ -114,6 +123,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public StringFilterSelector<TSource> Filter(Expression<Func<TSource, string>> valueSelector)
         {
@@ -122,6 +132,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public UIntFilterSelector<TSource> Filter(Expression<Func<TSource, uint>> valueSelector)
         {
@@ -130,6 +141,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public ULongFilterSelector<TSource> Filter(Expression<Func<TSource, ulong>> valueSelector)
         {
@@ -138,6 +150,7 @@ namespace GravityCTRL.FilterChili
             return filter;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public UShortFilterSelector<TSource> Filter(Expression<Func<TSource, ushort>> valueSelector)
         {
@@ -161,11 +174,13 @@ namespace GravityCTRL.FilterChili
             return _filters.Aggregate(queryable, (current, filter) => filter.ApplyFilter(current));
         }
 
+        [ItemNotNull]
         internal async Task<IEnumerable<DomainResolver<TSource>>> Domains()
         {
             return await Domains(CalculationStrategy);
         }
 
+        [ItemNotNull]
         internal async Task<IEnumerable<DomainResolver<TSource>>> Domains(CalculationStrategy calculationStrategy)
         {
             if (!_filters.Any(f => f.NeedsToBeResolved))

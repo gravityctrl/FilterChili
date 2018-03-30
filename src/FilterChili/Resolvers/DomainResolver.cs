@@ -26,6 +26,7 @@ namespace GravityCTRL.FilterChili.Resolvers
 {
     public abstract class DomainResolver
     {
+        [UsedImplicitly]
         public string Name { get; protected set; }
 
         protected DomainResolver(string name)
@@ -36,7 +37,8 @@ namespace GravityCTRL.FilterChili.Resolvers
 
     public abstract class DomainResolver<TSource> : DomainResolver
     {
-        private readonly Type _sourceType;
+        // ReSharper disable once StaticMemberInGenericType
+        protected static readonly Type GenericSourceType;
         private readonly Type _selectorType;
 
         internal abstract bool NeedsToBeResolved { get; set; }
@@ -45,14 +47,18 @@ namespace GravityCTRL.FilterChili.Resolvers
         public abstract string FilterType { get; }
 
         [UsedImplicitly]
-        public string SourceType => _sourceType.Name;
+        public string SourceType => GenericSourceType.Name;
 
         [UsedImplicitly]
         public string TargetType => _selectorType.Name;
 
+        static DomainResolver()
+        {
+            GenericSourceType = typeof(TSource);
+        }
+
         protected DomainResolver(string name, Type type) : base(name)
         {
-            _sourceType = typeof(TSource);
             _selectorType = type;
         }
 
@@ -80,18 +86,25 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         internal abstract Task SetSelectableEntities(IQueryable<TSource> queryable);
 
+        [CanBeNull]
         protected abstract Expression<Func<TSource, bool>> FilterExpression();
     }
 
     public abstract class DomainResolver<TDomainResolver, TSource, TSelector> : DomainResolver<TSource, TSelector>
         where TSelector : IComparable where TDomainResolver : DomainResolver<TDomainResolver, TSource, TSelector>
     {
-        protected DomainResolver(Expression<Func<TSource, TSelector>> selector) : base(selector) {}
+        private readonly TDomainResolver _this;
 
+        protected DomainResolver(Expression<Func<TSource, TSelector>> selector) : base(selector)
+        {
+            _this = (TDomainResolver)this;
+        }
+
+        [UsedImplicitly]
         public TDomainResolver UseName(string name)
         {
             Name = name;
-            return (TDomainResolver)this;
+            return _this;
         }
     }
 }

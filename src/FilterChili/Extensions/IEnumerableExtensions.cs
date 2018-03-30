@@ -14,32 +14,35 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace GravityCTRL.FilterChili.Extensions
 {
-    internal static class TypeExtensions
+    internal static class EnumerableExtensions
     {
-        private const string GENERIC_MARKER = "`";
-
-        public static string FormattedName(this Type type)
+        public static Expression Or(this IEnumerable<Expression> expressions)
         {
-            if (!type.IsGenericType)
+            var expressionList = expressions as IList<Expression> ?? expressions.ToList();
+
+            if (expressionList.Count == 0)
             {
-                return type.Name;
+                return null;
             }
 
-            var name = type.Name.Substring(0, type.Name.LastIndexOf(GENERIC_MARKER, StringComparison.Ordinal));
-            var genericArguments = string.Join(",", type.GetGenericArguments().Select(FormattedName));
-            return $"{name}<{genericArguments}>";
-        }
+            var expression = expressionList[0];
+            if (expressionList.Count == 1)
+            {
+                return expression;
+            }
 
-        public static string Name<TSource, TSelector>(this Expression<Func<TSource, TSelector>> selector)
-        {
-            var memberExpression = selector.Body as MemberExpression;
-            return memberExpression?.Member.Name;
+            for (var index = 1; index < expressionList.Count; index++)
+            {
+                expression = Expression.Or(expression, expressionList[index]);
+            }
+
+            return expression;
         }
     }
 }

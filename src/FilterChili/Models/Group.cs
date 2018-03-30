@@ -15,12 +15,17 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq.Expressions;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Resolvers.Range
+namespace GravityCTRL.FilterChili.Models
 {
-    public class LongRangeResolver<TSource> : RangeResolver<TSource, long>
+    public sealed class Group<TGroupIdentifier, TValue> where TGroupIdentifier : IComparable where TValue : IComparable
     {
-        internal LongRangeResolver(Expression<Func<TSource, long>> selector) : base(selector, long.MinValue, long.MaxValue) { }
+        [UsedImplicitly]
+        public TGroupIdentifier Identifier { get; internal set; }
+
+        [UsedImplicitly]
+        public IReadOnlyList<Item<TValue>> Values { get; internal set; }
     }
 }

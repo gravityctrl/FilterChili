@@ -22,6 +22,8 @@ using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Exceptions;
 using GravityCTRL.FilterChili.Extensions;
 using GravityCTRL.FilterChili.Resolvers;
+using GravityCTRL.FilterChili.Resolvers.Interfaces;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Selectors
@@ -110,12 +112,14 @@ namespace GravityCTRL.FilterChili.Selectors
             await DomainResolver.SetSelectableEntities(selectableItems);
         }
 
+        [NotNull]
         internal override DomainResolver<TSource> Domain()
         {
-            return DomainResolver ?? throw new MissingResolverException(Name);
+            var resolver = DomainResolver ?? throw new MissingResolverException(Name);
+            return resolver;
         }
 
-        internal override bool HasName(string name)
+        internal override bool HasName([NotNull] string name)
         {
             return DomainResolver?.Name == name;
         }
@@ -160,38 +164,55 @@ namespace GravityCTRL.FilterChili.Selectors
 
         private bool TrySet(TSelector value)
         {
-            // ReSharper disable once InvertIf
-            if (DomainResolver is ComparisonResolver<TSource, TSelector> target)
+            switch (DomainResolver)
             {
-                target.Set(value);
-                return true;
+                case IComparisonResolver<TSelector> target:
+                {
+                    target.Set(value);
+                    return true;
+                }
+                default:
+                {
+                    return false;
+                }
             }
-
-            return false;
         }
 
         private bool TrySet(TSelector min, TSelector max)
         {
-            // ReSharper disable once InvertIf
-            if (DomainResolver is RangeResolver<TSource, TSelector> target)
+            switch (DomainResolver)
             {
-                target.Set(min, max);
-                return true;
+                case IRangeResolver<TSelector> target:
+                {
+                    target.Set(min, max);
+                    return true;
+                }
+                default:
+                {
+                    return false;
+                }
             }
-
-            return false;
         }
 
         private bool TrySet(IEnumerable<TSelector> values)
         {
-            // ReSharper disable once InvertIf
-            if (DomainResolver is ListResolver<TSource, TSelector> target)
+            switch (DomainResolver)
             {
-                target.Set(values);
-                return true;
+                case IListResolver<TSelector> listTarget:
+                {
+                    listTarget.Set(values);
+                    return true;
+                }
+                case IGroupResolver<TSelector> groupTarget:
+                {
+                    groupTarget.Set(values);
+                    return true;
+                }
+                default:
+                {
+                    return false;
+                }
             }
-
-            return false;
         }
 
         #endregion

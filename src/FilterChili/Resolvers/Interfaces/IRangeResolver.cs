@@ -15,12 +15,11 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq.Expressions;
 
-namespace GravityCTRL.FilterChili.Resolvers.Range
+namespace GravityCTRL.FilterChili.Resolvers.Interfaces
 {
-    public class IntRangeResolver<TSource> : RangeResolver<TSource, int>
+    internal interface IRangeResolver<in TSelector> where TSelector : IComparable
     {
-        internal IntRangeResolver(Expression<Func<TSource, int>> selector) : base(selector, int.MinValue, int.MaxValue) { }
+        void Set(TSelector min, TSelector max);
     }
 }

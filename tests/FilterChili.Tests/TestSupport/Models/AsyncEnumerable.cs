@@ -17,15 +17,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
 {
-    public class AsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
+    internal sealed class AsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
     {
         public AsyncEnumerable(IEnumerable<T> enumerable) : base(enumerable) { }
 
         public AsyncEnumerable(Expression expression) : base(expression) { }
 
+        [NotNull]
         public IAsyncEnumerator<T> GetEnumerator()
         {
             return new AsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());

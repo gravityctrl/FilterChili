@@ -16,19 +16,28 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Resolvers.List;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
 {
-    public class StringFilterSelector<TSource> : FilterSelector<TSource, string>
+    public sealed class StringFilterSelector<TSource> : FilterSelector<TSource, string>
     {
         internal StringFilterSelector(Expression<Func<TSource, string>> selector) : base(selector) {}
 
+        [NotNull]
         [UsedImplicitly]
-        public ListResolver<TSource, string> WithList(StringComparisonStrategy comparisonStrategy = StringComparisonStrategy.Equals)
+        public ListResolver<TSource, string> WithList()
         {
-            var resolver = new StringListResolver<TSource>(Selector, comparisonStrategy);
+            var resolver = new ListResolver<TSource, string>(Selector);
+            DomainResolver = resolver;
+            return resolver;
+        }
+
+        [NotNull]
+        [UsedImplicitly]
+        public GroupResolver<TSource, string, TGroupSelector> WithGroup<TGroupSelector>([NotNull] Expression<Func<TSource, TGroupSelector>> groupSelector) where TGroupSelector : IComparable
+        {
+            var resolver = new GroupResolver<TSource, string, TGroupSelector>(Selector, groupSelector);
             DomainResolver = resolver;
             return resolver;
         }

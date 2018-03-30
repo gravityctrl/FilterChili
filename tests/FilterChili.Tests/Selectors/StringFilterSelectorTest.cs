@@ -15,14 +15,13 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using FluentAssertions;
-using GravityCTRL.FilterChili.Resolvers.List;
 using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class StringFilterSelectorTest
+    public sealed class StringFilterSelectorTest
     {
         private const string TEST_NAME = "String";
 
@@ -36,18 +35,19 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Should_Return_List_Resolver()
         {
-            var result = (StringListResolver<GenericSource>)_testInstance.WithList();
-            result.Should().BeOfType<StringListResolver<GenericSource>>();
+            var result = _testInstance.WithList();
+            result.Should().BeOfType<ListResolver<GenericSource, string>>();
             result.Name.Should().Be(TEST_NAME);
             result.FilterType.Should().Be("List");
-            result.ComparisonStrategy.Should().Be(StringComparisonStrategy.Equals);
         }
 
         [Fact]
-        public void Should_Accept_Other_Comparison_Strategy()
+        public void Should_Return_Group_Resolver()
         {
-            var result = (StringListResolver<GenericSource>)_testInstance.WithList(StringComparisonStrategy.Contains);
-            result.ComparisonStrategy.Should().Be(StringComparisonStrategy.Contains);
+            var result = _testInstance.WithGroup(source => source.Decimal);
+            result.Should().BeOfType<GroupResolver<GenericSource, string, decimal>>();
+            result.Name.Should().Be(TEST_NAME);
+            result.FilterType.Should().Be("Group");
         }
     }
 }

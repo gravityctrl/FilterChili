@@ -18,12 +18,15 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Models
 {
-    public class Item<TValue>
+    public sealed class Item<TValue>
     {
-        public TValue Value { [UsedImplicitly] get; set; }
+        [UsedImplicitly]
+        public TValue Value { get; set; }
 
-        public bool CanBeSelected { [UsedImplicitly] get; set; }
+        [UsedImplicitly]
+        public bool CanBeSelected { get; set; }
 
-        public bool IsSelected { [UsedImplicitly] get; set; }
+        [UsedImplicitly]
+        public bool IsSelected { get; set; }
     }
 }

@@ -17,52 +17,55 @@
 using System;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Comparison;
-using GravityCTRL.FilterChili.Resolvers.Comparison;
-using GravityCTRL.FilterChili.Resolvers.Range;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
 {
-    public class DoubleFilterSelector<TSource> : FilterSelector<TSource, double>
+    public sealed class DoubleFilterSelector<TSource> : FilterSelector<TSource, double>
     {
         internal DoubleFilterSelector(Expression<Func<TSource, double>> selector) : base(selector) {}
 
+        [NotNull]
         [UsedImplicitly]
         public RangeResolver<TSource, double> WithRange()
         {
-            var resolver = new DoubleRangeResolver<TSource>(Selector);
+            var resolver = new RangeResolver<TSource, double>(Selector, double.MinValue, double.MaxValue);
             DomainResolver = resolver;
             return resolver;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public ComparisonResolver<TSource, double> WithGreaterThan()
         {
-            var resolver = new DoubleComparisonResolver<TSource>(new GreaterThanComparer<TSource, double>(double.MinValue), Selector);
+            var resolver = new ComparisonResolver<TSource, double>(new GreaterThanComparer<TSource, double>(double.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public ComparisonResolver<TSource, double> WithLessThan()
         {
-            var resolver = new DoubleComparisonResolver<TSource>(new LessThanComparer<TSource, double>(double.MaxValue), Selector);
+            var resolver = new ComparisonResolver<TSource, double>(new LessThanComparer<TSource, double>(double.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public ComparisonResolver<TSource, double> WithGreaterThanOrEqual()
         {
-            var resolver = new DoubleComparisonResolver<TSource>(new GreaterThanOrEqualComparer<TSource, double>(double.MinValue), Selector);
+            var resolver = new ComparisonResolver<TSource, double>(new GreaterThanOrEqualComparer<TSource, double>(double.MinValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public ComparisonResolver<TSource, double> WithLessThanOrEqual()
         {
-            var resolver = new DoubleComparisonResolver<TSource>(new LessThanOrEqualComparer<TSource, double>(double.MaxValue), Selector);
+            var resolver = new ComparisonResolver<TSource, double>(new LessThanOrEqualComparer<TSource, double>(double.MaxValue), Selector);
             DomainResolver = resolver;
             return resolver;
         }

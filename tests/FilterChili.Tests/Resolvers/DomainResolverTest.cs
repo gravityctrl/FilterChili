@@ -20,9 +20,9 @@ using FluentAssertions;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
-namespace GravityCTRL.FilterChili.Tests.Extensions
+namespace GravityCTRL.FilterChili.Tests.Resolvers
 {
-    public class ResolverExtensionsTest
+    public sealed class DomainResolverTest
     {
         [Fact]
         public void Should_Update_Name_Of_Resolver_When_Calling_Use_Name_And_Return_Same_Instance()
@@ -34,7 +34,20 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
             testInstance.Name.Should().Be("SomeName");
         }
 
-        private class TestResolver : RangeResolver<GenericSource, int>
+        [Fact]
+        public void Should_Replace_Existing_Behavior_If_Behavior_Class_Is_Same_Type()
+        {
+            var testInstance = new TestResolver(_ => 1);
+            testInstance.Name.Should().Be(null);
+
+            testInstance.UseName("SomeName").Should().Be(testInstance);
+            testInstance.Name.Should().Be("SomeName");
+
+            testInstance.UseName("SomeName2").Should().Be(testInstance);
+            testInstance.Name.Should().Be("SomeName2");
+        }
+
+        private sealed class TestResolver : RangeResolver<GenericSource, int>
         {
             internal TestResolver(Expression<Func<GenericSource, int>> selector) : base(selector, 1, 2) { }
         }

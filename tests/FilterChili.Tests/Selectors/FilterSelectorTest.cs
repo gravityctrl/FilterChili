@@ -22,12 +22,13 @@ using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Exceptions;
 using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class FilterSelectorTest
+    public sealed class FilterSelectorTest
     {
         private readonly TestFilterSelector _testInstance;
 
@@ -131,8 +132,8 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void ListResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.List().Should().BeOfType<TestListResolver>();
-            _testInstance.Domain().Should().BeOfType<TestListResolver>();
+            _testInstance.List().Should().BeOfType<ListResolver<GenericSource, int>>();
+            _testInstance.Domain().Should().BeOfType<ListResolver<GenericSource, int>>();
             _testInstance.NeedsToBeResolved = false;
 
             _testInstance.TrySet(1).Should().BeFalse();
@@ -157,10 +158,11 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             func.Should().Throw<FormatException>();
         }
 
-        private class TestFilterSelector : FilterSelector<GenericSource, int>
+        private sealed class TestFilterSelector : FilterSelector<GenericSource, int>
         {
             internal TestFilterSelector(Expression<Func<GenericSource, int>> selector) : base(selector) {}
 
+            [NotNull]
             public TestComparisonResolver Comparison()
             {
                 var resolver = new TestComparisonResolver(new TestComparer(), Selector);
@@ -168,6 +170,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
                 return resolver;
             }
 
+            [NotNull]
             public TestRangeResolver Range()
             {
                 var resolver = new TestRangeResolver(Selector);
@@ -175,38 +178,30 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
                 return resolver;
             }
 
-            public TestListResolver List()
+            [NotNull]
+            public ListResolver<GenericSource, int> List()
             {
-                var resolver = new TestListResolver(Selector);
+                var resolver = new ListResolver<GenericSource, int>(Selector);
                 DomainResolver = resolver;
                 return resolver;
             }
         }
 
-        private class TestComparisonResolver : ComparisonResolver<GenericSource, int>
+        private sealed class TestComparisonResolver : ComparisonResolver<GenericSource, int>
         {
             internal TestComparisonResolver(Comparer<GenericSource, int> comparer, Expression<Func<GenericSource, int>> selector) : base(comparer, selector) {}
         }
 
-        private class TestRangeResolver : RangeResolver<GenericSource, int>
+        private sealed class TestRangeResolver : RangeResolver<GenericSource, int>
         {
             internal TestRangeResolver(Expression<Func<GenericSource, int>> selector) : base(selector, int.MinValue, int.MaxValue) {}
         }
 
-        private class TestListResolver : ListResolver<GenericSource, int>
-        {
-            internal TestListResolver(Expression<Func<GenericSource, int>> selector) : base(selector) {}
-
-            protected override Expression<Func<GenericSource, bool>> FilterExpression()
-            {
-                return null;
-            }
-        }
-
-        private class TestComparer : Comparer<GenericSource, int>
+        private sealed class TestComparer : Comparer<GenericSource, int>
         {
             public override string FilterType { get; } = "TestComparer";
 
+            [NotNull]
             public override Expression<Func<GenericSource, bool>> FilterExpression(Expression<Func<GenericSource, int>> selector, int selectedValue)
             {
                 var valueConstant = Expression.Constant(selectedValue);
