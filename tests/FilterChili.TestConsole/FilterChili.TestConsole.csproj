@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>GravityCTRL.FilterChili.Tests</AssemblyName>
     <RootNamespace>GravityCTRL.FilterChili.TestConsole</RootNamespace>
   </PropertyGroup>
