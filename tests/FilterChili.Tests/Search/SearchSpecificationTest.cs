@@ -3,21 +3,19 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Expressions;
 using GravityCTRL.FilterChili.Search;
-using GravityCTRL.FilterChili.Search.ExpressionProviders;
-using GravityCTRL.FilterChili.Tests.Shared.Models;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using JetBrains.Annotations;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Search
 {
-    public sealed class SearchSelectorTest
+    public sealed class SearchSpecificationTest
     {
-        private readonly SearchSelector<GenericSource> _testInstance;
+        private readonly SearchSpecification<GenericSource> _testInstance;
 
-        public SearchSelectorTest()
+        public SearchSpecificationTest()
         {
-            _testInstance = new SearchSelector<GenericSource>(source => source.String);
+            _testInstance = new SearchSpecification<GenericSource>(source => source.String);
         }
 
         [Fact]

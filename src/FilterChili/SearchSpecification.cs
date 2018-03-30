@@ -20,9 +20,9 @@ using GravityCTRL.FilterChili.Extensions;
 using GravityCTRL.FilterChili.Search.ExpressionProviders;
 using JetBrains.Annotations;
 
-namespace GravityCTRL.FilterChili.Search
+namespace GravityCTRL.FilterChili
 {
-    public sealed class SearchSelector<TSource>
+    public sealed class SearchSpecification<TSource>
     {
         private readonly Expression<Func<TSource, string>> _selector;
         private IExpressionProvider<TSource> _includeExpressionProvider;
@@ -33,7 +33,7 @@ namespace GravityCTRL.FilterChili.Search
 
         internal bool IncludeAcceptsMultipleInputs => _includeExpressionProvider.AcceptsMultipleSearchInputs;
 
-        internal SearchSelector([NotNull] Expression<Func<TSource, string>> valueSelector)
+        internal SearchSpecification([NotNull] Expression<Func<TSource, string>> valueSelector)
         {
             Name = valueSelector.Name();
             _selector = valueSelector;
@@ -54,7 +54,7 @@ namespace GravityCTRL.FilterChili.Search
 
         [NotNull]
         [UsedImplicitly]
-        public SearchSelector<TSource> UseEquals()
+        public SearchSpecification<TSource> UseEquals()
         {
             _includeExpressionProvider = new EqualsExpressionProvider<TSource>();
             _excludeExpressionProvider = new EqualsExpressionProvider<TSource>();
@@ -63,7 +63,7 @@ namespace GravityCTRL.FilterChili.Search
 
         [NotNull]
         [UsedImplicitly]
-        public SearchSelector<TSource> UseContains()
+        public SearchSpecification<TSource> UseContains()
         {
             _includeExpressionProvider = new ContainsExpressionProvider<TSource>();
             _excludeExpressionProvider = new ContainsExpressionProvider<TSource>();
@@ -72,7 +72,7 @@ namespace GravityCTRL.FilterChili.Search
 
         [NotNull]
         [UsedImplicitly]
-        public SearchSelector<TSource> UseSoundex()
+        public SearchSpecification<TSource> UseSoundex()
         {
             _includeExpressionProvider = new SoundexExpressionProvider<TSource>();
             _excludeExpressionProvider = new ContainsExpressionProvider<TSource>();
@@ -81,7 +81,7 @@ namespace GravityCTRL.FilterChili.Search
 
         [NotNull]
         [UsedImplicitly]
-        public SearchSelector<TSource> UseGermanSoundex()
+        public SearchSpecification<TSource> UseGermanSoundex()
         {
             _includeExpressionProvider = new GermanSoundexExpressionProvider<TSource>();
             _excludeExpressionProvider = new ContainsExpressionProvider<TSource>();
@@ -90,7 +90,7 @@ namespace GravityCTRL.FilterChili.Search
 
         [NotNull]
         [UsedImplicitly]
-        public SearchSelector<TSource> UseName(string name)
+        public SearchSpecification<TSource> UseName(string name)
         {
             Name = name;
             return this;

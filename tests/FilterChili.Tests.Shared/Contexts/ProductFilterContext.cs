@@ -15,6 +15,7 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System.Linq;
+using GravityCTRL.FilterChili.Search;
 using GravityCTRL.FilterChili.Tests.Shared.Models;
 using JetBrains.Annotations;
 
@@ -22,6 +23,21 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
 {
     public sealed class ProductFilterContext : FilterContext<Product>
     {
+        [UsedImplicitly]
+        public SearchSpecification<Product> NameSearch { get; set; }
+
+        [UsedImplicitly]
+        public SearchSpecification<Product> CategorySearch { get; set; }
+
+        [UsedImplicitly]
+        public SearchSpecification<Product> IdSearch { get; set; }
+
+        [UsedImplicitly]
+        public SearchSpecification<Product> RatingSearch { get; set; }
+
+        [UsedImplicitly]
+        public SearchSpecification<Product> SoldSearch { get; set; }
+
         [UsedImplicitly]
         public GroupResolver<Product, string, string> NameFilter { get; set; }
 
@@ -37,11 +53,11 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
         {
             options.CalculationStrategy = CalculationStrategy.Full;
 
-            options.Search(product => product.Name);
-            options.Search(product => product.Category);
-            options.Search(product => product.Id.ToString()).UseEquals();
-            options.Search(product => product.Rating.ToString()).UseEquals();
-            options.Search(product => product.Sold.ToString()).UseEquals();
+            NameSearch = options.Search(product => product.Name);
+            CategorySearch = options.Search(product => product.Category);
+            IdSearch = options.Search(product => product.Id.ToString()).UseEquals();
+            RatingSearch = options.Search(product => product.Rating.ToString()).UseEquals();
+            SoldSearch = options.Search(product => product.Sold.ToString()).UseEquals();
 
             NameFilter = options.Filter(product => product.Name).WithGroup(product => product.Category).UseDefaultGroup("Unknown");
             RatingFilter = options.Filter(product => product.Rating).WithRange();

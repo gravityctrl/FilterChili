@@ -30,7 +30,7 @@ namespace GravityCTRL.FilterChili.Search
         // ReSharper disable once StaticMemberInGenericType
         private static readonly ParameterExpression ParameterExpression;
 
-        private readonly List<SearchSelector<TSource>> _searchers;
+        private readonly List<SearchSpecification<TSource>> _searchers;
 
         [CanBeNull]
         private string _searchString;
@@ -45,7 +45,7 @@ namespace GravityCTRL.FilterChili.Search
 
         public SearchResolver()
         {
-            _searchers = new List<SearchSelector<TSource>>();
+            _searchers = new List<SearchSpecification<TSource>>();
         }
 
         public IQueryable<TSource> ApplySearch(IQueryable<TSource> queryable)
@@ -66,9 +66,9 @@ namespace GravityCTRL.FilterChili.Search
             _searchExpression = SetSearchExpression(fragmentedSearch);
         }
 
-        internal void AddSearcher(SearchSelector<TSource> searchSelector)
+        internal void AddSearcher(SearchSpecification<TSource> searchSpecification)
         {
-            _searchers.Add(searchSelector);
+            _searchers.Add(searchSpecification);
         }
 
         [CanBeNull]
@@ -144,7 +144,7 @@ namespace GravityCTRL.FilterChili.Search
         }
 
         [CanBeNull]
-        private static Expression IncludeExpressions([NotNull] IReadOnlyCollection<SearchSelector<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<IncludeFragment> includeFragments)
+        private static Expression IncludeExpressions([NotNull] IReadOnlyCollection<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<IncludeFragment> includeFragments)
         {
             IEnumerable<Expression> CreateIncludeExpressions()
             {
@@ -167,7 +167,7 @@ namespace GravityCTRL.FilterChili.Search
         }
 
         [CanBeNull]
-        private static Expression ExcludeExpressions([NotNull] IReadOnlyCollection<SearchSelector<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<ExcludeFragment> excludeFragments)
+        private static Expression ExcludeExpressions([NotNull] IReadOnlyCollection<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<ExcludeFragment> excludeFragments)
         {
             IEnumerable<Expression> CreateExcludeExpressions()
             {

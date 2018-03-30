@@ -47,9 +47,9 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public SearchSelector<TSource> Search([NotNull] Expression<Func<TSource, string>> valueSelector)
+        public SearchSpecification<TSource> Search([NotNull] Expression<Func<TSource, string>> valueSelector)
         {
-            var searcher = new SearchSelector<TSource>(valueSelector);
+            var searcher = new SearchSpecification<TSource>(valueSelector);
             _searchResolver.AddSearcher(searcher);
             return searcher;
         }
