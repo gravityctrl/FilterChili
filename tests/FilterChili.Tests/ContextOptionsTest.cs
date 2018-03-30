@@ -41,6 +41,7 @@ namespace GravityCTRL.FilterChili.Tests
             testGenericSources.RuleFor(entity => entity.Int, faker => faker.Random.Int(0, 10));
             testGenericSources.RuleFor(entity => entity.Double, faker => faker.Random.Double(0, 20));
             testGenericSources.RuleFor(entity => entity.Float, faker => faker.Random.Float(0, 30));
+            testGenericSources.RuleFor(entity => entity.String, faker => faker.Commerce.Product());
             var items = testGenericSources.GenerateLazy(20).ToList();
 
             var queryable = items.AsQueryable();
@@ -137,6 +138,18 @@ namespace GravityCTRL.FilterChili.Tests
             results.Should().NotContain(entity => entity.Int <= 3);
             results.Should().NotContain(entity => entity.Double > 15);
             results.Should().NotContain(entity => entity.Float < 5 && entity.Float > 25);
+        }
+
+        [Fact]
+        public void Should_Return_Expected_Entities_When_Applying_Search()
+        {
+            _testInstance.Search(source => source.String).UseEquals();
+            _testInstance.Search(source => source.Int.ToString());
+
+            _testInstance.SetSearch("cheese");
+
+            var results = _testInstance.ApplyFilters();
+            results.Should().OnlyContain(result => result.String.ToLowerInvariant() == "cheese");
         }
     }
 }
