@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Search;
-using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Search
