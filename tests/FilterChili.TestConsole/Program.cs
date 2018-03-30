@@ -33,11 +33,11 @@ namespace GravityCTRL.FilterChili.TestConsole
     public class Program
     {
         private const int MAX_PRINTED_RESULTS = 10;
-        private const int ENTITY_AMOUNT = 100_000;
+        private const int ENTITY_AMOUNT = 10_000;
 
         public static void Main()
         {
-            using (var dataContext = DataContext.CreateInMemory(Guid.NewGuid().ToString()))
+            using (var dataContext = DataContext.CreateWithSqlServer(Guid.NewGuid().ToString()))
             {
                 dataContext.Migrate();
 
@@ -57,18 +57,29 @@ namespace GravityCTRL.FilterChili.TestConsole
 
                     var filterContext = new ProductFilterContext(service.Entities);
 
-                    var duration = Benchmark.Measure(() =>
+                    var duration1 = Benchmark.Measure(() =>
                     {
                         // ReSharper disable once AccessToModifiedClosure
                         filterContext.SetSearch(input);
                         filterContext.TrySet("Rating", 1, 7);
                         filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
                         filterContext.TrySet("Sold", 600);
-                        PerformAnalysis(filterContext).Wait();
                     });
 
-                    Console.WriteLine("Duration {0}", duration);
-                } while (!string.IsNullOrEmpty(input));
+                    var duration2 = Benchmark.Measure(() => {
+                        PerformResultAnalysis(filterContext).Wait();
+                    });
+
+                    var duration3 = Benchmark.Measure(() =>
+                    {
+                        PerformFilterAnalysis(filterContext).Wait();
+                    });
+
+                    Console.WriteLine("Duration {0}", duration1);
+                    Console.WriteLine("Duration {0}", duration2);
+                    Console.WriteLine("Duration {0}", duration3);
+                }
+                while (!string.IsNullOrEmpty(input));
 
                 dataContext.Delete();
             }
@@ -86,12 +97,15 @@ namespace GravityCTRL.FilterChili.TestConsole
             return testProducts.GenerateLazy(ENTITY_AMOUNT);
         }
 
-        private static async Task PerformAnalysis([NotNull] ProductFilterContext context)
+        private static async Task PerformResultAnalysis([NotNull] ProductFilterContext context)
         {
             var filterResults = context.ApplyFilters().Take(MAX_PRINTED_RESULTS);
             var evaluatedFilterResults = await filterResults.ToListAsync();
             Console.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
+        }
 
+        private static async Task PerformFilterAnalysis([NotNull] ProductFilterContext context)
+        {
             var domains = await context.Domains();
             Console.WriteLine(JsonUtils.Convert(domains));
         }
