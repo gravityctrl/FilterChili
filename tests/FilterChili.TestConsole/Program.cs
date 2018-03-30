@@ -37,20 +37,18 @@ namespace GravityCTRL.FilterChili.TestConsole
 
         public static void Main()
         {
-            using (var dataContext = DataContext.CreateWithSqlServer(Guid.NewGuid().ToString()))
+            using (var dataContext = DataContext.CreateInMemory(Guid.NewGuid().ToString()))
             {
                 dataContext.Migrate();
 
                 var service = new ProductService(dataContext);
                 service.AddRange(CreateTestProducts()).Wait();
 
-                string input;
+                string input = null;
                 do
                 {
-                    input = Console.ReadLine()?.ToLowerInvariant();
                     Console.Clear();
-
-                    if (string.IsNullOrEmpty(input))
+                    if (string.Equals(input, "exit", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
@@ -78,8 +76,11 @@ namespace GravityCTRL.FilterChili.TestConsole
                     Console.WriteLine("Duration {0}", duration1);
                     Console.WriteLine("Duration {0}", duration2);
                     Console.WriteLine("Duration {0}", duration3);
+
+                    Console.Write($"{Environment.NewLine}ENTER SEARCH TERMS: ");
+                    input = Console.ReadLine()?.ToLowerInvariant();
                 }
-                while (!string.IsNullOrEmpty(input));
+                while (!string.Equals(input, "exit", StringComparison.OrdinalIgnoreCase));
 
                 dataContext.Delete();
             }
