@@ -22,7 +22,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Resolvers
 {
-    public class DomainResolverTest
+    public sealed class DomainResolverTest
     {
         [Fact]
         public void Should_Update_Name_Of_Resolver_When_Calling_Use_Name_And_Return_Same_Instance()
@@ -52,7 +52,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             testInstance.Name.Should().Be("SomeName2");
         }
 
-        private class TestResolver : RangeResolver<GenericSource, int>
+        private sealed class TestResolver : RangeResolver<GenericSource, int>
         {
             internal TestResolver(Expression<Func<GenericSource, int>> selector) : base(selector, 1, 2) { }
         }

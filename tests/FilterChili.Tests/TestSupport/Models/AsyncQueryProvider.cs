@@ -19,11 +19,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
 {
-    public class AsyncQueryProvider<TEntity> : IAsyncQueryProvider
+    internal sealed class AsyncQueryProvider<TEntity> : IAsyncQueryProvider
     {
         private readonly IQueryProvider _inner;
 
@@ -32,6 +33,7 @@ namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
             _inner = inner;
         }
 
+        [NotNull]
         public IQueryable CreateQuery(Expression expression)
         {
             return new AsyncEnumerable<TEntity>(expression);
@@ -52,6 +54,7 @@ namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
             return _inner.Execute<TResult>(expression);
         }
 
+        [NotNull]
         public IAsyncEnumerable<TResult> ExecuteAsync<TResult>(Expression expression)
         {
             return new AsyncEnumerable<TResult>(expression);

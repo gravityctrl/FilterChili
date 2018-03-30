@@ -70,8 +70,13 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
-        public override bool TrySet(JToken domainToken)
+        public override bool TrySet([CanBeNull] JToken domainToken)
         {
+            if (domainToken == null)
+            {
+                return false;
+            }
+
             var minToken = domainToken.SelectToken("min");
             var maxToken = domainToken.SelectToken("max");
             if (minToken == null || maxToken == null)
@@ -127,7 +132,8 @@ namespace GravityCTRL.FilterChili
             SelectableRange = await SetRange(queryable.Select(Selector));
         }
 
-        private static async Task<Range<TSelector>> SetRange(IQueryable<TSelector> queryable)
+        [ItemCanBeNull]
+        private static async Task<Range<TSelector>> SetRange([NotNull] IQueryable<TSelector> queryable)
         {
             if (queryable is IAsyncEnumerable<TSelector> _)
             {
@@ -137,7 +143,8 @@ namespace GravityCTRL.FilterChili
             return ResolveRange(queryable);
         }
 
-        private static Range<TSelector> ResolveRange(IQueryable<TSelector> queryable)
+        [CanBeNull]
+        private static Range<TSelector> ResolveRange([NotNull] IQueryable<TSelector> queryable)
         {
             if (!queryable.Any())
             {
@@ -149,7 +156,8 @@ namespace GravityCTRL.FilterChili
             return new Range<TSelector>(min, max);
         }
 
-        private static async Task<Range<TSelector>> ResolveRangeAsync(IQueryable<TSelector> queryable)
+        [ItemCanBeNull]
+        private static async Task<Range<TSelector>> ResolveRangeAsync([NotNull] IQueryable<TSelector> queryable)
         {
             if (!await queryable.AnyAsync())
             {

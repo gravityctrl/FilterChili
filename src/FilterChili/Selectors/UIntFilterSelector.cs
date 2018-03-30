@@ -21,10 +21,11 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
 {
-    public class UIntFilterSelector<TSource> : FilterSelector<TSource, uint>
+    public sealed class UIntFilterSelector<TSource> : FilterSelector<TSource, uint>
     {
         internal UIntFilterSelector(Expression<Func<TSource, uint>> selector) : base(selector) {}
 
+        [NotNull]
         [UsedImplicitly]
         public RangeResolver<TSource, uint> WithRange()
         {
@@ -33,6 +34,7 @@ namespace GravityCTRL.FilterChili.Selectors
             return resolver;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public ComparisonResolver<TSource, uint> WithGreaterThan()
         {
@@ -41,6 +43,7 @@ namespace GravityCTRL.FilterChili.Selectors
             return resolver;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public ComparisonResolver<TSource, uint> WithLessThan()
         {
@@ -49,6 +52,7 @@ namespace GravityCTRL.FilterChili.Selectors
             return resolver;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public ComparisonResolver<TSource, uint> WithGreaterThanOrEqual()
         {
@@ -57,6 +61,7 @@ namespace GravityCTRL.FilterChili.Selectors
             return resolver;
         }
 
+        [NotNull]
         [UsedImplicitly]
         public ComparisonResolver<TSource, uint> WithLessThanOrEqual()
         {

@@ -22,7 +22,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class StringFilterSelectorTest
+    public sealed class StringFilterSelectorTest
     {
         private const string TEST_NAME = "String";
 

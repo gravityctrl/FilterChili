@@ -19,7 +19,7 @@ using System.Linq.Expressions;
 
 namespace GravityCTRL.FilterChili.Comparison
 {
-    internal class LessThanComparer<TSource, TSelector> : Comparer<TSource, TSelector> where TSelector : IComparable
+    internal sealed class LessThanComparer<TSource, TSelector> : Comparer<TSource, TSelector> where TSelector : IComparable
     {
         private readonly TSelector _maxValue;
 

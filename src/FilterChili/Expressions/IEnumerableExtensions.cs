@@ -20,7 +20,7 @@ using System.Linq.Expressions;
 
 namespace GravityCTRL.FilterChili.Expressions
 {
-    public static class EnumerableExtensions
+    internal static class EnumerableExtensions
     {
         public static Expression Or(this IEnumerable<Expression> expressions)
         {

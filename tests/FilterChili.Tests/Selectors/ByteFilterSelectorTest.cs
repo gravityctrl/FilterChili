@@ -21,7 +21,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class ByteFilterSelectorTest
+    public sealed class ByteFilterSelectorTest
     {
         private const string TEST_NAME = "Byte";
 

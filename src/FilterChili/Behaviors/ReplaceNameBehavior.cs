@@ -16,10 +16,11 @@
 
 using System;
 using GravityCTRL.FilterChili.Resolvers;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Behaviors
 {
-    internal class ReplaceNameBehavior<TSource, TSelector> : IBehavior<TSource, TSelector> where TSelector : IComparable
+    internal sealed class ReplaceNameBehavior<TSource, TSelector> : IBehavior<TSource, TSelector> where TSelector : IComparable
     {
         private readonly string _name;
 
@@ -28,7 +29,7 @@ namespace GravityCTRL.FilterChili.Behaviors
             _name = name;
         }
 
-        public void Apply<TDomainResolver>(TDomainResolver resolver) where TDomainResolver : DomainResolver<TDomainResolver, TSource, TSelector>
+        public void Apply<TDomainResolver>([NotNull] TDomainResolver resolver) where TDomainResolver : DomainResolver<TDomainResolver, TSource, TSelector>
         {
             resolver.Name = _name;
         }

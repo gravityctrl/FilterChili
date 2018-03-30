@@ -21,7 +21,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class UShortFilterSelectorTest
+    public sealed class UShortFilterSelectorTest
     {
         private const string TEST_NAME = "UShort";
 

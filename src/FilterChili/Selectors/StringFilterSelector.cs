@@ -21,10 +21,11 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
 {
-    public class StringFilterSelector<TSource> : FilterSelector<TSource, string>
+    public sealed class StringFilterSelector<TSource> : FilterSelector<TSource, string>
     {
         internal StringFilterSelector(Expression<Func<TSource, string>> selector) : base(selector) {}
 
+        [NotNull]
         [UsedImplicitly]
         public ListResolver<TSource, string> WithList(StringComparisonStrategy comparisonStrategy = StringComparisonStrategy.Equals)
         {
@@ -33,8 +34,9 @@ namespace GravityCTRL.FilterChili.Selectors
             return resolver;
         }
 
+        [NotNull]
         [UsedImplicitly]
-        public GroupResolver<TSource, string, TGroupSelector> WithGroup<TGroupSelector>(Expression<Func<TSource, TGroupSelector>> groupSelector) where TGroupSelector : IComparable
+        public GroupResolver<TSource, string, TGroupSelector> WithGroup<TGroupSelector>([NotNull] Expression<Func<TSource, TGroupSelector>> groupSelector) where TGroupSelector : IComparable
         {
             var resolver = new GroupResolver<TSource, string, TGroupSelector>(Selector, groupSelector);
             DomainResolver = resolver;

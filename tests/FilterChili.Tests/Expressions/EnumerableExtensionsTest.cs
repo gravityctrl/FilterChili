@@ -21,7 +21,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Expressions
 {
-    public class EnumerableExtensionsTest
+    public sealed class EnumerableExtensionsTest
     {
         [Fact]
         public void Should_Return_Null_If_Expressions_Are_Empty()

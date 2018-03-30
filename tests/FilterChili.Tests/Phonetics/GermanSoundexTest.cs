@@ -20,7 +20,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Phonetics
 {
-    public class GermanSoundexTest
+    public sealed class GermanSoundexTest
     {
         [Fact]
         public void Test_German_Soundex_For_Breschnew()

@@ -29,7 +29,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Resolvers
 {
-    public class ListResolverTest
+    public sealed class ListResolverTest
     {
         private readonly ListResolver<GenericSource, int> _testInstance;
 
@@ -323,7 +323,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
-        private class TestListResolver : ListResolver<GenericSource, int>
+        private sealed class TestListResolver : ListResolver<GenericSource, int>
         {
             internal TestListResolver(Expression<Func<GenericSource, int>> selector) : base(selector) {}
 

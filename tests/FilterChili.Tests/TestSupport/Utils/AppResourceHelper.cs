@@ -16,13 +16,15 @@
 
 using System.IO;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Tests.TestSupport.Utils
 {
-    public static class AppResourceHelper
+    internal static class AppResourceHelper
     {
         private const string RESOURCES_NAMESPACE = "GravityCTRL.FilterChili.Tests.Resources";
 
+        [NotNull]
         public static string Load(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();

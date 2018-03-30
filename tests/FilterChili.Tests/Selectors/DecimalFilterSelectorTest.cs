@@ -21,7 +21,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class DecimalFilterSelectorTest
+    public sealed class DecimalFilterSelectorTest
     {
         private const string TEST_NAME = "Decimal";
 

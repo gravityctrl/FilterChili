@@ -21,7 +21,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Selectors
 {
-    public class ULongFilterSelectorTest
+    public sealed class ULongFilterSelectorTest
     {
         private const string TEST_NAME = "ULong";
 

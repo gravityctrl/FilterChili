@@ -22,13 +22,14 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Resolvers
 {
-    public class GroupResolverTest
+    public sealed class GroupResolverTest
     {
         private readonly TestGroupResolver _testInstance;
 
@@ -517,9 +518,9 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
-        private class TestGroupResolver : GroupResolver<GenericSource, int, string>
+        private sealed class TestGroupResolver : GroupResolver<GenericSource, int, string>
         {
-            internal TestGroupResolver(Expression<Func<GenericSource, int>> selector, Expression<Func<GenericSource, string>> groupSelector) : base(selector, groupSelector) {}
+            internal TestGroupResolver([NotNull] Expression<Func<GenericSource, int>> selector, [NotNull] Expression<Func<GenericSource, string>> groupSelector) : base(selector, groupSelector) {}
         }
     }
 }

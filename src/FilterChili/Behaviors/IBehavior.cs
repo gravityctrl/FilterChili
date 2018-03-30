@@ -19,7 +19,7 @@ using GravityCTRL.FilterChili.Resolvers;
 
 namespace GravityCTRL.FilterChili.Behaviors
 {
-    public interface IBehavior<TSource, TSelector> where TSelector : IComparable
+    internal interface IBehavior<TSource, TSelector> where TSelector : IComparable
     {
         void Apply<TDomainResolver>(TDomainResolver resolver) where TDomainResolver : DomainResolver<TDomainResolver, TSource, TSelector>;
     }

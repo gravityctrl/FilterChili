@@ -24,7 +24,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Extensions
 {
-    public class TypeExtensionsTest
+    public sealed class TypeExtensionsTest
     {
         [Fact]
         public void Should_Create_Correct_Formatted_Name_For_Type()
@@ -41,9 +41,9 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
         }
 
         // ReSharper disable UnusedTypeParameter
-        [UsedImplicitly] private class TestClass1<T1, T2, T3> {}
-        [UsedImplicitly] private class TestClass2<T1, T2> {}
-        [UsedImplicitly] private class TestClass3<T1> {}
+        [UsedImplicitly] private sealed class TestClass1<T1, T2, T3> {}
+        [UsedImplicitly] private sealed class TestClass2<T1, T2> {}
+        [UsedImplicitly] private sealed class TestClass3<T1> {}
         // ReSharper restore UnusedTypeParameter
     }
 }

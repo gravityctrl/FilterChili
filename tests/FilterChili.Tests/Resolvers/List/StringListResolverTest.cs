@@ -22,7 +22,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Resolvers.List
 {
-    public class StringListResolverTest
+    public sealed class StringListResolverTest
     {
         private readonly StringListResolver<GenericSource> _testInstance;
 

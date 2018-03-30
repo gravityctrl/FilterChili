@@ -18,7 +18,7 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
 {
-    public class GenericSource
+    public sealed class GenericSource
     {
         [UsedImplicitly]
         public byte Byte { get; set; }

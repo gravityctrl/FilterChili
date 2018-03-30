@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace GravityCTRL.FilterChili.Tests.TestSupport.Models
 {
-    public class AsyncEnumerator<T> : IAsyncEnumerator<T>
+    internal sealed class AsyncEnumerator<T> : IAsyncEnumerator<T>
     {
         private readonly IEnumerator<T> _inner;
 

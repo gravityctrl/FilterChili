@@ -18,7 +18,7 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Tests.Shared.Models
 {
-    public class Product
+    public sealed class Product
     {
         public int Id { get; [UsedImplicitly] set; }
         public string Name { get; [UsedImplicitly] set; }

@@ -23,12 +23,13 @@ using FluentAssertions;
 using GravityCTRL.FilterChili.Tests.Shared.Contexts;
 using GravityCTRL.FilterChili.Tests.Shared.Models;
 using GravityCTRL.FilterChili.Tests.TestSupport.Utils;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests
 {
-    public class FilterContextTest
+    public sealed class FilterContextTest
     {
         private readonly JObject _rangeObject;
         private readonly JObject _listObject;
@@ -145,6 +146,7 @@ namespace GravityCTRL.FilterChili.Tests
             filterContext.TrySet(_notExistingFilterObject).Should().BeFalse();
         }
 
+        [NotNull]
         private static IEnumerable<Product> CreateTestProducts()
         {
             Randomizer.Seed = new Random(0);

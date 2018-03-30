@@ -53,7 +53,7 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public TSelector SelectedValue { get; private set; }
 
-        protected internal ComparisonResolver(Comparer<TSource, TSelector> comparer, Expression<Func<TSource, TSelector>> selector) : base(selector)
+        internal ComparisonResolver(Comparer<TSource, TSelector> comparer, Expression<Func<TSource, TSelector>> selector) : base(selector)
         {
             _comparer = comparer;
             _needsToBeResolved = true;
@@ -65,7 +65,7 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
-        public override bool TrySet(JToken domainToken)
+        public override bool TrySet([NotNull] JToken domainToken)
         {
             var token = domainToken.SelectToken("value");
             if (token == null)
@@ -94,7 +94,8 @@ namespace GravityCTRL.FilterChili
             SelectableRange = await SetRange(queryable.Select(Selector));
         }
 
-        private static async Task<Range<TSelector>> SetRange(IQueryable<TSelector> queryable)
+        [ItemCanBeNull]
+        private static async Task<Range<TSelector>> SetRange([NotNull] IQueryable<TSelector> queryable)
         {
             if (queryable is IAsyncEnumerable<TSelector> _)
             {
@@ -104,7 +105,8 @@ namespace GravityCTRL.FilterChili
             return ResolveRange(queryable);
         }
 
-        private static Range<TSelector> ResolveRange(IQueryable<TSelector> queryable)
+        [CanBeNull]
+        private static Range<TSelector> ResolveRange([NotNull] IQueryable<TSelector> queryable)
         {
             if (!queryable.Any())
             {
@@ -116,7 +118,8 @@ namespace GravityCTRL.FilterChili
             return new Range<TSelector>(min, max);
         }
 
-        private static async Task<Range<TSelector>> ResolveRangeAsync(IQueryable<TSelector> queryable)
+        [ItemCanBeNull]
+        private static async Task<Range<TSelector>> ResolveRangeAsync([NotNull] IQueryable<TSelector> queryable)
         {
             if (!await queryable.AnyAsync())
             {

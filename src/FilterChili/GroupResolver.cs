@@ -73,7 +73,7 @@ namespace GravityCTRL.FilterChili
             ParameterExpression = Expression.Parameter(GenericSourceType);
         }
 
-        internal GroupResolver(Expression<Func<TSource, TSelector>> selector, Expression<Func<TSource, TGroupSelector>> groupSelector) : base(selector)
+        internal GroupResolver([NotNull] Expression<Func<TSource, TSelector>> selector, [NotNull] Expression<Func<TSource, TGroupSelector>> groupSelector) : base(selector)
         {
             SelectedValues = new List<TSelector>();
 
@@ -95,6 +95,7 @@ namespace GravityCTRL.FilterChili
 
         #region Public Methods
 
+        [UsedImplicitly]
         public void Set(IEnumerable<TSelector> selectedValues)
         {
             SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
@@ -102,6 +103,7 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
+        [UsedImplicitly]
         public void Set(params TSelector[] selectedValues)
         {
             SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
@@ -109,6 +111,7 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
+        [UsedImplicitly]
         public void SetGroups(IEnumerable<TGroupSelector> selectedValues)
         {
             if (_availableValues == null)
@@ -121,6 +124,7 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
+        [UsedImplicitly]
         public void SetGroups(params TGroupSelector[] selectedValues)
         {
             if (_availableValues == null)
@@ -133,6 +137,8 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
+        [NotNull]
+        [UsedImplicitly]
         public GroupResolver<TSource, TSelector, TGroupSelector> UseDefaultGroup(TGroupSelector defaultGroupIdentifier)
         {
             _defaultGroupIdentifier = Option.Some(defaultGroupIdentifier);
@@ -143,8 +149,14 @@ namespace GravityCTRL.FilterChili
 
         #region Public Overrides
 
-        public override bool TrySet(JToken domainToken)
+        [UsedImplicitly]
+        public override bool TrySet([CanBeNull] JToken domainToken)
         {
+            if (domainToken == null)
+            {
+                return false;
+            }
+
             var valuesToken = domainToken.SelectToken("values");
             if (valuesToken != null)
             {
@@ -166,6 +178,8 @@ namespace GravityCTRL.FilterChili
         }
 
         #endregion
+
+        #region Internal Methods
 
         protected override Expression<Func<TSource, bool>> FilterExpression()
         {
@@ -194,6 +208,8 @@ namespace GravityCTRL.FilterChili
                 ? await queryable.Select(Selector).Distinct().ToListAsync()
                 : queryable.Select(Selector).Distinct().ToList();
         }
+
+        #endregion
 
         #region Private Methods
 
@@ -233,6 +249,7 @@ namespace GravityCTRL.FilterChili
             }).ToList();
         }
 
+        [NotNull]
         private IReadOnlyDictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>> CreateGroupDictionary()
         {
             var useDefaultIdentifier = _defaultGroupIdentifier.TryGetValue(out var identifier);
@@ -275,7 +292,7 @@ namespace GravityCTRL.FilterChili
             return dictionary;
         }
 
-        private static void SetSelectedStatus(IReadOnlyList<TSelector> selectedValues, IReadOnlyDictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>> dictionary)
+        private static void SetSelectedStatus(IReadOnlyList<TSelector> selectedValues, [NotNull] IReadOnlyDictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>> dictionary)
         {
             foreach (var valueDictionary in dictionary.Values)
             {
@@ -289,7 +306,7 @@ namespace GravityCTRL.FilterChili
             }
         }
 
-        private static void SetSelectableStatus(IReadOnlyList<TSelector> selectableValues, IReadOnlyDictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>> dictionary)
+        private static void SetSelectableStatus(IReadOnlyList<TSelector> selectableValues, [NotNull] IReadOnlyDictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>> dictionary)
         {
             foreach (var valueDictionary in dictionary.Values)
             {
@@ -312,7 +329,7 @@ namespace GravityCTRL.FilterChili
 
         #region Private Classes
 
-        private class KeyValuePair
+        private sealed class KeyValuePair
         {
             public TGroupSelector GroupIdentifier { get; [UsedImplicitly] set; }
             public TSelector Value { get; [UsedImplicitly] set; }

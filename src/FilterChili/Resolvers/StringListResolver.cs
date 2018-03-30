@@ -23,7 +23,7 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Resolvers
 {
-    public class StringListResolver<TSource> : ListResolver<TSource, string>
+    public sealed class StringListResolver<TSource> : ListResolver<TSource, string>
     {
         [UsedImplicitly]
         public StringComparisonStrategy ComparisonStrategy { get; set; }

@@ -21,7 +21,7 @@ using Microsoft.Extensions.Logging;
 
 namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
 {
-    public class DataContext : DbContext
+    public sealed class DataContext : DbContext
     {
         private static readonly LoggerFactory Factory;
 
@@ -31,7 +31,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
         [UsedImplicitly]
         private const string SQLEXPRESS = "localhost\\sqlexpress";
 
-        public DbSet<Product> Products { get; [UsedImplicitly] set; }
+        internal DbSet<Product> Products { get; [UsedImplicitly] set; }
 
         static DataContext()
         {
@@ -40,25 +40,27 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
             Factory = factory;
         }
 
-        private DataContext(DbContextOptions options) : base(options) {}
+        private DataContext([NotNull] DbContextOptions options) : base(options) {}
 
+        [NotNull]
         [UsedImplicitly]
-        public static DataContext CreateWithSqlServer(string databaseName)
+        public static DataContext CreateWithSqlServer([NotNull] string databaseName)
         {
             var builder = new DbContextOptionsBuilder<DataContext>();
             var options = builder.UseSqlServer($"Server={SQLEXPRESS};Database={databaseName};Trusted_Connection=True;MultipleActiveResultSets=true").UseLoggerFactory(Factory).Options;
             return new DataContext(options);
         }
 
+        [NotNull]
         [UsedImplicitly]
-        public static DataContext CreateInMemory(string databaseName)
+        public static DataContext CreateInMemory([NotNull] string databaseName)
         {
             var builder = new DbContextOptionsBuilder<DataContext>();
             var options = builder.UseInMemoryDatabase(databaseName).Options;
             return new DataContext(options);
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating([NotNull] ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().HasKey(p => p.Id);
             modelBuilder.Entity<Product>().Property(p => p.Name).HasMaxLength(70);

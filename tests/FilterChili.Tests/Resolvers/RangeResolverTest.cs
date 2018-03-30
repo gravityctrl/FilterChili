@@ -26,7 +26,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Resolvers
 {
-    public class RangeResolverTest
+    public sealed class RangeResolverTest
     {
         private readonly RangeResolver<GenericSource, int> _testInstance;
 
@@ -282,7 +282,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             result.Should().Contain(expectedItems);
         }
 
-        private class TestRangeResolver : RangeResolver<GenericSource, int>
+        private sealed class TestRangeResolver : RangeResolver<GenericSource, int>
         {
             internal TestRangeResolver(Expression<Func<GenericSource, int>> selector) : base(selector, -5, 5) {}
         }

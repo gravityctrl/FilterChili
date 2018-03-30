@@ -20,10 +20,12 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Models
 {
-    public class Group<TGroupIdentifier, TValue> where TGroupIdentifier : IComparable where TValue : IComparable
+    public sealed class Group<TGroupIdentifier, TValue> where TGroupIdentifier : IComparable where TValue : IComparable
     {
-        public TGroupIdentifier Identifier { [UsedImplicitly] get; set; }
+        [UsedImplicitly]
+        public TGroupIdentifier Identifier { get; internal set; }
 
-        public IReadOnlyList<Item<TValue>> Values { [UsedImplicitly] get; set; }
+        [UsedImplicitly]
+        public IReadOnlyList<Item<TValue>> Values { get; internal set; }
     }
 }

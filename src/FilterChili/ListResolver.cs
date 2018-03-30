@@ -60,6 +60,7 @@ namespace GravityCTRL.FilterChili
             SelectedValues = new List<TSelector>();
         }
 
+        [UsedImplicitly]
         public void Set(IEnumerable<TSelector> selectedValues)
         {
             SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
@@ -67,6 +68,7 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
+        [UsedImplicitly]
         public void Set(params TSelector[] selectedValues)
         {
             SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
@@ -74,9 +76,10 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
-        public override bool TrySet(JToken domainToken)
+        [UsedImplicitly]
+        public override bool TrySet([CanBeNull] JToken domainToken)
         {
-            var valuesToken = domainToken.SelectToken("values");
+            var valuesToken = domainToken?.SelectToken("values");
             if (valuesToken == null)
             {
                 return false;
@@ -124,7 +127,7 @@ namespace GravityCTRL.FilterChili
             return entities.Values.ToList();
         }
 
-        private static void SetSelectedStatus(IEnumerable<TSelector> selectedValues, IReadOnlyDictionary<TSelector, Item<TSelector>> dictionary)
+        private static void SetSelectedStatus([NotNull] IEnumerable<TSelector> selectedValues, IReadOnlyDictionary<TSelector, Item<TSelector>> dictionary)
         {
             foreach (var selectedValue in selectedValues)
             {
@@ -135,7 +138,7 @@ namespace GravityCTRL.FilterChili
             }
         }
 
-        private static void SetSelectableStatus(IEnumerable<TSelector> selectableValues, Dictionary<TSelector, Item<TSelector>> dictionary)
+        private static void SetSelectableStatus([NotNull] IEnumerable<TSelector> selectableValues, [NotNull] Dictionary<TSelector, Item<TSelector>> dictionary)
         {
             foreach (var selectable in dictionary.Values)
             {

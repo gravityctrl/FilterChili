@@ -23,6 +23,7 @@ using GravityCTRL.FilterChili.Exceptions;
 using GravityCTRL.FilterChili.Extensions;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Resolvers.Interfaces;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Selectors
@@ -111,6 +112,7 @@ namespace GravityCTRL.FilterChili.Selectors
             await DomainResolver.SetSelectableEntities(selectableItems);
         }
 
+        [NotNull]
         internal override DomainResolver<TSource> Domain()
         {
             var resolver = DomainResolver ?? throw new MissingResolverException(Name);
@@ -118,7 +120,7 @@ namespace GravityCTRL.FilterChili.Selectors
             return resolver;
         }
 
-        internal override bool HasName(string name)
+        internal override bool HasName([NotNull] string name)
         {
             return DomainResolver?.Name == name;
         }

@@ -14,12 +14,20 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using JetBrains.Annotations;
+
 namespace GravityCTRL.FilterChili.Models
 {
     internal abstract class Option
     {
-        public static Option<T> None<T>() => new None<T>();
-        public static Option<T> Some<T>(T value)
+        [NotNull]
+        public static Option<T> None<T>()
+        {
+            return new None<T>();
+        }
+
+        [NotNull]
+        public static Option<T> Some<T>([CanBeNull] T value)
         {
             return value == null ? (Option<T>) new None<T>() : new Some<T>(value);
         }
@@ -28,7 +36,7 @@ namespace GravityCTRL.FilterChili.Models
     // ReSharper disable once UnusedTypeParameter
     internal abstract class Option<T> : Option {}
 
-    internal class Some<T> : Option<T>
+    internal sealed class Some<T> : Option<T>
     {
         public T Value { get; }
 
@@ -38,7 +46,7 @@ namespace GravityCTRL.FilterChili.Models
         }
     }
 
-    internal class None<T> : Option<T> {}
+    internal sealed class None<T> : Option<T> {}
 
     internal static class OptionExtensions
     {

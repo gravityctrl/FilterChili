@@ -28,6 +28,7 @@ namespace GravityCTRL.FilterChili.Resolvers
 {
     public abstract class DomainResolver
     {
+        [UsedImplicitly]
         public string Name { get; internal set; }
 
         protected DomainResolver(string name)
@@ -89,6 +90,7 @@ namespace GravityCTRL.FilterChili.Resolvers
 
         internal abstract Task SetSelectableEntities(IQueryable<TSource> queryable);
 
+        [CanBeNull]
         protected abstract Expression<Func<TSource, bool>> FilterExpression();
     }
 
@@ -104,6 +106,7 @@ namespace GravityCTRL.FilterChili.Resolvers
             _this = (TDomainResolver)this;
         }
 
+        [UsedImplicitly]
         public TDomainResolver UseName(string name)
         {
             var behavior = new ReplaceNameBehavior<TSource, TSelector>(name);

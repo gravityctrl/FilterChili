@@ -20,7 +20,7 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
 {
-    public class ProductFilterContext : FilterContext<Product>
+    public sealed class ProductFilterContext : FilterContext<Product>
     {
         [UsedImplicitly]
         public GroupResolver<Product, string, string> NameFilter { get; set; }

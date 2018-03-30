@@ -17,10 +17,11 @@
 using System;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Phonetics
 {
-    public static class Soundex
+    internal static class Soundex
     {
         private const int MAX_DIGITS = 3;
 
@@ -33,7 +34,7 @@ namespace GravityCTRL.FilterChili.Phonetics
             return string.Join(" ", words.Select(SoundexForWord));
         }
 
-        private static string SoundexForWord(string word)
+        private static string SoundexForWord([NotNull] string word)
         {
             var sb = new StringBuilder();
             var length = word.Length;

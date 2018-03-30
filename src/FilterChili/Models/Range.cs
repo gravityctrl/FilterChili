@@ -14,12 +14,16 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using JetBrains.Annotations;
+
 namespace GravityCTRL.FilterChili.Models
 {
-    public class Range<TValue>
+    public sealed class Range<TValue>
     {
+        [UsedImplicitly]
         public TValue Min { get; internal set; }
 
+        [UsedImplicitly]
         public TValue Max { get; internal set; }
 
         public Range(TValue min, TValue max)
