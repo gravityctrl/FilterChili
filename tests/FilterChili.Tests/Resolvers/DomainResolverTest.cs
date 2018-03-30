@@ -31,9 +31,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             testInstance.Name.Should().Be(null);
 
             testInstance.UseName("SomeName").Should().Be(testInstance);
-            testInstance.Name.Should().Be(null);
-
-            testInstance.ApplyBehaviors();
             testInstance.Name.Should().Be("SomeName");
         }
 
@@ -44,11 +41,9 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             testInstance.Name.Should().Be(null);
 
             testInstance.UseName("SomeName").Should().Be(testInstance);
-            testInstance.ApplyBehaviors();
             testInstance.Name.Should().Be("SomeName");
 
             testInstance.UseName("SomeName2").Should().Be(testInstance);
-            testInstance.ApplyBehaviors();
             testInstance.Name.Should().Be("SomeName2");
         }
 

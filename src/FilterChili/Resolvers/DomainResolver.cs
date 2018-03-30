@@ -15,11 +15,9 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using GravityCTRL.FilterChili.Behaviors;
 using GravityCTRL.FilterChili.Extensions;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
@@ -29,7 +27,7 @@ namespace GravityCTRL.FilterChili.Resolvers
     public abstract class DomainResolver
     {
         [UsedImplicitly]
-        public string Name { get; internal set; }
+        public string Name { get; protected set; }
 
         protected DomainResolver(string name)
         {
@@ -65,8 +63,6 @@ namespace GravityCTRL.FilterChili.Resolvers
         }
 
         public abstract bool TrySet(JToken domainToken);
-
-        internal abstract void ApplyBehaviors();
     }
 
     public abstract class DomainResolver<TSource, TSelector> : DomainResolver<TSource> where TSelector : IComparable
@@ -97,40 +93,18 @@ namespace GravityCTRL.FilterChili.Resolvers
     public abstract class DomainResolver<TDomainResolver, TSource, TSelector> : DomainResolver<TSource, TSelector>
         where TSelector : IComparable where TDomainResolver : DomainResolver<TDomainResolver, TSource, TSelector>
     {
-        private readonly List<IBehavior<TSource, TSelector>> _behaviors;
         private readonly TDomainResolver _this;
 
         protected DomainResolver(Expression<Func<TSource, TSelector>> selector) : base(selector)
         {
-            _behaviors = new List<IBehavior<TSource, TSelector>>();
             _this = (TDomainResolver)this;
         }
 
         [UsedImplicitly]
         public TDomainResolver UseName(string name)
         {
-            var behavior = new ReplaceNameBehavior<TSource, TSelector>(name);
-            AddBehavior(behavior);
+            Name = name;
             return _this;
-        }
-
-        internal override void ApplyBehaviors()
-        {
-            var resolver = (TDomainResolver)this;
-            _behaviors.ForEach(behavior => behavior.Apply(resolver));
-        }
-
-        private void AddBehavior<TBehavior>(TBehavior behavior) where TBehavior : IBehavior<TSource, TSelector>
-        {
-            var index = _behaviors.FindIndex(existingBehavior => existingBehavior is TBehavior);
-            if (index > -1)
-            {
-                _behaviors[index] = behavior;
-            }
-            else
-            {
-                _behaviors.Add(behavior);
-            }
         }
     }
 }
