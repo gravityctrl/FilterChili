@@ -41,15 +41,15 @@ namespace GravityCTRL.FilterChili.Search
         }
 
         [NotNull]
-        internal Expression IncludeExpression(string search)
+        internal Expression IncludeExpression([NotNull] string search)
         {
-            return _includeExpressionProvider.SearchExpression(_selector, search);
+            return _includeExpressionProvider.SearchExpression(_selector, search.ToLowerInvariant());
         }
 
         [NotNull]
-        internal Expression ExcludeExpression(string search)
+        internal Expression ExcludeExpression([NotNull] string search)
         {
-            return _excludeExpressionProvider.SearchExpression(_selector, search);
+            return _excludeExpressionProvider.SearchExpression(_selector, search.ToLowerInvariant());
         }
 
         [NotNull]

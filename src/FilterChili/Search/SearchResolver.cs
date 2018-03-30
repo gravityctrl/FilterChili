@@ -55,7 +55,7 @@ namespace GravityCTRL.FilterChili.Search
 
         public void SetSearchString(string searchString)
         {
-            searchString = searchString?.ToLower() ?? string.Empty;
+            searchString = searchString ?? string.Empty;
             if (string.Equals(_searchString, searchString))
             {
                 return;
