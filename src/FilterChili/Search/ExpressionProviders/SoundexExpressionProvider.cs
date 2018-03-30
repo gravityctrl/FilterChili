@@ -27,7 +27,7 @@ namespace GravityCTRL.FilterChili.Search.ExpressionProviders
         public Expression SearchExpression(Expression<Func<TSource, string>> searchSelector, string search)
         {
             var compiledExpression = searchSelector.Compile();
-            Expression<Func<TSource, bool>> expression = entity => search.ToSoundex().Contains(compiledExpression(entity).ToSoundex());
+            Expression<Func<TSource, bool>> expression = entity => compiledExpression(entity).ToSoundex().Contains(search.ToSoundex());
             return expression.Body;
         }
     }
