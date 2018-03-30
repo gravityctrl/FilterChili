@@ -91,6 +91,11 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             _testInstance.SelectedValues.Should().Contain(new[] { -2, -1, 2, 3 });
             _testInstance.NeedsToBeResolved.Should().Be(true);
+
+            _testInstance.SetGroups(new List<string> { "Category1", "Category3" });
+
+            _testInstance.SelectedValues.Should().Contain(new[] { -2, -1, 2, 3 });
+            _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
         [Fact]

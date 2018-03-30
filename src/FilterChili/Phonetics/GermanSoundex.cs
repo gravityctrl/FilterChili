@@ -28,7 +28,7 @@ namespace GravityCTRL.FilterChili.Phonetics
 
             var splitters = word.Where(character => !char.IsLetter(character));
             var words = word.Split(splitters.ToArray(), StringSplitOptions.RemoveEmptyEntries);
-            return string.Join(' ', words.Select(GermanSoundexForWord));
+            return string.Join(" ", words.Select(GermanSoundexForWord));
         }
 
         private static string GermanSoundexForWord(string word)

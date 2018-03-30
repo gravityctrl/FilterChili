@@ -30,7 +30,7 @@ namespace GravityCTRL.FilterChili.Phonetics
 
             var splitters = word.Where(character => !char.IsLetter(character));
             var words = word.Split(splitters.ToArray(), StringSplitOptions.RemoveEmptyEntries);
-            return string.Join(' ', words.Select(SoundexForWord));
+            return string.Join(" ", words.Select(SoundexForWord));
         }
 
         private static string SoundexForWord(string word)

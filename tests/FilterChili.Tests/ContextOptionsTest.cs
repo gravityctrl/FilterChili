@@ -75,7 +75,9 @@ namespace GravityCTRL.FilterChili.Tests
             _testInstance.Filter(source => source.UShort).Should().BeOfType<UShortFilterSelector<GenericSource>>();
 
             var domains = await _testInstance.Domains();
-            Action enumerateAction = () => domains.ToHashSet();
+
+            // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+            Action enumerateAction = () => domains.ToList();
             enumerateAction.Should().Throw<MissingResolverException>().Where(ex => ex.Message.EndsWith("FilterSelector<GenericSource>"));
         }
 

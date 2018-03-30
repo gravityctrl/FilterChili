@@ -32,7 +32,7 @@ namespace GravityCTRL.FilterChili.Extensions
             }
 
             var name = type.Name.Substring(0, type.Name.LastIndexOf(GENERIC_MARKER, StringComparison.Ordinal));
-            var genericArguments = string.Join(',', type.GetGenericArguments().Select(FormattedName));
+            var genericArguments = string.Join(",", type.GetGenericArguments().Select(FormattedName));
             return $"{name}<{genericArguments}>";
         }
 
