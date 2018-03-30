@@ -25,7 +25,7 @@ namespace GravityCTRL.FilterChili.Expressions
             return new PredicateRewriterVisitor(parameterExpression).Visit(expression);
         }
 
-        private class PredicateRewriterVisitor : ExpressionVisitor
+        private sealed class PredicateRewriterVisitor : ExpressionVisitor
         {
             private readonly ParameterExpression _parameterExpression;
 

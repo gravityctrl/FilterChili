@@ -16,10 +16,10 @@
 
 using System.Linq.Expressions;
 using FluentAssertions;
-using GravityCTRL.FilterChili.Expressions;
+using GravityCTRL.FilterChili.Extensions;
 using Xunit;
 
-namespace GravityCTRL.FilterChili.Tests.Expressions
+namespace GravityCTRL.FilterChili.Tests.Extensions
 {
     public sealed class EnumerableExtensionsTest
     {

@@ -16,7 +16,6 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Resolvers;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Selectors
@@ -27,9 +26,9 @@ namespace GravityCTRL.FilterChili.Selectors
 
         [NotNull]
         [UsedImplicitly]
-        public ListResolver<TSource, string> WithList(StringComparisonStrategy comparisonStrategy = StringComparisonStrategy.Equals)
+        public ListResolver<TSource, string> WithList()
         {
-            var resolver = new StringListResolver<TSource>(Selector, comparisonStrategy);
+            var resolver = new ListResolver<TSource, string>(Selector);
             DomainResolver = resolver;
             return resolver;
         }

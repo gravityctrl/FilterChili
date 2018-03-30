@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Extensions;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Resolvers.Interfaces;
@@ -28,7 +29,7 @@ using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
 {
-    public abstract class ListResolver<TSource, TSelector> 
+    public sealed class ListResolver<TSource, TSelector> 
         : DomainResolver<ListResolver<TSource, TSelector>, TSource, TSelector>, IListResolver<TSelector>
             where TSelector : IComparable
     {
@@ -54,11 +55,13 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public IReadOnlyList<Item<TSelector>> Values => CombineLists();
 
-        protected internal ListResolver(Expression<Func<TSource, TSelector>> selector) : base(selector)
+        public ListResolver(Expression<Func<TSource, TSelector>> selector) : base(selector)
         {
             _needsToBeResolved = true;
             SelectedValues = new List<TSelector>();
         }
+
+        #region Public Methods
 
         [UsedImplicitly]
         public void Set(IEnumerable<TSelector> selectedValues)
@@ -76,6 +79,10 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
+        #endregion
+
+        #region Public Overrides
+
         [UsedImplicitly]
         public override bool TrySet([CanBeNull] JToken domainToken)
         {
@@ -90,7 +97,22 @@ namespace GravityCTRL.FilterChili
             return true;
         }
 
+        #endregion
+
         #region Internal Methods
+
+        protected override Expression<Func<TSource, bool>> FilterExpression()
+        {
+            if (!SelectedValues.Any())
+            {
+                return null;
+            }
+
+            var selectedValueExpressions = SelectedValues.Select(selector => Expression.Constant(selector));
+            var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Equal(expression, Selector.Body));
+            var orExpression = equalsExpressions.Or();
+            return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
+        }
 
         internal override async Task SetAvailableEntities(IQueryable<TSource> queryable)
         {

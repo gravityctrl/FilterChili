@@ -17,10 +17,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
-using GravityCTRL.FilterChili.Expressions;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json;
@@ -35,7 +33,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
         public ListResolverTest()
         {
-            _testInstance = new TestListResolver(source => source.Int);
+            _testInstance = new ListResolver<GenericSource, int>(source => source.Int);
         }
 
         [Fact]
@@ -56,7 +54,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             _testInstance.Set(-1, 1);
 
-            _testInstance.SelectedValues.Should().Contain(new[] {-1, 1});
+            _testInstance.SelectedValues.Should().Contain(new[] { -1, 1 });
             _testInstance.NeedsToBeResolved.Should().Be(true);
         }
 
@@ -127,6 +125,39 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             await _testInstance.SetSelectableEntities(new GenericSource[0].AsQueryable());
 
             _testInstance.Values.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Should_Return_Null_If_There_Are_No_Items()
+        {
+            var items = new[]
+            {
+                new GenericSource { Int = -2 },
+                new GenericSource { Int = -1 },
+                new GenericSource { Int = 0 },
+                new GenericSource { Int = 1 },
+                new GenericSource { Int = 2 }
+            };
+
+            var result = _testInstance.ExecuteFilter(items.AsQueryable());
+            result.Should().HaveCount(5);
+        }
+
+        [Fact]
+        public void Should_Use_ComparisonStrategy_Equals_Correctly()
+        {
+            var items = new[]
+            {
+                new GenericSource { Int = -2 },
+                new GenericSource { Int = -1 },
+                new GenericSource { Int = 0 },
+                new GenericSource { Int = 1 },
+                new GenericSource { Int = 2 }
+            };
+
+            _testInstance.Set(-1, 2);
+            var result = _testInstance.ExecuteFilter(items.AsQueryable());
+            result.Should().HaveCount(2);
         }
 
         [Fact]
@@ -321,19 +352,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             var expectedJson = JsonConvert.SerializeObject(expected);
             JsonConvert.SerializeObject(_testInstance.Values).Should().Be(expectedJson);
             _testInstance.NeedsToBeResolved.Should().Be(true);
-        }
-
-        private sealed class TestListResolver : ListResolver<GenericSource, int>
-        {
-            internal TestListResolver(Expression<Func<GenericSource, int>> selector) : base(selector) {}
-
-            protected override Expression<Func<GenericSource, bool>> FilterExpression()
-            {
-                var selectedValueExpressions = SelectedValues.Select(value => Expression.Constant(value));
-                var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Equal(expression, Selector.Body));
-                var orExpression = equalsExpressions.Or();
-                return orExpression == null ? null : Expression.Lambda<Func<GenericSource, bool>>(orExpression, Selector.Parameters);
-            }
         }
     }
 }

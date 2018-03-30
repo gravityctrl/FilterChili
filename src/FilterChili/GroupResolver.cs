@@ -21,6 +21,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Expressions;
+using GravityCTRL.FilterChili.Extensions;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Resolvers.Interfaces;

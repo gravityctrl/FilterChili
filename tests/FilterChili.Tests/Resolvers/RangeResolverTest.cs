@@ -83,6 +83,12 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
+        public void Should_Not_Be_Able_To_Set_Null_JToken_As_Filter()
+        {
+            _testInstance.TrySet(null).Should().BeFalse();
+        }
+
+        [Fact]
         public void Should_Not_Set_Value_With_TrySet_If_JToken_Value_Cannot_Be_Interpreted()
         {
             _testInstance.NeedsToBeResolved = false;

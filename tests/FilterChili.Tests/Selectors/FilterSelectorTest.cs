@@ -132,8 +132,8 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void ListResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.List().Should().BeOfType<TestListResolver>();
-            _testInstance.Domain().Should().BeOfType<TestListResolver>();
+            _testInstance.List().Should().BeOfType<ListResolver<GenericSource, int>>();
+            _testInstance.Domain().Should().BeOfType<ListResolver<GenericSource, int>>();
             _testInstance.NeedsToBeResolved = false;
 
             _testInstance.TrySet(1).Should().BeFalse();
@@ -179,9 +179,9 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             }
 
             [NotNull]
-            public TestListResolver List()
+            public ListResolver<GenericSource, int> List()
             {
-                var resolver = new TestListResolver(Selector);
+                var resolver = new ListResolver<GenericSource, int>(Selector);
                 DomainResolver = resolver;
                 return resolver;
             }
@@ -195,16 +195,6 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         private sealed class TestRangeResolver : RangeResolver<GenericSource, int>
         {
             internal TestRangeResolver(Expression<Func<GenericSource, int>> selector) : base(selector, int.MinValue, int.MaxValue) {}
-        }
-
-        private sealed class TestListResolver : ListResolver<GenericSource, int>
-        {
-            internal TestListResolver(Expression<Func<GenericSource, int>> selector) : base(selector) {}
-
-            protected override Expression<Func<GenericSource, bool>> FilterExpression()
-            {
-                return null;
-            }
         }
 
         private sealed class TestComparer : Comparer<GenericSource, int>

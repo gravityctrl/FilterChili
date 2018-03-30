@@ -133,6 +133,13 @@ namespace GravityCTRL.FilterChili.Tests
         }
 
         [Fact]
+        public void Should_Not_Be_Able_To_Set_Null_Filter()
+        {
+            var filterContext = new ProductFilterContext(CreateTestProducts().AsQueryable());
+            filterContext.TrySet((JToken)null).Should().BeFalse();
+        }
+
+        [Fact]
         public void Should_Not_Be_Able_To_Set_Invalid_Filter()
         {
             var filterContext = new ProductFilterContext(CreateTestProducts().AsQueryable());

@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace GravityCTRL.FilterChili.Expressions
+namespace GravityCTRL.FilterChili.Extensions
 {
     internal static class EnumerableExtensions
     {
