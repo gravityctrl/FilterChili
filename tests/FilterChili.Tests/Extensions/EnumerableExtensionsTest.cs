@@ -49,6 +49,7 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
 
             var expressions = new Expression[] { Expression.Constant(0), Expression.Constant(1), Expression.Constant(2) };
 
+            // ReSharper disable once PossibleNullReferenceException
             expressions.Or().ToString().Should().Be(expected);
         }
     }

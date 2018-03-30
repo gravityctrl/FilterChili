@@ -20,6 +20,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Resolvers;
+using GravityCTRL.FilterChili.Search;
 using GravityCTRL.FilterChili.Selectors;
 using JetBrains.Annotations;
 
@@ -29,6 +30,7 @@ namespace GravityCTRL.FilterChili
     {
         private readonly IQueryable<TSource> _queryable;
         private readonly List<FilterSelector<TSource>> _filters;
+        private readonly SearchResolver<TSource> _searchResolver;
 
         [UsedImplicitly]
         public CalculationStrategy CalculationStrategy { get; set; }
@@ -37,6 +39,7 @@ namespace GravityCTRL.FilterChili
         {
             _queryable = queryable;
             _filters = new List<FilterSelector<TSource>>();
+            _searchResolver = new SearchResolver<TSource>();
             configure(this);
         }
 
@@ -44,7 +47,16 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public ByteFilterSelector<TSource> Filter(Expression<Func<TSource, byte>> valueSelector)
+        public SearchSelector<TSource> Search([NotNull] Expression<Func<TSource, string>> valueSelector)
+        {
+            var searcher = new SearchSelector<TSource>(valueSelector);
+            _searchResolver.AddSearcher(searcher);
+            return searcher;
+        }
+
+        [NotNull]
+        [UsedImplicitly]
+        public ByteFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, byte>> valueSelector)
         {
             var filter = new ByteFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -53,7 +65,7 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public CharFilterSelector<TSource> Filter(Expression<Func<TSource, char>> valueSelector)
+        public CharFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, char>> valueSelector)
         {
             var filter = new CharFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -62,7 +74,7 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public DecimalFilterSelector<TSource> Filter(Expression<Func<TSource, decimal>> valueSelector)
+        public DecimalFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, decimal>> valueSelector)
         {
             var filter = new DecimalFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -71,7 +83,7 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public DoubleFilterSelector<TSource> Filter(Expression<Func<TSource, double>> valueSelector)
+        public DoubleFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, double>> valueSelector)
         {
             var filter = new DoubleFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -80,7 +92,7 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public FloatFilterSelector<TSource> Filter(Expression<Func<TSource, float>> valueSelector)
+        public FloatFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, float>> valueSelector)
         {
             var filter = new FloatFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -89,7 +101,7 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public IntFilterSelector<TSource> Filter(Expression<Func<TSource, int>> valueSelector)
+        public IntFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, int>> valueSelector)
         {
             var filter = new IntFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -98,7 +110,7 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public LongFilterSelector<TSource> Filter(Expression<Func<TSource, long>> valueSelector)
+        public LongFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, long>> valueSelector)
         {
             var filter = new LongFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -107,7 +119,7 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public SByteFilterSelector<TSource> Filter(Expression<Func<TSource, sbyte>> valueSelector)
+        public SByteFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, sbyte>> valueSelector)
         {
             var filter = new SByteFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -116,7 +128,7 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public ShortFilterSelector<TSource> Filter(Expression<Func<TSource, short>> valueSelector)
+        public ShortFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, short>> valueSelector)
         {
             var filter = new ShortFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -125,7 +137,7 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public StringFilterSelector<TSource> Filter(Expression<Func<TSource, string>> valueSelector)
+        public StringFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, string>> valueSelector)
         {
             var filter = new StringFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -134,7 +146,7 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public UIntFilterSelector<TSource> Filter(Expression<Func<TSource, uint>> valueSelector)
+        public UIntFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, uint>> valueSelector)
         {
             var filter = new UIntFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -143,7 +155,7 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public ULongFilterSelector<TSource> Filter(Expression<Func<TSource, ulong>> valueSelector)
+        public ULongFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, ulong>> valueSelector)
         {
             var filter = new ULongFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -152,7 +164,7 @@ namespace GravityCTRL.FilterChili
 
         [NotNull]
         [UsedImplicitly]
-        public UShortFilterSelector<TSource> Filter(Expression<Func<TSource, ushort>> valueSelector)
+        public UShortFilterSelector<TSource> Filter([NotNull] Expression<Func<TSource, ushort>> valueSelector)
         {
             var filter = new UShortFilterSelector<TSource>(valueSelector);
             _filters.Add(filter);
@@ -170,7 +182,7 @@ namespace GravityCTRL.FilterChili
 
         internal IQueryable<TSource> ApplyFilters()
         {
-            var queryable = _queryable.AsQueryable();
+            var queryable = _searchResolver.ApplySearch(_queryable);
             return _filters.Aggregate(queryable, (current, filter) => filter.ApplyFilter(current));
         }
 
@@ -192,17 +204,24 @@ namespace GravityCTRL.FilterChili
             return _filters.Select(filter => filter.Domain());
         }
 
+        internal void SetSearch(string search)
+        {
+            _searchResolver.SetSearchString(search);
+        }
+
         #endregion
 
         #region Private Methods
 
         private async Task Resolve(CalculationStrategy calculationStrategy)
         {
-            var filters = _filters.ToList();
+            var queryable = _searchResolver.ApplySearch(_queryable);
+
+            // Check if this is unnecessary.
             async Task ResolveFilterAtIndex(int ignoredIndex)
             {
-                var currentFilter = filters[ignoredIndex];
-                var selectableItems = _queryable.AsQueryable();
+                var currentFilter = _filters[ignoredIndex];
+                var selectableItems = queryable.AsQueryable();
                 if (currentFilter.NeedsToBeResolved)
                 {
                     await currentFilter.SetAvailableEntities(selectableItems);
@@ -210,7 +229,7 @@ namespace GravityCTRL.FilterChili
 
                 if (calculationStrategy == CalculationStrategy.Full)
                 {
-                    var filtersToExecute = filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
+                    var filtersToExecute = _filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
                     selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
                     await currentFilter.SetSelectableEntities(selectableItems);
                 }
@@ -218,7 +237,7 @@ namespace GravityCTRL.FilterChili
                 currentFilter.NeedsToBeResolved = false;
             }
 
-            for (var i = 0; i < filters.Count; i++)
+            for (var i = 0; i < _filters.Count; i++)
             {
                 await ResolveFilterAtIndex(i);
             }

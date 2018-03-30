@@ -24,6 +24,7 @@ using GravityCTRL.FilterChili.Tests.Shared.Models;
 using GravityCTRL.FilterChili.Tests.Shared.Services;
 using GravityCTRL.FilterChili.Tests.Shared.Utils;
 using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace GravityCTRL.FilterChili.TestConsole
 {
@@ -31,34 +32,46 @@ namespace GravityCTRL.FilterChili.TestConsole
     // ReSharper disable once MemberCanBeInternal
     public class Program
     {
-        private const int MAX_PRINTED_RESULTS = 5;
+        private const int MAX_PRINTED_RESULTS = 10;
         private const int ENTITY_AMOUNT = 100_000;
 
         public static void Main()
         {
-            using (var dataContext = DataContext.CreateInMemory(Guid.NewGuid().ToString()))
+            using (var dataContext = DataContext.CreateWithSqlServer(Guid.NewGuid().ToString()))
             {
                 dataContext.Migrate();
 
                 var service = new ProductService(dataContext);
                 service.AddRange(CreateTestProducts()).Wait();
 
-                var filterContext = new ProductFilterContext(service.Entities);
-
-                var duration = Benchmark.Measure(() =>
+                string input;
+                do
                 {
-                    filterContext.TrySet("Rating", 1, 7);
-                    filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
-                    filterContext.TrySet("Sold", 600);
-                    PerformAnalysis(filterContext).Wait();
-                });
+                    input = Console.ReadLine()?.ToLowerInvariant();
+                    Console.Clear();
 
-                Console.WriteLine("Duration {0}", duration);
+                    if (string.IsNullOrEmpty(input))
+                    {
+                        continue;
+                    }
+
+                    var filterContext = new ProductFilterContext(service.Entities);
+
+                    var duration = Benchmark.Measure(() =>
+                    {
+                        // ReSharper disable once AccessToModifiedClosure
+                        filterContext.SetSearch(input);
+                        filterContext.TrySet("Rating", 1, 7);
+                        filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
+                        filterContext.TrySet("Sold", 600);
+                        PerformAnalysis(filterContext).Wait();
+                    });
+
+                    Console.WriteLine("Duration {0}", duration);
+                } while (!string.IsNullOrEmpty(input));
 
                 dataContext.Delete();
             }
-
-            Console.ReadLine();
         }
 
         private static IEnumerable<Product> CreateTestProducts()
@@ -76,7 +89,7 @@ namespace GravityCTRL.FilterChili.TestConsole
         private static async Task PerformAnalysis([NotNull] ProductFilterContext context)
         {
             var filterResults = context.ApplyFilters().Take(MAX_PRINTED_RESULTS);
-            var evaluatedFilterResults = filterResults.ToList();
+            var evaluatedFilterResults = await filterResults.ToListAsync();
             Console.WriteLine(JsonUtils.Convert(evaluatedFilterResults));
 
             var domains = await context.Domains();

@@ -53,7 +53,7 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public TSelector SelectedValue { get; private set; }
 
-        internal ComparisonResolver(Comparer<TSource, TSelector> comparer, Expression<Func<TSource, TSelector>> selector) : base(selector)
+        internal ComparisonResolver(Comparer<TSource, TSelector> comparer, [NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector)
         {
             _comparer = comparer;
             _needsToBeResolved = true;

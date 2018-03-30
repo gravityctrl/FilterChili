@@ -15,13 +15,19 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Reflection;
+using GravityCTRL.FilterChili.Search;
+using Newtonsoft.Json;
+using Xunit;
 
-namespace GravityCTRL.FilterChili.Expressions
+namespace GravityCTRL.FilterChili.Tests.Search
 {
-    internal static class MethodExpressions
+    public sealed class FragmentedSearchTest
     {
-        public static readonly MethodInfo StringContainsExpression = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-        public static readonly MethodInfo ToLowerExpression = typeof(string).GetMethod("ToLower", new Type[] {});
+        [Fact]
+        public void Should()
+        {
+            var result = new FragmentedSearch(@"""Das: ist ein Test"". Action:Foobert Das sind ActionNeu:"" Das ist auch eine Aktion"" ein2Paar EmptyAction: normale -""Das ist keine Aktion"":Foo , -Wörter "" Foo  ");
+            Console.WriteLine(JsonConvert.SerializeObject(result));
+        }
     }
 }

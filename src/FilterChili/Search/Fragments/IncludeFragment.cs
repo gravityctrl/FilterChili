@@ -14,14 +14,10 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Reflection;
-
-namespace GravityCTRL.FilterChili.Expressions
+namespace GravityCTRL.FilterChili.Search.Fragments
 {
-    internal static class MethodExpressions
+    internal sealed class IncludeFragment : Fragment
     {
-        public static readonly MethodInfo StringContainsExpression = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-        public static readonly MethodInfo ToLowerExpression = typeof(string).GetMethod("ToLower", new Type[] {});
+        public IncludeFragment(FragmentType type, string text) : base(type, text) {}
     }
 }
