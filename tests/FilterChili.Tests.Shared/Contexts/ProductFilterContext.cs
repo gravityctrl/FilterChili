@@ -15,7 +15,6 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System.Linq;
-using GravityCTRL.FilterChili.Search;
 using GravityCTRL.FilterChili.Tests.Shared.Models;
 using JetBrains.Annotations;
 

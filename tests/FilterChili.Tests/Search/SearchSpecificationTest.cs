@@ -2,7 +2,6 @@
 using System.Linq.Expressions;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Expressions;
-using GravityCTRL.FilterChili.Search;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using JetBrains.Annotations;
 using Xunit;
