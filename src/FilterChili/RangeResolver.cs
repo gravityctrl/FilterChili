@@ -100,7 +100,7 @@ namespace GravityCTRL.FilterChili
                 var maxConstant = Expression.Constant(SelectedRange.Max);
                 var greaterThanExpression = Expression.GreaterThanOrEqual(Selector.Body, minConstant);
                 var lessThanExpression = Expression.LessThanOrEqual(Selector.Body, maxConstant);
-                var andExpression = Expression.And(greaterThanExpression, lessThanExpression);
+                var andExpression = Expression.AndAlso(greaterThanExpression, lessThanExpression);
                 return Expression.Lambda<Func<TSource, bool>>(andExpression, Selector.Parameters);
             }
 

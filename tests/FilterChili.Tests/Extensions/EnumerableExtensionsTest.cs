@@ -42,11 +42,11 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
         public void Should_Combine_Expressions_Via_Or_If_Expressions_Have_More_Than_One_Items()
         {
             var expected = Expression.Or(
+                Expression.Constant(2),
                 Expression.Or(
-                    Expression.Constant(0), 
-                    Expression.Constant(1)
-                ), 
-                Expression.Constant(2)
+                    Expression.Constant(1),
+                    Expression.Constant(0)
+                )
             ).ToString();
 
             var expressions = new Expression[] { Expression.Constant(0), Expression.Constant(1), Expression.Constant(2) };
@@ -58,15 +58,15 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
         [Fact]
         public void Should_Combine_Expressions_Via_And_If_Expressions_Have_More_Than_One_Items()
         {
-            var expected = Expression.And(
-                Expression.And(
-                    Expression.Constant(0),
-                    Expression.Constant(1)
-                ),
-                Expression.Constant(2)
+            var expected = Expression.AndAlso(
+                Expression.Constant(false),
+                Expression.AndAlso(
+                    Expression.Constant(false),
+                    Expression.Constant(true)
+                )
             ).ToString();
 
-            var expressions = new Expression[] { Expression.Constant(0), Expression.Constant(1), Expression.Constant(2) };
+            var expressions = new Expression[] { Expression.Constant(true), Expression.Constant(false), Expression.Constant(false) };
 
             // ReSharper disable once PossibleNullReferenceException
             expressions.And().ToString().Should().Be(expected);

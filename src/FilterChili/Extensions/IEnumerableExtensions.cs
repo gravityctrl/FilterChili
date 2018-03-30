@@ -33,7 +33,7 @@ namespace GravityCTRL.FilterChili.Extensions
         [CanBeNull]
         public static Expression And([NotNull] this IEnumerable<Expression> expressions)
         {
-            return CreateExpression(Expression.And, expressions);
+            return CreateExpression(Expression.AndAlso, expressions);
         }
 
         [CanBeNull]
@@ -54,7 +54,7 @@ namespace GravityCTRL.FilterChili.Extensions
 
             for (var index = 1; index < expressionList.Count; index++)
             {
-                expression = binaryExpression(expression, expressionList[index]);
+                expression = binaryExpression(expressionList[index], expression);
             }
 
             return expression;

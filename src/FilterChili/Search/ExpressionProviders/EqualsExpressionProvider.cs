@@ -22,12 +22,18 @@ namespace GravityCTRL.FilterChili.Search.ExpressionProviders
 {
     internal sealed class EqualsExpressionProvider<TSource> : IExpressionProvider<TSource>
     {
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly ConstantExpression NullExpression = Expression.Constant(null, typeof(string));
+
         public bool AcceptsMultipleSearchInputs { get; } = false;
 
         public Expression SearchExpression(Expression<Func<TSource, string>> searchSelector, string search)
         {
             var constant = Expression.Constant(search);
-            return Expression.Equal(Expression.Call(searchSelector.Body, MethodExpressions.ToLowerExpression), constant);
+            var notNull = Expression.NotEqual(searchSelector.Body, NullExpression);
+
+            var equalsExpression = Expression.Equal(Expression.Call(searchSelector.Body, MethodExpressions.ToLowerExpression), constant);
+            return Expression.AndAlso(notNull, equalsExpression);
         }
     }
 }
