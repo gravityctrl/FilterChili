@@ -29,6 +29,7 @@ namespace GravityCTRL.FilterChili.Models
         [NotNull]
         public static Option<T> Some<T>([CanBeNull] T value)
         {
+            // ReSharper disable once CompareNonConstrainedGenericWithNull
             return value == null ? (Option<T>) new None<T>() : new Some<T>(value);
         }
     }

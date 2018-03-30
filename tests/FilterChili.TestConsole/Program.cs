@@ -34,6 +34,7 @@ namespace GravityCTRL.FilterChili.TestConsole
     {
         private const int MAX_PRINTED_RESULTS = 10;
         private const int ENTITY_AMOUNT = 10_000;
+        private const bool SET_FILTERS = true;
 
         public static void Main()
         {
@@ -44,9 +45,10 @@ namespace GravityCTRL.FilterChili.TestConsole
                 var service = new ProductService(dataContext);
                 service.AddRange(CreateTestProducts()).Wait();
 
-                string input = null;
+                string readline = null;
                 do
                 {
+                    var input = readline;
                     Console.Clear();
                     if (string.Equals(input, "exit", StringComparison.OrdinalIgnoreCase))
                     {
@@ -57,17 +59,25 @@ namespace GravityCTRL.FilterChili.TestConsole
 
                     var duration1 = Benchmark.Measure(() =>
                     {
-                        // ReSharper disable once AccessToModifiedClosure
                         filterContext.SetSearch(input);
-                        filterContext.TrySet("Rating", 1, 7);
-                        filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
-                        filterContext.TrySet("Sold", 600);
+
+                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                        // ReSharper disable once InvertIf
+                        if (SET_FILTERS)
+                        {
+                            filterContext.TrySet("Rating", 1, 7);
+                            filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
+                            filterContext.TrySet("Sold", 600);
+                        }
                     });
 
-                    var duration2 = Benchmark.Measure(() => {
+                    // ReSharper disable once ImplicitlyCapturedClosure
+                    var duration2 = Benchmark.Measure(() =>
+                    {
                         PerformResultAnalysis(filterContext).Wait();
                     });
 
+                    // ReSharper disable once ImplicitlyCapturedClosure
                     var duration3 = Benchmark.Measure(() =>
                     {
                         PerformFilterAnalysis(filterContext).Wait();
@@ -78,9 +88,9 @@ namespace GravityCTRL.FilterChili.TestConsole
                     Console.WriteLine("Duration {0}", duration3);
 
                     Console.Write($"{Environment.NewLine}ENTER SEARCH TERMS: ");
-                    input = Console.ReadLine()?.ToLowerInvariant();
+                    readline = Console.ReadLine()?.ToLowerInvariant();
                 }
-                while (!string.Equals(input, "exit", StringComparison.OrdinalIgnoreCase));
+                while (!string.Equals(readline, "exit", StringComparison.OrdinalIgnoreCase));
 
                 dataContext.Delete();
             }

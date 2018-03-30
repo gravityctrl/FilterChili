@@ -261,6 +261,8 @@ namespace GravityCTRL.FilterChili
             foreach (var availableValue in _availableValues)
             {
                 var key = availableValue.GroupIdentifier;
+                
+                // ReSharper disable once CompareNonConstrainedGenericWithNull
                 if (key == null)
                 {
                     if (useDefaultIdentifier)

@@ -27,6 +27,7 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
         public void Should_Return_Null_If_Expressions_Are_Empty()
         {
             new Expression[0].Or().Should().BeNull();
+            new Expression[0].And().Should().BeNull();
         }
 
         [Fact]
@@ -34,6 +35,7 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
         {
             var expression = Expression.Constant(0);
             new Expression[] { expression }.Or().Should().Be(expression);
+            new Expression[] { expression }.And().Should().Be(expression);
         }
 
         [Fact]
@@ -51,6 +53,23 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
 
             // ReSharper disable once PossibleNullReferenceException
             expressions.Or().ToString().Should().Be(expected);
+        }
+
+        [Fact]
+        public void Should_Combine_Expressions_Via_And_If_Expressions_Have_More_Than_One_Items()
+        {
+            var expected = Expression.And(
+                Expression.And(
+                    Expression.Constant(0),
+                    Expression.Constant(1)
+                ),
+                Expression.Constant(2)
+            ).ToString();
+
+            var expressions = new Expression[] { Expression.Constant(0), Expression.Constant(1), Expression.Constant(2) };
+
+            // ReSharper disable once PossibleNullReferenceException
+            expressions.And().ToString().Should().Be(expected);
         }
     }
 }

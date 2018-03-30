@@ -21,6 +21,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -290,7 +291,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
         private sealed class TestRangeResolver : RangeResolver<GenericSource, int>
         {
-            internal TestRangeResolver(Expression<Func<GenericSource, int>> selector) : base(selector, -5, 5) {}
+            internal TestRangeResolver([NotNull] Expression<Func<GenericSource, int>> selector) : base(selector, -5, 5) {}
         }
     }
 }

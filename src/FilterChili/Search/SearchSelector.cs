@@ -16,9 +16,8 @@
 
 using System;
 using System.Linq.Expressions;
-using GravityCTRL.FilterChili.Expressions;
 using GravityCTRL.FilterChili.Extensions;
-using GravityCTRL.FilterChili.Phonetics;
+using GravityCTRL.FilterChili.Search.ExpressionProviders;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Search
@@ -95,60 +94,6 @@ namespace GravityCTRL.FilterChili.Search
         {
             Name = name;
             return this;
-        }
-    }
-
-    internal interface IExpressionProvider<TSource>
-    {
-        bool AcceptsMultipleSearchInputs { get; }
-
-        [NotNull]
-        Expression SearchExpression([NotNull] Expression<Func<TSource, string>> searchSelector, string search);
-    }
-
-    internal sealed class EqualsExpressionProvider<TSource> : IExpressionProvider<TSource>
-    {
-        public bool AcceptsMultipleSearchInputs { get; } = false;
-
-        public Expression SearchExpression(Expression<Func<TSource, string>> searchSelector, string search)
-        {
-            var constant = Expression.Constant(search);
-            return Expression.Equal(Expression.Call(searchSelector.Body, MethodExpressions.ToLowerExpression), constant);
-        }
-    }
-
-    internal sealed class ContainsExpressionProvider<TSource> : IExpressionProvider<TSource>
-    {
-        public bool AcceptsMultipleSearchInputs { get; } = true;
-
-        public Expression SearchExpression(Expression<Func<TSource, string>> searchSelector, string search)
-        {
-            var constant = Expression.Constant(search);
-            return Expression.Call(Expression.Call(searchSelector.Body, MethodExpressions.ToLowerExpression), MethodExpressions.StringContainsExpression, constant);
-        }
-    }
-
-    internal sealed class SoundexExpressionProvider<TSource> : IExpressionProvider<TSource>
-    {
-        public bool AcceptsMultipleSearchInputs { get; } = true;
-
-        public Expression SearchExpression(Expression<Func<TSource, string>> searchSelector, string search)
-        {
-            var compiledExpression = searchSelector.Compile();
-            Expression<Func<TSource, bool>> expression = entity => search.ToSoundex().Contains(compiledExpression(entity).ToSoundex());
-            return expression.Body;
-        }
-    }
-
-    internal sealed class GermanSoundexExpressionProvider<TSource> : IExpressionProvider<TSource>
-    {
-        public bool AcceptsMultipleSearchInputs { get; } = true;
-
-        public Expression SearchExpression(Expression<Func<TSource, string>> searchSelector, string search)
-        {
-            var compiledExpression = searchSelector.Compile();
-            Expression<Func<TSource, bool>> expression = entity => search.ToGermanSoundex().Contains(compiledExpression(entity).ToGermanSoundex());
-            return expression.Body;
         }
     }
 }
