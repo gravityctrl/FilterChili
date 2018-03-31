@@ -223,6 +223,11 @@ namespace GravityCTRL.FilterChili
             if (_availableValues != null)
             {
                 groupDictionary = CreateGroupDictionary(_availableValues, false);
+                if (_selectableValues != null)
+                {
+                    var selectableValues = _selectableValues.Select(kv => kv.Value).Distinct().ToList();
+                    SetSelectableStatus(selectableValues, groupDictionary);
+                }
             }
             else if (_selectableValues != null)
             {
@@ -234,19 +239,14 @@ namespace GravityCTRL.FilterChili
             }
 
             SetSelectedStatus(SelectedValues, groupDictionary);
-            
-            // ReSharper disable once InvertIf
-            if (_selectableValues != null && _availableValues != null)
-            {
-                var selectableValues = _selectableValues.Select(kv => kv.Value).Distinct().ToList();
-                SetSelectableStatus(selectableValues, groupDictionary);
-            }
 
-            return groupDictionary.Select(kv => new Group<TGroupSelector, TSelector>
+            var result = groupDictionary.Select(kv => new Group<TGroupSelector, TSelector>
             {
                 Identifier = kv.Key,
                 Values = kv.Value.Values.ToList()
-            }).ToList();
+            });
+
+            return result.ToList();
         }
 
         [NotNull]

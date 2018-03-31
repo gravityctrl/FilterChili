@@ -140,6 +140,10 @@ namespace GravityCTRL.FilterChili
             if (_availableValues != null)
             {
                 entities = CreateDictionary(_availableValues, false);
+                if (_selectableValues != null)
+                {
+                    SetSelectableStatus(_selectableValues, entities);
+                }
             }
             else if (_selectableValues != null)
             {
@@ -151,10 +155,6 @@ namespace GravityCTRL.FilterChili
             }
 
             SetSelectedStatus(SelectedValues, entities);
-            if (_selectableValues != null && _availableValues != null)
-            {
-                SetSelectableStatus(_selectableValues, entities);
-            }
 
             return entities.Values.ToList();
         }
@@ -162,8 +162,6 @@ namespace GravityCTRL.FilterChili
         [NotNull]
         private static Dictionary<TSelector, Item<TSelector>> CreateDictionary([NotNull] IEnumerable<TSelector> values, bool canBeSelected)
         {
-
-            // ReSharper disable once AssignNullToNotNullAttribute
             return values.ToDictionary(value => value, value => new Item<TSelector> { Value = value, CanBeSelected = canBeSelected });
         }
 
