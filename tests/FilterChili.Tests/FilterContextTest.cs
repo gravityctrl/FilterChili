@@ -94,7 +94,7 @@ namespace GravityCTRL.FilterChili.Tests
             filterResults.Should().NotContain(entity => !_allowedNames.Contains(entity.Name));
             filterResults.Should().NotContain(entity => entity.Sold <= 600);
 
-            var domains = await filterContext.Domains(CalculationStrategy.WithoutSelectableValues);
+            var domains = await filterContext.Domains(CalculationStrategy.AvailableValues);
             domains.Should().HaveCount(3);
         }
 
@@ -128,7 +128,7 @@ namespace GravityCTRL.FilterChili.Tests
             filterResults.Should().NotContain(entity => !_allowedNames.Contains(entity.Name));
             filterResults.Should().NotContain(entity => entity.Sold <= 600);
 
-            var domains = await filterContext.Domains(CalculationStrategy.WithoutSelectableValues);
+            var domains = await filterContext.Domains(CalculationStrategy.AvailableValues);
             domains.Should().HaveCount(3);
         }
 

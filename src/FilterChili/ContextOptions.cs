@@ -37,6 +37,7 @@ namespace GravityCTRL.FilterChili
 
         internal ContextOptions(IQueryable<TSource> queryable, [NotNull] Action<ContextOptions<TSource>> configure)
         {
+            CalculationStrategy = CalculationStrategy.Full;
             _queryable = queryable;
             _filters = new List<FilterSelector<TSource>>();
             _searchResolver = new SearchResolver<TSource>();
@@ -216,23 +217,24 @@ namespace GravityCTRL.FilterChili
 
         private async Task Resolve(CalculationStrategy calculationStrategy)
         {
+            var tasks = new List<Task>();
             var queryable = _searchResolver.ApplySearch(_queryable);
 
             // Check if this is unnecessary.
-            async Task ResolveFilterAtIndex(int ignoredIndex)
+            void ResolveFilterAtIndex(int ignoredIndex)
             {
                 var currentFilter = _filters[ignoredIndex];
-                var selectableItems = queryable.AsQueryable();
-                if (currentFilter.NeedsToBeResolved)
+
+                if (currentFilter.NeedsToBeResolved && ShouldSetAvailableItems(calculationStrategy))
                 {
-                    await currentFilter.SetAvailableEntities(selectableItems);
+                    tasks.Add(currentFilter.SetAvailableEntities(queryable.AsQueryable()));
                 }
 
-                if (calculationStrategy == CalculationStrategy.Full)
+                if (ShouldSetSelectableItems(calculationStrategy))
                 {
                     var filtersToExecute = _filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
-                    selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
-                    await currentFilter.SetSelectableEntities(selectableItems);
+                    var selectableItems = filtersToExecute.Aggregate(queryable.AsQueryable(), (current, filterSelector) => filterSelector.ApplyFilter(current));
+                    tasks.Add(currentFilter.SetSelectableEntities(selectableItems));
                 }
 
                 currentFilter.NeedsToBeResolved = false;
@@ -240,8 +242,20 @@ namespace GravityCTRL.FilterChili
 
             for (var i = 0; i < _filters.Count; i++)
             {
-                await ResolveFilterAtIndex(i);
+                ResolveFilterAtIndex(i);
             }
+
+            await Task.WhenAll(tasks);
+        }
+
+        private static bool ShouldSetAvailableItems(CalculationStrategy calculationStrategy)
+        {
+            return (calculationStrategy & CalculationStrategy.AvailableValues) == CalculationStrategy.AvailableValues;
+        }
+
+        private static bool ShouldSetSelectableItems(CalculationStrategy calculationStrategy)
+        {
+            return (calculationStrategy & CalculationStrategy.SelectableValues) == CalculationStrategy.SelectableValues;
         }
 
         #endregion

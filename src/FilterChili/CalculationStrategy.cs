@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili
@@ -21,22 +22,19 @@ namespace GravityCTRL.FilterChili
     /// <summary>
     /// Specifies in which detail the filterable values are reported.
     /// </summary>
+    [Flags]
     public enum CalculationStrategy
     {
-        /// <summary>
-        /// Provides all information on the filterable values per filtered property.
-        /// By Choosing this <see cref="CalculationStrategy"/> a set over all existing property values will be created.
-        /// This strategy also creates a set of values, that can currently be selected using the filter.
-        /// </summary>
         [UsedImplicitly]
-        Full = 0,
+        SelectedValues = 0b00,
 
-        /// <summary>
-        /// Provides all information on the filterable values per filtered property.
-        /// By Choosing this <see cref="CalculationStrategy"/> a set over all existing property values will be created.
-        /// This strategy does not create a set of values, that can currently be selected using the filter.
-        /// </summary>
         [UsedImplicitly]
-        WithoutSelectableValues = 1
+        SelectableValues = 0b01,
+
+        [UsedImplicitly]
+        AvailableValues = 0b10,
+
+        [UsedImplicitly]
+        Full = 0b11
     }
 }

@@ -47,7 +47,7 @@ namespace GravityCTRL.FilterChili
 
         private bool _needsToBeResolved;
         private IReadOnlyList<KeyValuePair> _availableValues;
-        private IReadOnlyList<TSelector> _selectableValues;
+        private IReadOnlyList<KeyValuePair> _selectableValues;
         private Option<TGroupSelector> _defaultGroupIdentifier;
 
         internal IReadOnlyList<TSelector> SelectedValues;
@@ -200,15 +200,16 @@ namespace GravityCTRL.FilterChili
         {
             var groupQueryable = queryable.Select(_selectKeyValuePairExpression);
             _availableValues = groupQueryable is IAsyncEnumerable<KeyValuePair>
-                ? await groupQueryable.Distinct().ToListAsync()
-                : groupQueryable.Distinct().ToList();
+                ? await groupQueryable.ToListAsync()
+                : groupQueryable.ToList();
         }
 
         internal override async Task SetSelectableEntities([NotNull] IQueryable<TSource> queryable)
         {
-            _selectableValues = queryable is IAsyncEnumerable<TSource>
-                ? await queryable.Select(Selector).Distinct().ToListAsync()
-                : queryable.Select(Selector).Distinct().ToList();
+            var groupQueryable = queryable.Select(_selectKeyValuePairExpression);
+            _selectableValues = groupQueryable is IAsyncEnumerable<KeyValuePair>
+                ? await groupQueryable.Distinct().ToListAsync()
+                : groupQueryable.Distinct().ToList();
         }
 
         #endregion
@@ -218,31 +219,27 @@ namespace GravityCTRL.FilterChili
         [NotNull]
         private IReadOnlyList<Group<TGroupSelector, TSelector>> CombineLists()
         {
-            if (_availableValues == null)
+            IReadOnlyDictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>> groupDictionary;
+            if (_availableValues != null)
             {
-                var list = new List<Group<TGroupSelector, TSelector>>();
-
-                if (SelectedValues.Count <= 0 || !_defaultGroupIdentifier.TryGetValue(out var identifier))
-                {
-                    return list;
-                }
-
-                var group = new Group<TGroupSelector, TSelector>
-                {
-                    Identifier = identifier,
-                    Values = SelectedValues.Select(value => new Item<TSelector> { Value = value, IsSelected = true }).ToList()
-                };
-
-                list.Add(group);
-
-                return list;
+                groupDictionary = CreateGroupDictionary(_availableValues, false);
+            }
+            else if (_selectableValues != null)
+            {
+                groupDictionary = CreateGroupDictionary(_selectableValues, true);
+            }
+            else
+            {
+                return CreateResultUsingSelectedValues();
             }
 
-            var groupDictionary = CreateGroupDictionary();
             SetSelectedStatus(SelectedValues, groupDictionary);
-            if (_selectableValues != null)
+            
+            // ReSharper disable once InvertIf
+            if (_selectableValues != null && _availableValues != null)
             {
-                SetSelectableStatus(_selectableValues, groupDictionary);
+                var selectableValues = _selectableValues.Select(kv => kv.Value).Distinct().ToList();
+                SetSelectableStatus(selectableValues, groupDictionary);
             }
 
             return groupDictionary.Select(kv => new Group<TGroupSelector, TSelector>
@@ -253,14 +250,14 @@ namespace GravityCTRL.FilterChili
         }
 
         [NotNull]
-        private IReadOnlyDictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>> CreateGroupDictionary()
+        private IReadOnlyDictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>> CreateGroupDictionary([NotNull] IEnumerable<KeyValuePair> source, bool canBeSelected)
         {
             var useDefaultIdentifier = _defaultGroupIdentifier.TryGetValue(out var identifier);
             var dictionary = new Dictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>>();
 
-            foreach (var availableValue in _availableValues)
+            foreach (var keyValuePair in source)
             {
-                var key = availableValue.GroupIdentifier;
+                var key = keyValuePair.GroupIdentifier;
                 
                 // ReSharper disable once CompareNonConstrainedGenericWithNull
                 if (key == null)
@@ -275,8 +272,8 @@ namespace GravityCTRL.FilterChili
                     }
                 }
 
-                var value = availableValue.Value;
-                var item = new Item<TSelector> { Value = value };
+                var value = keyValuePair.Value;
+                var item = new Item<TSelector> { Value = value, CanBeSelected = canBeSelected };
 
                 if (!dictionary.ContainsKey(key))
                 {
@@ -295,6 +292,25 @@ namespace GravityCTRL.FilterChili
             }
 
             return dictionary;
+        }
+
+        [NotNull]
+        private IReadOnlyList<Group<TGroupSelector, TSelector>> CreateResultUsingSelectedValues()
+        {
+            var list = new List<Group<TGroupSelector, TSelector>>();
+            if (SelectedValues.Count <= 0 || !_defaultGroupIdentifier.TryGetValue(out var identifier))
+            {
+                return list;
+            }
+
+            var group = new Group<TGroupSelector, TSelector>
+            {
+                Identifier = identifier,
+                Values = SelectedValues.Select(value => new Item<TSelector> { Value = value, IsSelected = true, CanBeSelected = false }).ToList()
+            };
+
+            list.Add(group);
+            return list;
         }
 
         private static void SetSelectedStatus(IReadOnlyList<TSelector> selectedValues, [NotNull] IReadOnlyDictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>> dictionary)

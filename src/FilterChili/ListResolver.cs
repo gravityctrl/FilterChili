@@ -136,19 +136,35 @@ namespace GravityCTRL.FilterChili
         [NotNull]
         private IReadOnlyList<Item<TSelector>> CombineLists()
         {
-            if (_availableValues == null)
+            Dictionary<TSelector, Item<TSelector>> entities;
+            if (_availableValues != null)
+            {
+                entities = CreateDictionary(_availableValues, false);
+            }
+            else if (_selectableValues != null)
+            {
+                entities = CreateDictionary(_selectableValues, true);
+            }
+            else
             {
                 return SelectedValues.Select(value => new Item<TSelector> { Value = value, IsSelected = true }).ToList();
             }
 
-            var entities = _availableValues.ToDictionary(value => value, value => new Item<TSelector> { Value = value });
             SetSelectedStatus(SelectedValues, entities);
-            if (_selectableValues != null)
+            if (_selectableValues != null && _availableValues != null)
             {
                 SetSelectableStatus(_selectableValues, entities);
             }
 
             return entities.Values.ToList();
+        }
+
+        [NotNull]
+        private static Dictionary<TSelector, Item<TSelector>> CreateDictionary([NotNull] IEnumerable<TSelector> values, bool canBeSelected)
+        {
+
+            // ReSharper disable once AssignNullToNotNullAttribute
+            return values.ToDictionary(value => value, value => new Item<TSelector> { Value = value, CanBeSelected = canBeSelected });
         }
 
         private static void SetSelectedStatus([NotNull] IEnumerable<TSelector> selectedValues, IReadOnlyDictionary<TSelector, Item<TSelector>> dictionary)
