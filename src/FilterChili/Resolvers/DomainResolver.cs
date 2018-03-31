@@ -29,9 +29,12 @@ namespace GravityCTRL.FilterChili.Resolvers
         [UsedImplicitly]
         public string Name { get; protected set; }
 
+        internal CalculationStrategy CalculationStrategy { get; set; }
+
         internal DomainResolver(string name)
         {
             Name = name;
+            CalculationStrategy = CalculationStrategy.Full;
         }
     }
 
@@ -104,6 +107,13 @@ namespace GravityCTRL.FilterChili.Resolvers
         public TDomainResolver UseName(string name)
         {
             Name = name;
+            return _this;
+        }
+
+        [UsedImplicitly]
+        public TDomainResolver UseCalculationStrategy(CalculationStrategy calculationStrategy)
+        {
+            CalculationStrategy = calculationStrategy;
             return _this;
         }
     }

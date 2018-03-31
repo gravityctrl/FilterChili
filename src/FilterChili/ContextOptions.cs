@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Search;
 using GravityCTRL.FilterChili.Selectors;
@@ -32,12 +33,8 @@ namespace GravityCTRL.FilterChili
         private readonly List<FilterSelector<TSource>> _filters;
         private readonly SearchResolver<TSource> _searchResolver;
 
-        [UsedImplicitly]
-        public CalculationStrategy CalculationStrategy { get; set; }
-
         internal ContextOptions(IQueryable<TSource> queryable, [NotNull] Action<ContextOptions<TSource>> configure)
         {
-            CalculationStrategy = CalculationStrategy.Full;
             _queryable = queryable;
             _filters = new List<FilterSelector<TSource>>();
             _searchResolver = new SearchResolver<TSource>();
@@ -191,19 +188,13 @@ namespace GravityCTRL.FilterChili
         [ItemNotNull]
         internal async Task<IEnumerable<DomainResolver<TSource>>> Domains()
         {
-            return await Domains(CalculationStrategy);
+            return await CalculateDomains(Option.None<CalculationStrategy>());
         }
 
         [ItemNotNull]
         internal async Task<IEnumerable<DomainResolver<TSource>>> Domains(CalculationStrategy calculationStrategy)
         {
-            if (!_filters.Any(f => f.NeedsToBeResolved))
-            {
-                return _filters.Select(filter => filter.Domain());
-            }
-
-            await Resolve(calculationStrategy);
-            return _filters.Select(filter => filter.Domain());
+            return await CalculateDomains(Option.Some(calculationStrategy));
         }
 
         internal void SetSearch(string search)
@@ -215,22 +206,34 @@ namespace GravityCTRL.FilterChili
 
         #region Private Methods
 
-        private async Task Resolve(CalculationStrategy calculationStrategy)
+        [ItemNotNull]
+        private async Task<IEnumerable<DomainResolver<TSource>>> CalculateDomains([NotNull] Option<CalculationStrategy> calculationStrategy)
+        {
+            if (!_filters.Any(f => f.NeedsToBeResolved))
+            {
+                return _filters.Select(filter => filter.Domain());
+            }
+
+            await Resolve(calculationStrategy);
+            return _filters.Select(filter => filter.Domain());
+        }
+
+        private async Task Resolve([NotNull] Option<CalculationStrategy> calculationStrategy)
         {
             var tasks = new List<Task>();
             var queryable = _searchResolver.ApplySearch(_queryable);
 
-            // Check if this is unnecessary.
             void ResolveFilterAtIndex(int ignoredIndex)
             {
                 var currentFilter = _filters[ignoredIndex];
+                var usedCalculationStrategy = calculationStrategy.TryGetValue(out var value) ? value : currentFilter.CalculationStrategy;
 
-                if (currentFilter.NeedsToBeResolved && ShouldSetAvailableItems(calculationStrategy))
+                if (ShouldSetAvailableItems(usedCalculationStrategy) && currentFilter.NeedsToBeResolved)
                 {
                     tasks.Add(currentFilter.SetAvailableEntities(queryable.AsQueryable()));
                 }
 
-                if (ShouldSetSelectableItems(calculationStrategy))
+                if (ShouldSetSelectableItems(usedCalculationStrategy))
                 {
                     var filtersToExecute = _filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
                     var selectableItems = filtersToExecute.Aggregate(queryable.AsQueryable(), (current, filterSelector) => filterSelector.ApplyFilter(current));

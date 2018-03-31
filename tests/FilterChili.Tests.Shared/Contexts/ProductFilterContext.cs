@@ -50,8 +50,6 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
 
         protected override void Configure(ContextOptions<Product> options)
         {
-            options.CalculationStrategy = CalculationStrategy.Full;
-
             NameSearch = options.Search(product => product.Name);
             CategorySearch = options.Search(product => product.Category);
             IdSearch = options.Search(product => product.Id.ToString()).UseEquals();
