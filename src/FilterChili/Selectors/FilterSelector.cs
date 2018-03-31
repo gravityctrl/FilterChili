@@ -34,6 +34,10 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal abstract CalculationStrategy CalculationStrategy { get; }
 
+        internal abstract string Name { get; }
+
+        internal abstract bool HasDomainResolver { get; }
+
         internal abstract bool NeedsToBeResolved { get; set; }
 
         internal abstract IQueryable<TSource> ApplyFilter(IQueryable<TSource> queryable);
@@ -59,13 +63,15 @@ namespace GravityCTRL.FilterChili.Selectors
 
     public abstract class FilterSelector<TSource, TSelector> : FilterSelector<TSource> where TSelector : IComparable
     {
-        private string Name => GetType().FormattedName();
+        internal override string Name => GetType().FormattedName();
 
         internal override CalculationStrategy CalculationStrategy => DomainResolver.CalculationStrategy;
 
         protected readonly Expression<Func<TSource, TSelector>> Selector;
 
         protected DomainResolver<TSource, TSelector> DomainResolver { private get; set; }
+
+        internal override bool HasDomainResolver => DomainResolver != null;
 
         internal override bool NeedsToBeResolved
         {

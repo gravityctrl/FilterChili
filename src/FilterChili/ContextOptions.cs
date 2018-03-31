@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Exceptions;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Search;
@@ -39,6 +40,7 @@ namespace GravityCTRL.FilterChili
             _filters = new List<FilterSelector<TSource>>();
             _searchResolver = new SearchResolver<TSource>();
             configure(this);
+            CheckPrerequisites();
         }
 
         #region Filters
@@ -205,6 +207,15 @@ namespace GravityCTRL.FilterChili
         #endregion
 
         #region Private Methods
+
+        private void CheckPrerequisites()
+        {
+            var invalidFilter = _filters.FirstOrDefault(filter => !filter.HasDomainResolver);
+            if (invalidFilter != null)
+            {
+                throw new MissingResolverException(invalidFilter.Name);
+            }
+        }
 
         [ItemNotNull]
         private async Task<IEnumerable<DomainResolver<TSource>>> CalculateDomains([NotNull] Option<CalculationStrategy> calculationStrategy)
