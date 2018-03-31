@@ -200,8 +200,8 @@ namespace GravityCTRL.FilterChili
         {
             var groupQueryable = queryable.Select(_selectKeyValuePairExpression);
             _availableValues = groupQueryable is IAsyncEnumerable<KeyValuePair>
-                ? await groupQueryable.ToListAsync()
-                : groupQueryable.ToList();
+                ? await groupQueryable.Distinct().ToListAsync()
+                : groupQueryable.Distinct().ToList();
         }
 
         internal override async Task SetSelectableEntities([NotNull] IQueryable<TSource> queryable)
