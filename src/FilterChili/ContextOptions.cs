@@ -220,24 +220,23 @@ namespace GravityCTRL.FilterChili
 
         private async Task Resolve([NotNull] Option<CalculationStrategy> calculationStrategy)
         {
-            var tasks = new List<Task>();
             var queryable = _searchResolver.ApplySearch(_queryable);
 
-            void ResolveFilterAtIndex(int ignoredIndex)
+            async Task ResolveFilterAtIndex(int ignoredIndex)
             {
                 var currentFilter = _filters[ignoredIndex];
                 var usedCalculationStrategy = calculationStrategy.TryGetValue(out var value) ? value : currentFilter.CalculationStrategy;
 
                 if (ShouldSetAvailableItems(usedCalculationStrategy) && currentFilter.NeedsToBeResolved)
                 {
-                    tasks.Add(currentFilter.SetAvailableEntities(queryable.AsQueryable()));
+                    await currentFilter.SetAvailableEntities(queryable.AsQueryable());
                 }
 
                 if (ShouldSetSelectableItems(usedCalculationStrategy))
                 {
                     var filtersToExecute = _filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
                     var selectableItems = filtersToExecute.Aggregate(queryable.AsQueryable(), (current, filterSelector) => filterSelector.ApplyFilter(current));
-                    tasks.Add(currentFilter.SetSelectableEntities(selectableItems));
+                    await currentFilter.SetSelectableEntities(selectableItems);
                 }
 
                 currentFilter.NeedsToBeResolved = false;
@@ -245,10 +244,8 @@ namespace GravityCTRL.FilterChili
 
             for (var i = 0; i < _filters.Count; i++)
             {
-                ResolveFilterAtIndex(i);
+                await ResolveFilterAtIndex(i);
             }
-
-            await Task.WhenAll(tasks);
         }
 
         private static bool ShouldSetAvailableItems(CalculationStrategy calculationStrategy)
