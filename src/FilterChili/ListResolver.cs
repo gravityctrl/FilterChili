@@ -40,11 +40,11 @@ namespace GravityCTRL.FilterChili
         [NotNull]
         internal IReadOnlyList<TValue> SelectedValues { get; private set; }
 
-        [CanBeNull]
-        private IReadOnlyList<TValue> _selectableValues;
+        [NotNull]
+        private Option<IReadOnlyList<TValue>> _selectableValues;
 
-        [CanBeNull]
-        private IReadOnlyList<TValue> _availableValues;
+        [NotNull]
+        private Option<IReadOnlyList<TValue>> _availableValues;
 
         [NotNull]
         [UsedImplicitly]
@@ -56,6 +56,8 @@ namespace GravityCTRL.FilterChili
         {
             NeedsToBeResolved = true;
             SelectedValues = new List<TValue>();
+            _selectableValues = Option.None<IReadOnlyList<TValue>>();
+            _availableValues = Option.None<IReadOnlyList<TValue>>();
         }
 
         #endregion
@@ -117,12 +119,12 @@ namespace GravityCTRL.FilterChili
         {
             if (allEntities.TryGetValue(out var all))
             {
-                _availableValues = await CreateSelectorList(all);
+                _availableValues = Option.Some(await CreateSelectorList(all));
             }
 
             if (selectableEntities.TryGetValue(out var selectable))
             {
-                _selectableValues = await CreateSelectorList(selectable);
+                _selectableValues = Option.Some(await CreateSelectorList(selectable));
             }
         }
 
@@ -142,17 +144,17 @@ namespace GravityCTRL.FilterChili
         private IReadOnlyList<Item<TValue>> CombineLists()
         {
             Dictionary<TValue, Item<TValue>> entities;
-            if (_availableValues != null)
+            if (_availableValues.TryGetValue(out var available))
             {
-                entities = CreateDictionary(_availableValues, false);
-                if (_selectableValues != null)
+                entities = CreateDictionary(available, false);
+                if (_selectableValues.TryGetValue(out var selectable))
                 {
-                    SetSelectableStatus(_selectableValues, entities);
+                    SetSelectableStatus(selectable, entities);
                 }
             }
-            else if (_selectableValues != null)
+            else if (_selectableValues.TryGetValue(out var selectable))
             {
-                entities = CreateDictionary(_selectableValues, true);
+                entities = CreateDictionary(selectable, true);
             }
             else
             {

@@ -51,7 +51,7 @@ namespace GravityCTRL.FilterChili.Models
 
     internal static class OptionExtensions
     {
-        public static bool TryGetValue<T>(this Option<T> option, out T value)
+        public static bool TryGetValue<T>([CanBeNull] this Option<T> option, out T value)
         {
             if (option is Some<T> some)
             {
