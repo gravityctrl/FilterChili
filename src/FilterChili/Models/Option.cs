@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Models
@@ -30,7 +31,7 @@ namespace GravityCTRL.FilterChili.Models
         internal static Option<T> Some<T>([CanBeNull] T value)
         {
             // ReSharper disable once CompareNonConstrainedGenericWithNull
-            return value == null ? (Option<T>) new None<T>() : new Some<T>(value);
+            return value == null ? throw new ArgumentNullException() : new Some<T>(value);
         }
 
         [NotNull]
@@ -47,7 +48,7 @@ namespace GravityCTRL.FilterChili.Models
         [NotNull]
         public static implicit operator Option<T>(T value)
         {
-            return Some(value);
+            return Maybe(value);
         }
     }
 
