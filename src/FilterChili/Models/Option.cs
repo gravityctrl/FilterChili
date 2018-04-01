@@ -21,21 +21,35 @@ namespace GravityCTRL.FilterChili.Models
     public abstract class Option
     {
         [NotNull]
-        public static Option<T> None<T>()
+        internal static Option<T> None<T>()
         {
             return new None<T>();
         }
 
         [NotNull]
-        public static Option<T> Some<T>([CanBeNull] T value)
+        internal static Option<T> Some<T>([CanBeNull] T value)
         {
             // ReSharper disable once CompareNonConstrainedGenericWithNull
             return value == null ? (Option<T>) new None<T>() : new Some<T>(value);
         }
+
+        [NotNull]
+        internal static Option<T> Maybe<T>([CanBeNull] T value)
+        {
+            // ReSharper disable once CompareNonConstrainedGenericWithNull
+            return value == null ? (Option<T>)new None<T>() : new Some<T>(value);
+        }
     }
 
     // ReSharper disable once UnusedTypeParameter
-    public abstract class Option<T> : Option {}
+    public abstract class Option<T> : Option
+    {
+        [NotNull]
+        public static implicit operator Option<T>(T value)
+        {
+            return Some(value);
+        }
+    }
 
     internal sealed class Some<T> : Option<T>
     {

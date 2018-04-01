@@ -17,6 +17,7 @@
 using System.Linq.Expressions;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Extensions;
+using GravityCTRL.FilterChili.Models;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Extensions
@@ -26,16 +27,19 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
         [Fact]
         public void Should_Return_Null_If_Expressions_Are_Empty()
         {
-            new Expression[0].Or().Should().BeNull();
-            new Expression[0].And().Should().BeNull();
+            new Expression[0].Or().TryGetValue(out var _).Should().BeFalse();
+            new Expression[0].And().TryGetValue(out var _).Should().BeFalse();
         }
 
         [Fact]
         public void Should_Return_Same_Expression_If_Expressions_Only_Contain_The_One()
         {
             var expression = Expression.Constant(0);
-            new Expression[] { expression }.Or().Should().Be(expression);
-            new Expression[] { expression }.And().Should().Be(expression);
+            new Expression[] { expression }.Or().TryGetValue(out var orExpression).Should().BeTrue();
+            orExpression.Should().Be(expression);
+
+            new Expression[] { expression }.And().TryGetValue(out var andExpression).Should().BeTrue();
+            andExpression.Should().Be(expression);
         }
 
         [Fact]
@@ -52,7 +56,8 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
             var expressions = new Expression[] { Expression.Constant(0), Expression.Constant(1), Expression.Constant(2) };
 
             // ReSharper disable once PossibleNullReferenceException
-            expressions.Or().ToString().Should().Be(expected);
+            expressions.Or().TryGetValue(out var value).Should().BeTrue();
+            value.ToString().Should().Be(expected);
         }
 
         [Fact]
@@ -69,7 +74,8 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
             var expressions = new Expression[] { Expression.Constant(true), Expression.Constant(false), Expression.Constant(false) };
 
             // ReSharper disable once PossibleNullReferenceException
-            expressions.And().ToString().Should().Be(expected);
+            expressions.And().TryGetValue(out var value).Should().BeTrue();
+            value.ToString().Should().Be(expected);
         }
     }
 }

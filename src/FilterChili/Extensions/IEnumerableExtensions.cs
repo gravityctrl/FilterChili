@@ -18,38 +18,39 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Models;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Extensions
 {
     internal static class EnumerableExtensions
     {
-        [CanBeNull]
-        public static Expression Or([NotNull] this IEnumerable<Expression> expressions)
+        [NotNull]
+        public static Option<Expression> Or([NotNull] this IEnumerable<Expression> expressions)
         {
             return CreateExpression(Expression.Or, expressions);
         }
 
-        [CanBeNull]
-        public static Expression And([NotNull] this IEnumerable<Expression> expressions)
+        [NotNull]
+        public static Option<Expression> And([NotNull] this IEnumerable<Expression> expressions)
         {
             return CreateExpression(Expression.AndAlso, expressions);
         }
 
-        [CanBeNull]
-        private static Expression CreateExpression(Func<Expression, Expression, BinaryExpression> binaryExpression, [NotNull] IEnumerable<Expression> expressions)
+        [NotNull]
+        private static Option<Expression> CreateExpression(Func<Expression, Expression, BinaryExpression> binaryExpression, [NotNull] IEnumerable<Expression> expressions)
         {
             var expressionList = expressions as IList<Expression> ?? expressions.ToList();
 
             if (expressionList.Count == 0)
             {
-                return null;
+                return Option.None<Expression>();
             }
 
             var expression = expressionList[0];
             if (expressionList.Count == 1)
             {
-                return expression;
+                return Option.Some(expression);
             }
 
             for (var index = 1; index < expressionList.Count; index++)
@@ -57,7 +58,7 @@ namespace GravityCTRL.FilterChili.Extensions
                 expression = binaryExpression(expressionList[index], expression);
             }
 
-            return expression;
+            return Option.Some(expression);
         }
     }
 }

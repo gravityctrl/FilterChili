@@ -17,6 +17,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Resolvers;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
@@ -74,25 +75,25 @@ namespace GravityCTRL.FilterChili
             }
 
             var filter = _contextOptions.GetFilter(name);
-            if (filter == null)
+            if (!filter.TryGetValue(out var value))
             {
                 return false;
             }
 
             var domain = filterToken.SelectToken("filter");
-            return domain != null && filter.TrySet(domain);
+            return domain != null && value.TrySet(domain);
         }
 
         [UsedImplicitly]
         public bool TrySet<TValue>(string name, TValue value)
         {
-            return _contextOptions.GetFilter(name)?.TrySet(value) ?? false;
+            return _contextOptions.GetFilter(name).TryGetValue(out var filter) && filter.TrySet(value);
         }
 
         [UsedImplicitly]
         public bool TrySet<TValue>(string name, TValue min, TValue max)
         {
-            return _contextOptions.GetFilter(name)?.TrySet(min, max) ?? false;
+            return _contextOptions.GetFilter(name).TryGetValue(out var filter) && filter.TrySet(min, max);
         }
 
         protected abstract void Configure([NotNull] ContextOptions<TSource> options);

@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using Bogus;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Exceptions;
+using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json;
@@ -112,13 +113,16 @@ namespace GravityCTRL.FilterChili.Tests
             _testInstance.Filter(source => source.Double).WithLessThanOrEqual();
             _testInstance.Filter(source => source.Float).WithRange();
 
-            // ReSharper disable PossibleNullReferenceException
-            _testInstance.GetFilter("Int").Domain().Name.Should().Be("Int");
-            _testInstance.GetFilter("Double").Domain().Name.Should().Be("Double");
-            _testInstance.GetFilter("Float").Domain().Name.Should().Be("Float");
-            // ReSharper restore PossibleNullReferenceException
+            _testInstance.GetFilter("Int").TryGetValue(out var intFilter).Should().BeTrue();
+            intFilter.Domain().Name.Should().Be("Int");
 
-            _testInstance.GetFilter("Byte").Should().BeNull();
+            _testInstance.GetFilter("Double").TryGetValue(out var doubleFilter).Should().BeTrue();
+            doubleFilter.Domain().Name.Should().Be("Double");
+
+            _testInstance.GetFilter("Float").TryGetValue(out var floatFilter).Should().BeTrue();
+            floatFilter.Domain().Name.Should().Be("Float");
+
+            _testInstance.GetFilter("Byte").TryGetValue(out var _).Should().BeFalse();
         }
 
         [Fact]

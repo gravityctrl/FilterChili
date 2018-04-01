@@ -23,7 +23,6 @@ using FluentAssertions;
 using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Xunit;
 

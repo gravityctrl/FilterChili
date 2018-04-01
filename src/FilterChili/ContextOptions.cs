@@ -175,10 +175,10 @@ namespace GravityCTRL.FilterChili
 
         #region Internal Methods
 
-        [CanBeNull]
-        internal FilterSelector<TSource> GetFilter(string name)
+        [NotNull]
+        internal Option<FilterSelector<TSource>> GetFilter(string name)
         {
-            return _filters.SingleOrDefault(filter => filter.HasName(name));
+            return Option.Maybe(_filters.SingleOrDefault(filter => filter.HasName(name)));
         }
 
         internal IQueryable<TSource> ApplyFilters()

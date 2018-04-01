@@ -185,8 +185,8 @@ namespace GravityCTRL.FilterChili
             var selectedValueExpressions = SelectedValues.Select(selector => Expression.Constant(selector));
             var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Equal(expression, Selector.Body));
             var orExpression = equalsExpressions.Or();
-            return orExpression != null 
-                ? Option.Some(Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters))
+            return orExpression.TryGetValue(out var value)
+                ? Option.Some(Expression.Lambda<Func<TSource, bool>>(value, Selector.Parameters))
                 : Option.None<Expression<Func<TSource, bool>>>();
         }
 
