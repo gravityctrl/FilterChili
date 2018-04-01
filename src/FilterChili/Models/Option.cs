@@ -31,7 +31,7 @@ namespace GravityCTRL.FilterChili.Models
         internal static Option<T> Some<T>([CanBeNull] T value)
         {
             // ReSharper disable once CompareNonConstrainedGenericWithNull
-            return value == null ? throw new ArgumentNullException() : new Some<T>(value);
+            return value == null ? throw new ArgumentNullException(nameof(T)) : new Some<T>(value);
         }
 
         [NotNull]
