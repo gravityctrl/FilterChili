@@ -33,13 +33,7 @@ namespace GravityCTRL.FilterChili
         : FilterResolver<ListResolver<TSource, TValue>, TSource, TValue>, IListResolver<TValue>
             where TValue : IComparable
     {
-        private bool _needsToBeResolved;
-
-        internal override bool NeedsToBeResolved
-        {
-            get => _needsToBeResolved;
-            set => _needsToBeResolved = value;
-        }
+        internal override bool NeedsToBeResolved { get; set; }
 
         public override string FilterType { get; } = "List";
 
@@ -56,11 +50,15 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public IReadOnlyList<Item<TValue>> Values => CombineLists();
 
-        public ListResolver([NotNull] Expression<Func<TSource, TValue>> selector) : base(selector)
+        #region Constructors
+
+        internal ListResolver([NotNull] Expression<Func<TSource, TValue>> selector) : base(selector)
         {
-            _needsToBeResolved = true;
+            NeedsToBeResolved = true;
             SelectedValues = new List<TValue>();
         }
+
+        #endregion
 
         #region Public Methods
 
@@ -69,7 +67,7 @@ namespace GravityCTRL.FilterChili
         {
             SelectedValues = selectedValues as IReadOnlyList<TValue> ?? selectedValues.ToList();
             _selectableValues = null;
-            _needsToBeResolved = true;
+            NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
@@ -77,7 +75,7 @@ namespace GravityCTRL.FilterChili
         {
             SelectedValues = selectedValues as IReadOnlyList<TValue> ?? selectedValues.ToList();
             _selectableValues = null;
-            _needsToBeResolved = true;
+            NeedsToBeResolved = true;
         }
 
         #endregion

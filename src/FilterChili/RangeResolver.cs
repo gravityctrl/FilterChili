@@ -28,17 +28,11 @@ using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
 {
-    public class RangeResolver<TSource, TValue> 
+    public sealed class RangeResolver<TSource, TValue> 
         : FilterResolver<RangeResolver<TSource, TValue>, TSource, TValue>, IRangeResolver<TValue>
             where TValue : IComparable
     {
-        private bool _needsToBeResolved;
-
-        internal override bool NeedsToBeResolved
-        {
-            get => _needsToBeResolved;
-            set => _needsToBeResolved = value;
-        }
+        internal override bool NeedsToBeResolved { get; set; }
 
         private readonly TValue _min;
 
@@ -57,7 +51,7 @@ namespace GravityCTRL.FilterChili
 
         internal RangeResolver([NotNull] Expression<Func<TSource, TValue>> selector, TValue min, TValue max) : base(selector)
         {
-            _needsToBeResolved = true;
+            NeedsToBeResolved = true;
             _min = min;
             _max = max;
             SelectedRange = new Range<TValue>(min, max);
@@ -67,7 +61,7 @@ namespace GravityCTRL.FilterChili
         {
             SelectedRange.Min = min;
             SelectedRange.Max = max;
-            _needsToBeResolved = true;
+            NeedsToBeResolved = true;
         }
 
         public override bool TrySet([CanBeNull] JToken filterToken)

@@ -35,7 +35,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
         public ComparisonResolverTest()
         {
-            _testInstance = new TestComparisonResolver(new TestComparer(), source => source.Int);
+            _testInstance = new ComparisonResolver<GenericSource, int>(new TestComparer(), source => source.Int);
         }
 
         [Fact]
@@ -206,11 +206,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             var result2 = _testInstance.ExecuteFilter(new GenericSource[0].AsQueryable());
             result2.Should().HaveCount(0);
-        }
-
-        private sealed class TestComparisonResolver : ComparisonResolver<GenericSource, int>
-        {
-            internal TestComparisonResolver(Comparer<GenericSource, int> comparer, [NotNull] Expression<Func<GenericSource, int>> selector) : base(comparer, selector) {}
         }
 
         private sealed class TestComparer : Comparer<GenericSource, int>

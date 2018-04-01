@@ -31,7 +31,7 @@ using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
 {
-    public class GroupResolver<TSource, TValue, TGroupIdentifier> 
+    public sealed class GroupResolver<TSource, TValue, TGroupIdentifier> 
         : FilterResolver<GroupResolver<TSource, TValue, TGroupIdentifier>, TSource, TValue>, IGroupResolver<TValue> 
             where TValue : IComparable 
             where TGroupIdentifier : IComparable
@@ -45,24 +45,20 @@ namespace GravityCTRL.FilterChili
 
         private readonly Expression<Func<TSource, KeyValuePair>> _selectKeyValuePairExpression;
 
-        private bool _needsToBeResolved;
         private Option<TGroupIdentifier> _defaultGroupIdentifier;
-
-        internal IReadOnlyList<TValue> SelectedValues;
         private Option<IReadOnlyList<KeyValuePair>> _groupList;
         private Option<IReadOnlyList<TValue>> _selectableList;
+
+        internal override bool NeedsToBeResolved { get; set; }
 
         public override string FilterType { get; } = "Group";
 
         [NotNull]
+        internal IReadOnlyList<TValue> SelectedValues { get; private set; }
+
+        [NotNull]
         [UsedImplicitly]
         public IReadOnlyList<Group<TGroupIdentifier, TValue>> Groups => CombineLists();
-
-        internal override bool NeedsToBeResolved
-        {
-            get => _needsToBeResolved;
-            set => _needsToBeResolved = value;
-        }
 
         #region Constructors
 
@@ -77,10 +73,10 @@ namespace GravityCTRL.FilterChili
 
         internal GroupResolver([NotNull] Expression<Func<TSource, TValue>> selector, [NotNull] Expression<Func<TSource, TGroupIdentifier>> groupSelector) : base(selector)
         {
+            NeedsToBeResolved = true;
             SelectedValues = new List<TValue>();
 
             _defaultGroupIdentifier = Option.None<TGroupIdentifier>();
-            _needsToBeResolved = true;
 
             var memberBindings = new List<MemberBinding>
             {
@@ -101,14 +97,14 @@ namespace GravityCTRL.FilterChili
         public void Set([NotNull] IEnumerable<TValue> selectedValues)
         {
             SelectedValues = selectedValues as IReadOnlyList<TValue> ?? selectedValues.ToList();
-            _needsToBeResolved = true;
+            NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
         public void Set(params TValue[] selectedValues)
         {
             SelectedValues = selectedValues as IReadOnlyList<TValue> ?? selectedValues.ToList();
-            _needsToBeResolved = true;
+            NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
@@ -120,7 +116,7 @@ namespace GravityCTRL.FilterChili
             }
 
             SelectedValues = groups.Where(group => selectedValues.Contains(group.GroupIdentifier)).Select(group => group.Value).ToList();
-            _needsToBeResolved = true;
+            NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
@@ -132,7 +128,7 @@ namespace GravityCTRL.FilterChili
             }
 
             SelectedValues = groups.Where(group => selectedValues.Contains(group.GroupIdentifier)).Select(group => group.Value).ToList();
-            _needsToBeResolved = true;
+            NeedsToBeResolved = true;
         }
 
         [NotNull]

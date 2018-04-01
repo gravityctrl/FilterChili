@@ -29,7 +29,7 @@ using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
 {
-    public class ComparisonResolver<TSource, TValue> 
+    public sealed class ComparisonResolver<TSource, TValue> 
         : FilterResolver<ComparisonResolver<TSource, TValue>, TSource, TValue>, IComparisonResolver<TValue>
             where TValue : IComparable
     {

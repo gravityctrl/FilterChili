@@ -17,12 +17,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -31,11 +29,11 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 {
     public sealed class GroupResolverTest
     {
-        private readonly TestGroupResolver _testInstance;
+        private readonly GroupResolver<GenericSource, int, string> _testInstance;
 
         public GroupResolverTest()
         {
-            _testInstance = new TestGroupResolver(source => source.Int, source => source.String);
+            _testInstance = new GroupResolver<GenericSource, int, string>(source => source.Int, source => source.String);
         }
 
         [Fact]
@@ -500,11 +498,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             var expectedJson = JsonConvert.SerializeObject(expected);
             JsonConvert.SerializeObject(_testInstance.Groups).Should().Be(expectedJson);
             _testInstance.NeedsToBeResolved.Should().Be(true);
-        }
-
-        private sealed class TestGroupResolver : GroupResolver<GenericSource, int, string>
-        {
-            internal TestGroupResolver([NotNull] Expression<Func<GenericSource, int>> selector, [NotNull] Expression<Func<GenericSource, string>> groupSelector) : base(selector, groupSelector) {}
         }
     }
 }
