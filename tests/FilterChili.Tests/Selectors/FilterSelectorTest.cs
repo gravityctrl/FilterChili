@@ -167,7 +167,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             public TestComparisonResolver Comparison()
             {
                 var resolver = new TestComparisonResolver(new TestComparer(), Selector);
-                DomainResolver = resolver;
+                FilterResolver = resolver;
                 return resolver;
             }
 
@@ -175,7 +175,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             public TestRangeResolver Range()
             {
                 var resolver = new TestRangeResolver(Selector);
-                DomainResolver = resolver;
+                FilterResolver = resolver;
                 return resolver;
             }
 
@@ -183,7 +183,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             public ListResolver<GenericSource, int> List()
             {
                 var resolver = new ListResolver<GenericSource, int>(Selector);
-                DomainResolver = resolver;
+                FilterResolver = resolver;
                 return resolver;
             }
         }

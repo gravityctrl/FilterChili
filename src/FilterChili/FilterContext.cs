@@ -40,14 +40,14 @@ namespace GravityCTRL.FilterChili
 
         [ItemNotNull]
         [UsedImplicitly]
-        public async Task<IEnumerable<DomainResolver<TSource>>> Domains()
+        public async Task<IEnumerable<FilterResolver<TSource>>> Domains()
         {
             return await _contextOptions.Domains();
         }
 
         [ItemNotNull]
         [UsedImplicitly]
-        public async Task<IEnumerable<DomainResolver<TSource>>> Domains(CalculationStrategy calculationStrategy)
+        public async Task<IEnumerable<FilterResolver<TSource>>> Domains(CalculationStrategy calculationStrategy)
         {
             return await _contextOptions.Domains(calculationStrategy);
         }
@@ -79,7 +79,7 @@ namespace GravityCTRL.FilterChili
                 return false;
             }
 
-            var domain = filterToken.SelectToken("domain");
+            var domain = filterToken.SelectToken("filter");
             return domain != null && filter.TrySet(domain);
         }
 

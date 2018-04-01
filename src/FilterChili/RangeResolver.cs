@@ -29,7 +29,7 @@ using Newtonsoft.Json.Linq;
 namespace GravityCTRL.FilterChili
 {
     public class RangeResolver<TSource, TSelector> 
-        : DomainResolver<RangeResolver<TSource, TSelector>, TSource, TSelector>, IRangeResolver<TSelector>
+        : FilterResolver<RangeResolver<TSource, TSelector>, TSource, TSelector>, IRangeResolver<TSelector>
             where TSelector : IComparable
     {
         private bool _needsToBeResolved;
@@ -70,15 +70,15 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
-        public override bool TrySet([CanBeNull] JToken domainToken)
+        public override bool TrySet([CanBeNull] JToken filterToken)
         {
-            if (domainToken == null)
+            if (filterToken == null)
             {
                 return false;
             }
 
-            var minToken = domainToken.SelectToken("min");
-            var maxToken = domainToken.SelectToken("max");
+            var minToken = filterToken.SelectToken("min");
+            var maxToken = filterToken.SelectToken("max");
             if (minToken == null || maxToken == null)
             {
                 return false;

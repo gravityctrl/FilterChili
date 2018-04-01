@@ -29,7 +29,7 @@ namespace GravityCTRL.FilterChili.Selectors
         public ListResolver<TSource, string> WithList()
         {
             var resolver = new ListResolver<TSource, string>(Selector);
-            DomainResolver = resolver;
+            FilterResolver = resolver;
             return resolver;
         }
 
@@ -38,7 +38,7 @@ namespace GravityCTRL.FilterChili.Selectors
         public GroupResolver<TSource, string, TGroupSelector> WithGroup<TGroupSelector>([NotNull] Expression<Func<TSource, TGroupSelector>> groupSelector) where TGroupSelector : IComparable
         {
             var resolver = new GroupResolver<TSource, string, TGroupSelector>(Selector, groupSelector);
-            DomainResolver = resolver;
+            FilterResolver = resolver;
             return resolver;
         }
     }

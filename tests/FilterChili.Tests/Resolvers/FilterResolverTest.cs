@@ -23,7 +23,7 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Resolvers
 {
-    public sealed class DomainResolverTest
+    public sealed class FilterResolverTest
     {
         [Fact]
         public void Should_Update_Name_Of_Resolver_When_Calling_Use_Name_And_Return_Same_Instance()

@@ -30,7 +30,7 @@ using Newtonsoft.Json.Linq;
 namespace GravityCTRL.FilterChili
 {
     public class ComparisonResolver<TSource, TSelector> 
-        : DomainResolver<ComparisonResolver<TSource, TSelector>, TSource, TSelector>, IComparisonResolver<TSelector>
+        : FilterResolver<ComparisonResolver<TSource, TSelector>, TSource, TSelector>, IComparisonResolver<TSelector>
             where TSelector : IComparable
     {
         private readonly Comparer<TSource, TSelector> _comparer;
@@ -65,9 +65,9 @@ namespace GravityCTRL.FilterChili
             _needsToBeResolved = true;
         }
 
-        public override bool TrySet([NotNull] JToken domainToken)
+        public override bool TrySet([NotNull] JToken filterToken)
         {
-            var token = domainToken.SelectToken("value");
+            var token = filterToken.SelectToken("value");
             if (token == null)
             {
                 return false;

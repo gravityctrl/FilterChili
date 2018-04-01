@@ -188,13 +188,13 @@ namespace GravityCTRL.FilterChili
         }
 
         [ItemNotNull]
-        internal async Task<IEnumerable<DomainResolver<TSource>>> Domains()
+        internal async Task<IEnumerable<FilterResolver<TSource>>> Domains()
         {
             return await CalculateDomains(Option.None<CalculationStrategy>());
         }
 
         [ItemNotNull]
-        internal async Task<IEnumerable<DomainResolver<TSource>>> Domains(CalculationStrategy calculationStrategy)
+        internal async Task<IEnumerable<FilterResolver<TSource>>> Domains(CalculationStrategy calculationStrategy)
         {
             return await CalculateDomains(Option.Some(calculationStrategy));
         }
@@ -210,7 +210,7 @@ namespace GravityCTRL.FilterChili
 
         private void CheckPrerequisites()
         {
-            var invalidFilter = _filters.FirstOrDefault(filter => !filter.HasDomainResolver);
+            var invalidFilter = _filters.FirstOrDefault(filter => !filter.HasFilterResolver);
             if (invalidFilter != null)
             {
                 throw new MissingResolverException(invalidFilter.Name);
@@ -218,7 +218,7 @@ namespace GravityCTRL.FilterChili
         }
 
         [ItemNotNull]
-        private async Task<IEnumerable<DomainResolver<TSource>>> CalculateDomains([NotNull] Option<CalculationStrategy> calculationStrategy)
+        private async Task<IEnumerable<FilterResolver<TSource>>> CalculateDomains([NotNull] Option<CalculationStrategy> calculationStrategy)
         {
             if (!_filters.Any(f => f.NeedsToBeResolved))
             {

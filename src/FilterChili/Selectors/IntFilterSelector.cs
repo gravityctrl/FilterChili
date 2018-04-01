@@ -30,7 +30,7 @@ namespace GravityCTRL.FilterChili.Selectors
         public RangeResolver<TSource, int> WithRange()
         {
             var resolver = new RangeResolver<TSource, int>(Selector, int.MinValue, int.MaxValue);
-            DomainResolver = resolver;
+            FilterResolver = resolver;
             return resolver;
         }
 
@@ -39,7 +39,7 @@ namespace GravityCTRL.FilterChili.Selectors
         public ComparisonResolver<TSource, int> WithGreaterThan()
         {
             var resolver = new ComparisonResolver<TSource, int>(new GreaterThanComparer<TSource, int>(int.MinValue), Selector);
-            DomainResolver = resolver;
+            FilterResolver = resolver;
             return resolver;
         }
 
@@ -48,7 +48,7 @@ namespace GravityCTRL.FilterChili.Selectors
         public ComparisonResolver<TSource, int> WithLessThan()
         {
             var resolver = new ComparisonResolver<TSource, int>(new LessThanComparer<TSource, int>(int.MaxValue), Selector);
-            DomainResolver = resolver;
+            FilterResolver = resolver;
             return resolver;
         }
 
@@ -57,7 +57,7 @@ namespace GravityCTRL.FilterChili.Selectors
         public ComparisonResolver<TSource, int> WithGreaterThanOrEqual()
         {
             var resolver = new ComparisonResolver<TSource, int>(new GreaterThanOrEqualComparer<TSource, int>(int.MinValue), Selector);
-            DomainResolver = resolver;
+            FilterResolver = resolver;
             return resolver;
         }
 
@@ -66,7 +66,7 @@ namespace GravityCTRL.FilterChili.Selectors
         public ComparisonResolver<TSource, int> WithLessThanOrEqual()
         {
             var resolver = new ComparisonResolver<TSource, int>(new LessThanOrEqualComparer<TSource, int>(int.MaxValue), Selector);
-            DomainResolver = resolver;
+            FilterResolver = resolver;
             return resolver;
         }
     }

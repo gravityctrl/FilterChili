@@ -25,21 +25,21 @@ using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Resolvers
 {
-    public abstract class DomainResolver
+    public abstract class FilterResolver
     {
         [UsedImplicitly]
         public string Name { get; protected set; }
 
         internal CalculationStrategy CalculationStrategy { get; set; }
 
-        internal DomainResolver(string name)
+        internal FilterResolver(string name)
         {
             Name = name;
             CalculationStrategy = CalculationStrategy.Full;
         }
     }
 
-    public abstract class DomainResolver<TSource> : DomainResolver
+    public abstract class FilterResolver<TSource> : FilterResolver
     {
         // ReSharper disable once StaticMemberInGenericType
         protected static readonly Type GenericSourceType;
@@ -56,24 +56,24 @@ namespace GravityCTRL.FilterChili.Resolvers
         [UsedImplicitly]
         public string TargetType => _selectorType.Name;
 
-        static DomainResolver()
+        static FilterResolver()
         {
             GenericSourceType = typeof(TSource);
         }
 
-        internal DomainResolver(string name, Type type) : base(name)
+        internal FilterResolver(string name, Type type) : base(name)
         {
             _selectorType = type;
         }
 
-        public abstract bool TrySet(JToken domainToken);
+        public abstract bool TrySet(JToken filterToken);
     }
 
-    public abstract class DomainResolver<TSource, TSelector> : DomainResolver<TSource> where TSelector : IComparable
+    public abstract class FilterResolver<TSource, TSelector> : FilterResolver<TSource> where TSelector : IComparable
     {
         protected Expression<Func<TSource, TSelector>> Selector { get; }
 
-        internal DomainResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector.Name(), typeof(TSelector))
+        internal FilterResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector.Name(), typeof(TSelector))
         {
             Selector = selector;
         }
@@ -92,25 +92,25 @@ namespace GravityCTRL.FilterChili.Resolvers
         protected abstract Expression<Func<TSource, bool>> FilterExpression();
     }
 
-    public abstract class DomainResolver<TDomainResolver, TSource, TSelector> : DomainResolver<TSource, TSelector>
-        where TSelector : IComparable where TDomainResolver : DomainResolver<TDomainResolver, TSource, TSelector>
+    public abstract class FilterResolver<TFilterResolver, TSource, TSelector> : FilterResolver<TSource, TSelector>
+        where TSelector : IComparable where TFilterResolver : FilterResolver<TFilterResolver, TSource, TSelector>
     {
-        private readonly TDomainResolver _this;
+        private readonly TFilterResolver _this;
 
-        internal DomainResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector)
+        internal FilterResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector)
         {
-            _this = (TDomainResolver)this;
+            _this = (TFilterResolver)this;
         }
 
         [UsedImplicitly]
-        public TDomainResolver UseName(string name)
+        public TFilterResolver UseName(string name)
         {
             Name = name;
             return _this;
         }
 
         [UsedImplicitly]
-        public TDomainResolver UseStrategy(CalculationStrategy calculationStrategy)
+        public TFilterResolver UseStrategy(CalculationStrategy calculationStrategy)
         {
             CalculationStrategy = calculationStrategy;
             return _this;

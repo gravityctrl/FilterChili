@@ -32,7 +32,7 @@ using Newtonsoft.Json.Linq;
 namespace GravityCTRL.FilterChili
 {
     public class GroupResolver<TSource, TSelector, TGroupSelector> 
-        : DomainResolver<GroupResolver<TSource, TSelector, TGroupSelector>, TSource, TSelector>, IGroupResolver<TSelector> 
+        : FilterResolver<GroupResolver<TSource, TSelector, TGroupSelector>, TSource, TSelector>, IGroupResolver<TSelector> 
             where TSelector : IComparable 
             where TGroupSelector : IComparable
     {
@@ -148,14 +148,14 @@ namespace GravityCTRL.FilterChili
         #region Public Overrides
 
         [UsedImplicitly]
-        public override bool TrySet([CanBeNull] JToken domainToken)
+        public override bool TrySet([CanBeNull] JToken filterToken)
         {
-            if (domainToken == null)
+            if (filterToken == null)
             {
                 return false;
             }
 
-            var valuesToken = domainToken.SelectToken("values");
+            var valuesToken = filterToken.SelectToken("values");
             if (valuesToken != null)
             {
                 var values = valuesToken.Values<TSelector>();
@@ -163,7 +163,7 @@ namespace GravityCTRL.FilterChili
                 return true;
             }
 
-            var groupsToken = domainToken.SelectToken("groups");
+            var groupsToken = filterToken.SelectToken("groups");
             // ReSharper disable once InvertIf
             if (groupsToken != null)
             {
