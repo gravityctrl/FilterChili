@@ -28,9 +28,9 @@ using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
 {
-    public class RangeResolver<TSource, TSelector> 
-        : FilterResolver<RangeResolver<TSource, TSelector>, TSource, TSelector>, IRangeResolver<TSelector>
-            where TSelector : IComparable
+    public class RangeResolver<TSource, TValue> 
+        : FilterResolver<RangeResolver<TSource, TValue>, TSource, TValue>, IRangeResolver<TValue>
+            where TValue : IComparable
     {
         private bool _needsToBeResolved;
 
@@ -40,30 +40,30 @@ namespace GravityCTRL.FilterChili
             set => _needsToBeResolved = value;
         }
 
-        private readonly TSelector _min;
+        private readonly TValue _min;
 
-        private readonly TSelector _max;
+        private readonly TValue _max;
 
         public override string FilterType { get; } = "Range";
 
         [UsedImplicitly]
-        public Range<TSelector> TotalRange { get; private set; }
+        public Range<TValue> TotalRange { get; private set; }
 
         [UsedImplicitly]
-        public Range<TSelector> SelectableRange { get; private set; }
+        public Range<TValue> SelectableRange { get; private set; }
 
         [UsedImplicitly]
-        public Range<TSelector> SelectedRange { get; }
+        public Range<TValue> SelectedRange { get; }
 
-        internal RangeResolver([NotNull] Expression<Func<TSource, TSelector>> selector, TSelector min, TSelector max) : base(selector)
+        internal RangeResolver([NotNull] Expression<Func<TSource, TValue>> selector, TValue min, TValue max) : base(selector)
         {
             _needsToBeResolved = true;
             _min = min;
             _max = max;
-            SelectedRange = new Range<TSelector>(min, max);
+            SelectedRange = new Range<TValue>(min, max);
         }
 
-        public void Set(TSelector min, TSelector max)
+        public void Set(TValue min, TValue max)
         {
             SelectedRange.Min = min;
             SelectedRange.Max = max;
@@ -84,8 +84,8 @@ namespace GravityCTRL.FilterChili
                 return false;
             }
 
-            var min = minToken.ToObject<TSelector>();
-            var max = maxToken.ToObject<TSelector>();
+            var min = minToken.ToObject<TValue>();
+            var max = maxToken.ToObject<TValue>();
             Set(min, max);
             return true;
         }
@@ -136,9 +136,9 @@ namespace GravityCTRL.FilterChili
         }
 
         [ItemCanBeNull]
-        private static async Task<Range<TSelector>> SetRange([NotNull] IQueryable<TSelector> queryable)
+        private static async Task<Range<TValue>> SetRange([NotNull] IQueryable<TValue> queryable)
         {
-            if (queryable is IAsyncEnumerable<TSelector> _)
+            if (queryable is IAsyncEnumerable<TValue> _)
             {
                 return await ResolveRangeAsync(queryable);
             }
@@ -147,7 +147,7 @@ namespace GravityCTRL.FilterChili
         }
 
         [CanBeNull]
-        private static Range<TSelector> ResolveRange([NotNull] IQueryable<TSelector> queryable)
+        private static Range<TValue> ResolveRange([NotNull] IQueryable<TValue> queryable)
         {
             if (!queryable.Any())
             {
@@ -156,11 +156,11 @@ namespace GravityCTRL.FilterChili
 
             var min = queryable.Min();
             var max = queryable.Max();
-            return new Range<TSelector>(min, max);
+            return new Range<TValue>(min, max);
         }
 
         [ItemCanBeNull]
-        private static async Task<Range<TSelector>> ResolveRangeAsync([NotNull] IQueryable<TSelector> queryable)
+        private static async Task<Range<TValue>> ResolveRangeAsync([NotNull] IQueryable<TValue> queryable)
         {
             if (!await queryable.AnyAsync())
             {
@@ -169,7 +169,7 @@ namespace GravityCTRL.FilterChili
             
             var min = await queryable.MinAsync();
             var max = await queryable.MaxAsync();
-            return new Range<TSelector>(min, max);
+            return new Range<TValue>(min, max);
         }
 
         #endregion

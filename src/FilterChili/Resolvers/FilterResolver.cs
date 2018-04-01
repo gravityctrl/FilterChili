@@ -69,11 +69,11 @@ namespace GravityCTRL.FilterChili.Resolvers
         public abstract bool TrySet(JToken filterToken);
     }
 
-    public abstract class FilterResolver<TSource, TSelector> : FilterResolver<TSource> where TSelector : IComparable
+    public abstract class FilterResolver<TSource, TValue> : FilterResolver<TSource> where TValue : IComparable
     {
-        protected Expression<Func<TSource, TSelector>> Selector { get; }
+        protected Expression<Func<TSource, TValue>> Selector { get; }
 
-        internal FilterResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector.Name(), typeof(TSelector))
+        internal FilterResolver([NotNull] Expression<Func<TSource, TValue>> selector) : base(selector.Name(), typeof(TValue))
         {
             Selector = selector;
         }
@@ -92,12 +92,12 @@ namespace GravityCTRL.FilterChili.Resolvers
         protected abstract Expression<Func<TSource, bool>> FilterExpression();
     }
 
-    public abstract class FilterResolver<TFilterResolver, TSource, TSelector> : FilterResolver<TSource, TSelector>
-        where TSelector : IComparable where TFilterResolver : FilterResolver<TFilterResolver, TSource, TSelector>
+    public abstract class FilterResolver<TFilterResolver, TSource, TValue> : FilterResolver<TSource, TValue>
+        where TValue : IComparable where TFilterResolver : FilterResolver<TFilterResolver, TSource, TValue>
     {
         private readonly TFilterResolver _this;
 
-        internal FilterResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector)
+        internal FilterResolver([NotNull] Expression<Func<TSource, TValue>> selector) : base(selector)
         {
             _this = (TFilterResolver)this;
         }

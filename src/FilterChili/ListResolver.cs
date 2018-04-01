@@ -29,9 +29,9 @@ using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili
 {
-    public sealed class ListResolver<TSource, TSelector> 
-        : FilterResolver<ListResolver<TSource, TSelector>, TSource, TSelector>, IListResolver<TSelector>
-            where TSelector : IComparable
+    public sealed class ListResolver<TSource, TValue> 
+        : FilterResolver<ListResolver<TSource, TValue>, TSource, TValue>, IListResolver<TValue>
+            where TValue : IComparable
     {
         private bool _needsToBeResolved;
 
@@ -44,38 +44,38 @@ namespace GravityCTRL.FilterChili
         public override string FilterType { get; } = "List";
 
         [NotNull]
-        internal IReadOnlyList<TSelector> SelectedValues { get; private set; }
+        internal IReadOnlyList<TValue> SelectedValues { get; private set; }
 
         [CanBeNull]
-        private IReadOnlyList<TSelector> _selectableValues;
+        private IReadOnlyList<TValue> _selectableValues;
 
         [CanBeNull]
-        private IReadOnlyList<TSelector> _availableValues;
+        private IReadOnlyList<TValue> _availableValues;
 
         [NotNull]
         [UsedImplicitly]
-        public IReadOnlyList<Item<TSelector>> Values => CombineLists();
+        public IReadOnlyList<Item<TValue>> Values => CombineLists();
 
-        public ListResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector)
+        public ListResolver([NotNull] Expression<Func<TSource, TValue>> selector) : base(selector)
         {
             _needsToBeResolved = true;
-            SelectedValues = new List<TSelector>();
+            SelectedValues = new List<TValue>();
         }
 
         #region Public Methods
 
         [UsedImplicitly]
-        public void Set([NotNull] IEnumerable<TSelector> selectedValues)
+        public void Set([NotNull] IEnumerable<TValue> selectedValues)
         {
-            SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
+            SelectedValues = selectedValues as IReadOnlyList<TValue> ?? selectedValues.ToList();
             _selectableValues = null;
             _needsToBeResolved = true;
         }
 
         [UsedImplicitly]
-        public void Set(params TSelector[] selectedValues)
+        public void Set(params TValue[] selectedValues)
         {
-            SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
+            SelectedValues = selectedValues as IReadOnlyList<TValue> ?? selectedValues.ToList();
             _selectableValues = null;
             _needsToBeResolved = true;
         }
@@ -93,7 +93,7 @@ namespace GravityCTRL.FilterChili
                 return false;
             }
 
-            var values = valuesToken.Values<TSelector>();
+            var values = valuesToken.Values<TValue>();
             Set(values);
             return true;
         }
@@ -133,7 +133,7 @@ namespace GravityCTRL.FilterChili
         #region Private Methods
 
         [NotNull]
-        private async Task<IReadOnlyList<TSelector>> CreateSelectorList([NotNull] IQueryable<TSource> queryable)
+        private async Task<IReadOnlyList<TValue>> CreateSelectorList([NotNull] IQueryable<TSource> queryable)
         {
             return queryable is IAsyncEnumerable<TSource>
                 ? await queryable.Select(Selector).Distinct().ToListAsync()
@@ -141,9 +141,9 @@ namespace GravityCTRL.FilterChili
         }
 
         [NotNull]
-        private IReadOnlyList<Item<TSelector>> CombineLists()
+        private IReadOnlyList<Item<TValue>> CombineLists()
         {
-            Dictionary<TSelector, Item<TSelector>> entities;
+            Dictionary<TValue, Item<TValue>> entities;
             if (_availableValues != null)
             {
                 entities = CreateDictionary(_availableValues, false);
@@ -158,7 +158,7 @@ namespace GravityCTRL.FilterChili
             }
             else
             {
-                return SelectedValues.Select(value => new Item<TSelector> { Value = value, IsSelected = true }).ToList();
+                return SelectedValues.Select(value => new Item<TValue> { Value = value, IsSelected = true }).ToList();
             }
 
             SetSelectedStatus(SelectedValues, entities);
@@ -167,12 +167,12 @@ namespace GravityCTRL.FilterChili
         }
 
         [NotNull]
-        private static Dictionary<TSelector, Item<TSelector>> CreateDictionary([NotNull] IEnumerable<TSelector> values, bool canBeSelected)
+        private static Dictionary<TValue, Item<TValue>> CreateDictionary([NotNull] IEnumerable<TValue> values, bool canBeSelected)
         {
-            return values.ToDictionary(value => value, value => new Item<TSelector> { Value = value, CanBeSelected = canBeSelected });
+            return values.ToDictionary(value => value, value => new Item<TValue> { Value = value, CanBeSelected = canBeSelected });
         }
 
-        private static void SetSelectedStatus([NotNull] IEnumerable<TSelector> selectedValues, IReadOnlyDictionary<TSelector, Item<TSelector>> dictionary)
+        private static void SetSelectedStatus([NotNull] IEnumerable<TValue> selectedValues, IReadOnlyDictionary<TValue, Item<TValue>> dictionary)
         {
             foreach (var selectedValue in selectedValues)
             {
@@ -183,7 +183,7 @@ namespace GravityCTRL.FilterChili
             }
         }
 
-        private static void SetSelectableStatus([NotNull] IEnumerable<TSelector> selectableValues, [NotNull] Dictionary<TSelector, Item<TSelector>> dictionary)
+        private static void SetSelectableStatus([NotNull] IEnumerable<TValue> selectableValues, [NotNull] Dictionary<TValue, Item<TValue>> dictionary)
         {
             foreach (var selectable in dictionary.Values)
             {

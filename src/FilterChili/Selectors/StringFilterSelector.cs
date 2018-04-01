@@ -35,9 +35,9 @@ namespace GravityCTRL.FilterChili.Selectors
 
         [NotNull]
         [UsedImplicitly]
-        public GroupResolver<TSource, string, TGroupSelector> WithGroup<TGroupSelector>([NotNull] Expression<Func<TSource, TGroupSelector>> groupSelector) where TGroupSelector : IComparable
+        public GroupResolver<TSource, string, TGroupIdentifier> WithGroup<TGroupIdentifier>([NotNull] Expression<Func<TSource, TGroupIdentifier>> groupSelector) where TGroupIdentifier : IComparable
         {
-            var resolver = new GroupResolver<TSource, string, TGroupSelector>(Selector, groupSelector);
+            var resolver = new GroupResolver<TSource, string, TGroupIdentifier>(Selector, groupSelector);
             FilterResolver = resolver;
             return resolver;
         }

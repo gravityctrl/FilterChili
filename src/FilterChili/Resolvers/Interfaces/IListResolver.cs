@@ -19,8 +19,8 @@ using System.Collections.Generic;
 
 namespace GravityCTRL.FilterChili.Resolvers.Interfaces
 {
-    internal interface IListResolver<in TSelector> where TSelector : IComparable
+    internal interface IListResolver<in TValue> where TValue : IComparable
     {
-        void Set(IEnumerable<TSelector> selectedValues);
+        void Set(IEnumerable<TValue> selectedValues);
     }
 }

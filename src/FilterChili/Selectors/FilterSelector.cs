@@ -49,9 +49,9 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal abstract bool HasName(string name);
 
-        internal abstract bool TrySet<TSelector>(TSelector value);
+        internal abstract bool TrySet<TValue>(TValue value);
 
-        internal abstract bool TrySet<TSelector>(TSelector min, TSelector max);
+        internal abstract bool TrySet<TValue>(TValue min, TValue max);
 
         internal abstract bool TrySet(JToken filterToken);
 
@@ -60,15 +60,15 @@ namespace GravityCTRL.FilterChili.Selectors
         #endregion
     }
 
-    public abstract class FilterSelector<TSource, TSelector> : FilterSelector<TSource> where TSelector : IComparable
+    public abstract class FilterSelector<TSource, TValue> : FilterSelector<TSource> where TValue : IComparable
     {
         internal override string Name => GetType().FormattedName();
 
         internal override CalculationStrategy CalculationStrategy => FilterResolver.CalculationStrategy;
 
-        protected readonly Expression<Func<TSource, TSelector>> Selector;
+        protected readonly Expression<Func<TSource, TValue>> Selector;
 
-        protected FilterResolver<TSource, TSelector> FilterResolver { private get; set; }
+        protected FilterResolver<TSource, TValue> FilterResolver { private get; set; }
 
         internal override bool HasFilterResolver => FilterResolver != null;
 
@@ -86,7 +86,7 @@ namespace GravityCTRL.FilterChili.Selectors
             }
         }
 
-        internal FilterSelector(Expression<Func<TSource, TSelector>> selector)
+        internal FilterSelector(Expression<Func<TSource, TValue>> selector)
         {
             Selector = selector;
         }
@@ -130,15 +130,15 @@ namespace GravityCTRL.FilterChili.Selectors
             return FilterResolver?.TrySet(filterToken) ?? false;
         }
 
-        internal override bool TrySet<TSelectorTarget>(TSelectorTarget value)
+        internal override bool TrySet<TValueTarget>(TValueTarget value)
         {
             switch (value)
             {
-                case TSelector valueTarget:
+                case TValue valueTarget:
                 {
                     return TrySet(valueTarget);
                 }
-                case IEnumerable<TSelector> targetValues:
+                case IEnumerable<TValue> targetValues:
                 {
                     return TrySet(targetValues);
                 }
@@ -149,9 +149,9 @@ namespace GravityCTRL.FilterChili.Selectors
             }
         }
 
-        internal override bool TrySet<TSelectorTarget>(TSelectorTarget min, TSelectorTarget max)
+        internal override bool TrySet<TValueTarget>(TValueTarget min, TValueTarget max)
         {
-            if (min is TSelector minTarget && max is TSelector maxTarget)
+            if (min is TValue minTarget && max is TValue maxTarget)
             {
                 return TrySet(minTarget, maxTarget);
             }
@@ -163,11 +163,11 @@ namespace GravityCTRL.FilterChili.Selectors
 
         #region Private Methods
 
-        private bool TrySet(TSelector value)
+        private bool TrySet(TValue value)
         {
             switch (FilterResolver)
             {
-                case IComparisonResolver<TSelector> target:
+                case IComparisonResolver<TValue> target:
                 {
                     target.Set(value);
                     return true;
@@ -179,11 +179,11 @@ namespace GravityCTRL.FilterChili.Selectors
             }
         }
 
-        private bool TrySet(TSelector min, TSelector max)
+        private bool TrySet(TValue min, TValue max)
         {
             switch (FilterResolver)
             {
-                case IRangeResolver<TSelector> target:
+                case IRangeResolver<TValue> target:
                 {
                     target.Set(min, max);
                     return true;
@@ -195,16 +195,16 @@ namespace GravityCTRL.FilterChili.Selectors
             }
         }
 
-        private bool TrySet(IEnumerable<TSelector> values)
+        private bool TrySet(IEnumerable<TValue> values)
         {
             switch (FilterResolver)
             {
-                case IListResolver<TSelector> listTarget:
+                case IListResolver<TValue> listTarget:
                 {
                     listTarget.Set(values);
                     return true;
                 }
-                case IGroupResolver<TSelector> groupTarget:
+                case IGroupResolver<TValue> groupTarget:
                 {
                     groupTarget.Set(values);
                     return true;

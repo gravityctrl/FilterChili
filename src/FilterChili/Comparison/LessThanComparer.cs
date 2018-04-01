@@ -19,18 +19,18 @@ using System.Linq.Expressions;
 
 namespace GravityCTRL.FilterChili.Comparison
 {
-    internal sealed class LessThanComparer<TSource, TSelector> : Comparer<TSource, TSelector> where TSelector : IComparable
+    internal sealed class LessThanComparer<TSource, TValue> : Comparer<TSource, TValue> where TValue : IComparable
     {
-        private readonly TSelector _maxValue;
+        private readonly TValue _maxValue;
 
         public override string FilterType { get; } = "LessThan";
 
-        public LessThanComparer(TSelector maxValue)
+        public LessThanComparer(TValue maxValue)
         {
             _maxValue = maxValue;
         }
 
-        public override Expression<Func<TSource, bool>> FilterExpression(Expression<Func<TSource, TSelector>> selector, TSelector selectedValue)
+        public override Expression<Func<TSource, bool>> FilterExpression(Expression<Func<TSource, TValue>> selector, TValue selectedValue)
         {
             if (_maxValue.CompareTo(selectedValue) <= 0)
             {

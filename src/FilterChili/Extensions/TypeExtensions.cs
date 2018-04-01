@@ -38,7 +38,7 @@ namespace GravityCTRL.FilterChili.Extensions
         }
 
         [CanBeNull]
-        public static string Name<TSource, TSelector>([NotNull] this Expression<Func<TSource, TSelector>> selector)
+        public static string Name<TSource, TValue>([NotNull] this Expression<Func<TSource, TValue>> selector)
         {
             return ExtractExpressionName(selector.Body);
         }

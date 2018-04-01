@@ -20,11 +20,11 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Comparison
 {
-    internal abstract class Comparer<TSource, TSelector> where TSelector : IComparable
+    internal abstract class Comparer<TSource, TValue> where TValue : IComparable
     {
         public abstract string FilterType { get; }
 
         [CanBeNull]
-        public abstract Expression<Func<TSource, bool>> FilterExpression([NotNull] Expression<Func<TSource, TSelector>> selector, [NotNull] TSelector selectedValue);
+        public abstract Expression<Func<TSource, bool>> FilterExpression([NotNull] Expression<Func<TSource, TValue>> selector, [NotNull] TValue selectedValue);
     }
 }
