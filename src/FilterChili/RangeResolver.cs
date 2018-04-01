@@ -86,7 +86,7 @@ namespace GravityCTRL.FilterChili
 
         #region Internal Methods
 
-        protected override Expression<Func<TSource, bool>> FilterExpression()
+        protected override Option<Expression<Func<TSource, bool>>> FilterExpression()
         {
             if (_min.CompareTo(SelectedRange.Min) < 0 && _max.CompareTo(SelectedRange.Max) > 0)
             {
@@ -95,14 +95,16 @@ namespace GravityCTRL.FilterChili
                 var greaterThanExpression = Expression.GreaterThanOrEqual(Selector.Body, minConstant);
                 var lessThanExpression = Expression.LessThanOrEqual(Selector.Body, maxConstant);
                 var andExpression = Expression.AndAlso(greaterThanExpression, lessThanExpression);
-                return Expression.Lambda<Func<TSource, bool>>(andExpression, Selector.Parameters);
+                var expression = Expression.Lambda<Func<TSource, bool>>(andExpression, Selector.Parameters);
+                return Option.Some(expression);
             }
 
             if (_max.CompareTo(SelectedRange.Max) > 0)
             {
                 var maxConstant = Expression.Constant(SelectedRange.Max);
                 var lessThanExpression = Expression.LessThanOrEqual(Selector.Body, maxConstant);
-                return Expression.Lambda<Func<TSource, bool>>(lessThanExpression, Selector.Parameters);
+                var expression = Expression.Lambda<Func<TSource, bool>>(lessThanExpression, Selector.Parameters);
+                return Option.Some(expression);
             }
 
             // ReSharper disable once InvertIf
@@ -110,10 +112,11 @@ namespace GravityCTRL.FilterChili
             {
                 var minConstant = Expression.Constant(SelectedRange.Min);
                 var greaterThanExpression = Expression.GreaterThanOrEqual(Selector.Body, minConstant);
-                return Expression.Lambda<Func<TSource, bool>>(greaterThanExpression, Selector.Parameters);
+                var expression = Expression.Lambda<Func<TSource, bool>>(greaterThanExpression, Selector.Parameters);
+                return Option.Some(expression);
             }
 
-            return null;
+            return Option.None<Expression<Func<TSource, bool>>>();
         }
 
         internal override async Task SetEntities(Option<IQueryable<TSource>> allEntities, Option<IQueryable<TSource>> selectableEntities)

@@ -175,17 +175,19 @@ namespace GravityCTRL.FilterChili
 
         #region Internal Methods
 
-        protected override Expression<Func<TSource, bool>> FilterExpression()
+        protected override Option<Expression<Func<TSource, bool>>> FilterExpression()
         {
             if (!SelectedValues.Any())
             {
-                return null;
+                return Option.None<Expression<Func<TSource, bool>>>();
             }
 
             var selectedValueExpressions = SelectedValues.Select(selector => Expression.Constant(selector));
             var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Equal(expression, Selector.Body));
             var orExpression = equalsExpressions.Or();
-            return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
+            return orExpression != null 
+                ? Option.Some(Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters))
+                : Option.None<Expression<Func<TSource, bool>>>();
         }
 
         internal override async Task SetEntities(Option<IQueryable<TSource>> allEntities, Option<IQueryable<TSource>> selectableEntities)

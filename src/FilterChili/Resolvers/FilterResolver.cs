@@ -81,15 +81,15 @@ namespace GravityCTRL.FilterChili.Resolvers
         internal IQueryable<TSource> ExecuteFilter(IQueryable<TSource> queryable)
         {
             var expression = FilterExpression();
-            return expression == null
-                ? queryable
-                : queryable.Where(expression);
+            return expression.TryGetValue(out var value)
+                ? queryable.Where(value)
+                : queryable;
         }
 
         internal abstract Task SetEntities([NotNull] Option<IQueryable<TSource>> allEntities, [NotNull] Option<IQueryable<TSource>> selectableEntities);
 
-        [CanBeNull]
-        protected abstract Expression<Func<TSource, bool>> FilterExpression();
+        [NotNull]
+        protected abstract Option<Expression<Func<TSource, bool>>> FilterExpression();
     }
 
     public abstract class FilterResolver<TFilterResolver, TSource, TValue> : FilterResolver<TSource, TValue>

@@ -79,7 +79,7 @@ namespace GravityCTRL.FilterChili
 
         #region Internal Methods
 
-        protected override Expression<Func<TSource, bool>> FilterExpression()
+        protected override Option<Expression<Func<TSource, bool>>> FilterExpression()
         {
             return _comparer.FilterExpression(Selector, SelectedValue);
         }

@@ -16,6 +16,7 @@
 
 using System;
 using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Models;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Comparison
@@ -24,7 +25,7 @@ namespace GravityCTRL.FilterChili.Comparison
     {
         public abstract string FilterType { get; }
 
-        [CanBeNull]
-        public abstract Expression<Func<TSource, bool>> FilterExpression([NotNull] Expression<Func<TSource, TValue>> selector, [NotNull] TValue selectedValue);
+        [NotNull]
+        public abstract Option<Expression<Func<TSource, bool>>> FilterExpression([NotNull] Expression<Func<TSource, TValue>> selector, [NotNull] TValue selectedValue);
     }
 }

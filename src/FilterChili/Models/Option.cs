@@ -18,7 +18,7 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Models
 {
-    internal abstract class Option
+    public abstract class Option
     {
         [NotNull]
         public static Option<T> None<T>()
@@ -35,7 +35,7 @@ namespace GravityCTRL.FilterChili.Models
     }
 
     // ReSharper disable once UnusedTypeParameter
-    internal abstract class Option<T> : Option {}
+    public abstract class Option<T> : Option {}
 
     internal sealed class Some<T> : Option<T>
     {

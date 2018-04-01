@@ -192,12 +192,11 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         {
             public override string FilterType { get; } = "TestComparer";
 
-            [NotNull]
-            public override Expression<Func<GenericSource, bool>> FilterExpression(Expression<Func<GenericSource, int>> selector, int selectedValue)
+            public override Option<Expression<Func<GenericSource, bool>>> FilterExpression(Expression<Func<GenericSource, int>> selector, int selectedValue)
             {
                 var valueConstant = Expression.Constant(selectedValue);
                 var expression = Expression.Equal(selector.Body, valueConstant);
-                return Expression.Lambda<Func<GenericSource, bool>>(expression, selector.Parameters);
+                return Option.Some(Expression.Lambda<Func<GenericSource, bool>>(expression, selector.Parameters));
             }
         }
     }

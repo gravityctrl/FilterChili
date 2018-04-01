@@ -16,6 +16,7 @@
 
 using System;
 using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Models;
 
 namespace GravityCTRL.FilterChili.Comparison
 {
@@ -30,16 +31,16 @@ namespace GravityCTRL.FilterChili.Comparison
             _minValue = minValue;
         }
 
-        public override Expression<Func<TSource, bool>> FilterExpression(Expression<Func<TSource, TValue>> selector, TValue selectedValue)
+        public override Option<Expression<Func<TSource, bool>>> FilterExpression(Expression<Func<TSource, TValue>> selector, TValue selectedValue)
         {
             if (_minValue.CompareTo(selectedValue) >= 0)
             {
-                return null;
+                return Option.None<Expression<Func<TSource, bool>>>();
             }
 
             var valueConstant = Expression.Constant(selectedValue);
             var expression = Expression.GreaterThan(selector.Body, valueConstant);
-            return Expression.Lambda<Func<TSource, bool>>(expression, selector.Parameters);
+            return Option.Some(Expression.Lambda<Func<TSource, bool>>(expression, selector.Parameters));
         }
     }
 }
