@@ -22,13 +22,18 @@ namespace GravityCTRL.FilterChili.Search.ExpressionProviders
 {
     internal sealed class GermanSoundexExpressionProvider<TSource> : IExpressionProvider<TSource>
     {
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly ConstantExpression NullExpression = Expression.Constant(null, typeof(string));
+
         public bool AcceptsMultipleSearchInputs { get; } = true;
 
         public Expression SearchExpression(Expression<Func<TSource, string>> searchSelector, string search)
         {
             var compiledExpression = searchSelector.Compile();
             Expression<Func<TSource, bool>> expression = entity => compiledExpression(entity).ToGermanSoundex().Contains(search.ToGermanSoundex());
-            return expression.Body;
+
+            var notNullExpression = Expression.NotEqual(searchSelector.Body, NullExpression);
+            return Expression.AndAlso(notNullExpression, expression.Body);
         }
     }
 }
