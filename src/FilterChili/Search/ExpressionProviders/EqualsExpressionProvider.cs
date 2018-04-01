@@ -29,11 +29,11 @@ namespace GravityCTRL.FilterChili.Search.ExpressionProviders
 
         public Expression SearchExpression(Expression<Func<TSource, string>> searchSelector, string search)
         {
-            var constant = Expression.Constant(search);
-            var notNull = Expression.NotEqual(searchSelector.Body, NullExpression);
+            var constantExpression = Expression.Constant(search);
+            var notNullExpression = Expression.NotEqual(searchSelector.Body, NullExpression);
 
-            var equalsExpression = Expression.Equal(Expression.Call(searchSelector.Body, MethodExpressions.ToLowerExpression), constant);
-            return Expression.AndAlso(notNull, equalsExpression);
+            var equalsExpression = Expression.Equal(Expression.Call(searchSelector.Body, MethodExpressions.ToLowerExpression), constantExpression);
+            return Expression.AndAlso(notNullExpression, equalsExpression);
         }
     }
 }

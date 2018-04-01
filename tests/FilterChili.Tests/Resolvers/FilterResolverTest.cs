@@ -14,21 +14,18 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq.Expressions;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
-using JetBrains.Annotations;
 using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Resolvers
 {
-    public sealed class DomainResolverTest
+    public sealed class FilterResolverTest
     {
         [Fact]
         public void Should_Update_Name_Of_Resolver_When_Calling_Use_Name_And_Return_Same_Instance()
         {
-            var testInstance = new TestResolver(_ => 1);
+            var testInstance = new RangeResolver<GenericSource, int>(_ => 1, int.MinValue, int.MaxValue);
             testInstance.Name.Should().Be(null);
 
             testInstance.UseName("SomeName").Should().Be(testInstance);
@@ -38,7 +35,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         [Fact]
         public void Should_Replace_Existing_Behavior_If_Behavior_Class_Is_Same_Type()
         {
-            var testInstance = new TestResolver(_ => 1);
+            var testInstance = new RangeResolver<GenericSource, int>(_ => 1, int.MinValue, int.MaxValue);
             testInstance.Name.Should().Be(null);
 
             testInstance.UseName("SomeName").Should().Be(testInstance);
@@ -46,11 +43,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             testInstance.UseName("SomeName2").Should().Be(testInstance);
             testInstance.Name.Should().Be("SomeName2");
-        }
-
-        private sealed class TestResolver : RangeResolver<GenericSource, int>
-        {
-            internal TestResolver([NotNull] Expression<Func<GenericSource, int>> selector) : base(selector, 1, 2) { }
         }
     }
 }

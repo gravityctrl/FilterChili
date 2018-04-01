@@ -20,6 +20,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using GravityCTRL.FilterChili.Expressions;
 using GravityCTRL.FilterChili.Extensions;
+using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Search.Fragments;
 using JetBrains.Annotations;
 
@@ -35,8 +36,8 @@ namespace GravityCTRL.FilterChili.Search
         [CanBeNull]
         private string _searchString;
 
-        [CanBeNull]
-        private Expression<Func<TSource, bool>> _searchExpression;
+        [NotNull]
+        private Option<Expression<Func<TSource, bool>>> _searchExpression;
 
         static SearchResolver()
         {
@@ -46,11 +47,14 @@ namespace GravityCTRL.FilterChili.Search
         public SearchResolver()
         {
             _searchers = new List<SearchSpecification<TSource>>();
+            _searchExpression = Option.None<Expression<Func<TSource, bool>>>();
         }
 
         public IQueryable<TSource> ApplySearch(IQueryable<TSource> queryable)
         {
-            return _searchExpression == null ? queryable : queryable.Where(_searchExpression);
+            return _searchExpression.TryGetValue(out var value) 
+                ? queryable.Where(value) 
+                : queryable;
         }
 
         public void SetSearchString(string searchString)
@@ -62,8 +66,8 @@ namespace GravityCTRL.FilterChili.Search
             }
 
             _searchString = searchString;
-            var fragmentedSearch = new FragmentedSearch(searchString);
-            _searchExpression = SetSearchExpression(fragmentedSearch);
+            var interpretedSearch = new InterpretedSearch(searchString);
+            _searchExpression = SetSearchExpression(interpretedSearch);
         }
 
         internal void AddSearcher(SearchSpecification<TSource> searchSpecification)
@@ -71,17 +75,17 @@ namespace GravityCTRL.FilterChili.Search
             _searchers.Add(searchSpecification);
         }
 
-        [CanBeNull]
-        private Expression<Func<TSource, bool>> SetSearchExpression(FragmentedSearch fragmentedSearch)
+        [NotNull]
+        private Option<Expression<Func<TSource, bool>>> SetSearchExpression(InterpretedSearch interpretedSearch)
         {
             if (!_searchers.Any())
             {
-                return null;
+                return Option.None<Expression<Func<TSource, bool>>>();
             }
 
             var expressions = new List<Expression>();
 
-            var constrainedIncludeFragments = fragmentedSearch.Where(fragment => fragment is ConstrainedIncludeFragment).Cast<ConstrainedIncludeFragment>().ToList();
+            var constrainedIncludeFragments = interpretedSearch.Where(fragment => fragment is ConstrainedIncludeFragment).Cast<ConstrainedIncludeFragment>().ToList();
             if (constrainedIncludeFragments.Any())
             {
                 foreach (var fragment in constrainedIncludeFragments)
@@ -97,7 +101,7 @@ namespace GravityCTRL.FilterChili.Search
                 }
             }
 
-            var constrainedExcludeFragments = fragmentedSearch.Where(fragment => fragment is ConstrainedExcludeFragment).Cast<ConstrainedExcludeFragment>().ToList();
+            var constrainedExcludeFragments = interpretedSearch.Where(fragment => fragment is ConstrainedExcludeFragment).Cast<ConstrainedExcludeFragment>().ToList();
             if (constrainedExcludeFragments.Any())
             {
                 foreach (var fragment in constrainedExcludeFragments)
@@ -113,38 +117,38 @@ namespace GravityCTRL.FilterChili.Search
                 }
             }
 
-            var includeFragments = fragmentedSearch.Where(fragment => fragment is IncludeFragment).Cast<IncludeFragment>().ToList();
+            var includeFragments = interpretedSearch.Where(fragment => fragment is IncludeFragment).Cast<IncludeFragment>().ToList();
             if (includeFragments.Any())
             {
                 var expression = IncludeExpressions(_searchers, includeFragments);
-                if (expression != null)
+                if (expression.TryGetValue(out var includes))
                 {
-                    expressions.Add(expression);
+                    expressions.Add(includes);
                 }
             }
 
-            var excludeFragments = fragmentedSearch.Where(fragment => fragment is ExcludeFragment).Cast<ExcludeFragment>().ToList();
+            var excludeFragments = interpretedSearch.Where(fragment => fragment is ExcludeFragment).Cast<ExcludeFragment>().ToList();
             if (excludeFragments.Any())
             {
                 var expression = ExcludeExpressions(_searchers, excludeFragments);
-                if (expression != null)
+                if (expression.TryGetValue(out var excludes))
                 {
-                    expressions.Add(expression);
+                    expressions.Add(excludes);
                 }
             }
 
             var searchExpression = expressions.And();
-            if (searchExpression == null)
+            if (!searchExpression.TryGetValue(out var searches))
             {
-                return null;
+                return Option.None<Expression<Func<TSource, bool>>>();
             }
 
-            var rewrittenExpression = PredicateRewriter.Rewrite(ParameterExpression, searchExpression);
-            return Expression.Lambda<Func<TSource, bool>>(rewrittenExpression, ParameterExpression);
+            var rewrittenExpression = PredicateRewriter.Rewrite(ParameterExpression, searches);
+            return Option.Some(Expression.Lambda<Func<TSource, bool>>(rewrittenExpression, ParameterExpression));
         }
 
-        [CanBeNull]
-        private static Expression IncludeExpressions([NotNull] IReadOnlyCollection<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<IncludeFragment> includeFragments)
+        [NotNull]
+        private static Option<Expression> IncludeExpressions([NotNull] IReadOnlyCollection<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<IncludeFragment> includeFragments)
         {
             IEnumerable<Expression> CreateIncludeExpressions()
             {
@@ -153,8 +157,10 @@ namespace GravityCTRL.FilterChili.Search
                     if (searcher.IncludeAcceptsMultipleInputs)
                     {
                         var includeExpressions = includeFragments.Select(fragment => searcher.IncludeExpression(fragment.Text));
-                        yield return includeExpressions.And();
-
+                        if (includeExpressions.And().TryGetValue(out var includes))
+                        {
+                            yield return includes;
+                        }
                     }
                     else if (includeFragments.Count == 1)
                     {
@@ -166,20 +172,25 @@ namespace GravityCTRL.FilterChili.Search
             return CreateIncludeExpressions().Or();
         }
 
-        [CanBeNull]
-        private static Expression ExcludeExpressions([NotNull] IReadOnlyCollection<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<ExcludeFragment> excludeFragments)
+        [NotNull]
+        private static Option<UnaryExpression> ExcludeExpressions([NotNull] IReadOnlyCollection<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<ExcludeFragment> excludeFragments)
         {
             IEnumerable<Expression> CreateExcludeExpressions()
             {
                 foreach (var searcher in usedSearchers)
                 {
                     var excludeExpressions = excludeFragments.Select(fragment => searcher.ExcludeExpression(fragment.Text));
-                    yield return excludeExpressions.Or();
+                    if (excludeExpressions.Or().TryGetValue(out var orExpression))
+                    {
+                        yield return orExpression;
+                    }
                 }
             }
 
             var expression = CreateExcludeExpressions().Or();
-            return expression == null ? null : Expression.Not(expression);
+            return expression.TryGetValue(out var value) 
+                ? Option.Some(Expression.Not(value)) 
+                : Option.None<UnaryExpression>();
         }
     }
 }

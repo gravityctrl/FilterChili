@@ -14,28 +14,43 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Models
 {
-    internal abstract class Option
+    public abstract class Option
     {
         [NotNull]
-        public static Option<T> None<T>()
+        internal static Option<T> None<T>()
         {
             return new None<T>();
         }
 
         [NotNull]
-        public static Option<T> Some<T>([CanBeNull] T value)
+        internal static Option<T> Some<T>([CanBeNull] T value)
         {
             // ReSharper disable once CompareNonConstrainedGenericWithNull
-            return value == null ? (Option<T>) new None<T>() : new Some<T>(value);
+            return value == null ? throw new ArgumentNullException(nameof(T)) : new Some<T>(value);
+        }
+
+        [NotNull]
+        internal static Option<T> Maybe<T>([CanBeNull] T value)
+        {
+            // ReSharper disable once CompareNonConstrainedGenericWithNull
+            return value == null ? (Option<T>)new None<T>() : new Some<T>(value);
         }
     }
 
     // ReSharper disable once UnusedTypeParameter
-    internal abstract class Option<T> : Option {}
+    public abstract class Option<T> : Option
+    {
+        [NotNull]
+        public static implicit operator Option<T>(T value)
+        {
+            return Maybe(value);
+        }
+    }
 
     internal sealed class Some<T> : Option<T>
     {
@@ -51,7 +66,7 @@ namespace GravityCTRL.FilterChili.Models
 
     internal static class OptionExtensions
     {
-        public static bool TryGetValue<T>(this Option<T> option, out T value)
+        public static bool TryGetValue<T>([CanBeNull] this Option<T> option, out T value)
         {
             if (option is Some<T> some)
             {

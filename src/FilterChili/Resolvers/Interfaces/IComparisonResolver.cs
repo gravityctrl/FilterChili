@@ -18,8 +18,8 @@ using System;
 
 namespace GravityCTRL.FilterChili.Resolvers.Interfaces
 {
-    internal interface IComparisonResolver<in TSelector> where TSelector : IComparable
+    internal interface IComparisonResolver<in TValue> where TValue : IComparable
     {
-        void Set(TSelector value);
+        void Set(TValue value);
     }
 }

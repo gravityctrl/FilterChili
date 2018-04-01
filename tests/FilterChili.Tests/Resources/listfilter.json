@@ -1,6 +1,6 @@
 ﻿{
   "name": "Name",
-  "domain": {
+  "filter": {
     "values": [
       "Piza",
       "Chicken",

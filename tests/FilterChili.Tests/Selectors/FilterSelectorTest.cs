@@ -97,8 +97,8 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void ComparisonResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.Comparison().Should().BeOfType<TestComparisonResolver>();
-            _testInstance.Domain().Should().BeOfType<TestComparisonResolver>();
+            _testInstance.Comparison().Should().BeOfType<ComparisonResolver<GenericSource, int>>();
+            _testInstance.Domain().Should().BeOfType<ComparisonResolver<GenericSource, int>>();
             _testInstance.NeedsToBeResolved = false;
 
             _testInstance.TrySet(1).Should().BeTrue();
@@ -115,8 +115,8 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void RangeResolver_Should_Be_Filled_With_Correct_TrySet_Method_Calls()
         {
-            _testInstance.Range().Should().BeOfType<TestRangeResolver>();
-            _testInstance.Domain().Should().BeOfType<TestRangeResolver>();
+            _testInstance.Range().Should().BeOfType<RangeResolver<GenericSource, int>>();
+            _testInstance.Domain().Should().BeOfType<RangeResolver<GenericSource, int>>();
             _testInstance.NeedsToBeResolved = false;
 
             _testInstance.TrySet(1).Should().BeFalse();
@@ -164,18 +164,18 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             internal TestFilterSelector(Expression<Func<GenericSource, int>> selector) : base(selector) {}
 
             [NotNull]
-            public TestComparisonResolver Comparison()
+            public ComparisonResolver<GenericSource, int> Comparison()
             {
-                var resolver = new TestComparisonResolver(new TestComparer(), Selector);
-                DomainResolver = resolver;
+                var resolver = new ComparisonResolver<GenericSource, int>(new TestComparer(), Selector);
+                FilterResolver = resolver;
                 return resolver;
             }
 
             [NotNull]
-            public TestRangeResolver Range()
+            public RangeResolver<GenericSource, int> Range()
             {
-                var resolver = new TestRangeResolver(Selector);
-                DomainResolver = resolver;
+                var resolver = new RangeResolver<GenericSource, int>(Selector, int.MinValue, int.MaxValue);
+                FilterResolver = resolver;
                 return resolver;
             }
 
@@ -183,31 +183,20 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             public ListResolver<GenericSource, int> List()
             {
                 var resolver = new ListResolver<GenericSource, int>(Selector);
-                DomainResolver = resolver;
+                FilterResolver = resolver;
                 return resolver;
             }
-        }
-
-        private sealed class TestComparisonResolver : ComparisonResolver<GenericSource, int>
-        {
-            internal TestComparisonResolver(Comparer<GenericSource, int> comparer, [NotNull] Expression<Func<GenericSource, int>> selector) : base(comparer, selector) {}
-        }
-
-        private sealed class TestRangeResolver : RangeResolver<GenericSource, int>
-        {
-            internal TestRangeResolver([NotNull] Expression<Func<GenericSource, int>> selector) : base(selector, int.MinValue, int.MaxValue) {}
         }
 
         private sealed class TestComparer : Comparer<GenericSource, int>
         {
             public override string FilterType { get; } = "TestComparer";
 
-            [NotNull]
-            public override Expression<Func<GenericSource, bool>> FilterExpression(Expression<Func<GenericSource, int>> selector, int selectedValue)
+            public override Option<Expression<Func<GenericSource, bool>>> FilterExpression(Expression<Func<GenericSource, int>> selector, int selectedValue)
             {
                 var valueConstant = Expression.Constant(selectedValue);
                 var expression = Expression.Equal(selector.Body, valueConstant);
-                return Expression.Lambda<Func<GenericSource, bool>>(expression, selector.Parameters);
+                return Option.Some(Expression.Lambda<Func<GenericSource, bool>>(expression, selector.Parameters));
             }
         }
     }

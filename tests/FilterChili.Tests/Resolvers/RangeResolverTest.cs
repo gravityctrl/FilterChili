@@ -17,12 +17,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -34,7 +32,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
         public RangeResolverTest()
         {
-            _testInstance = new TestRangeResolver(source => source.Int);
+            _testInstance = new RangeResolver<GenericSource, int>(source => source.Int, -5, 5);
         }
 
         [Fact]
@@ -288,11 +286,6 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             var expectedItems = items.ToArray();
             result.Should().Contain(expectedItems);
-        }
-
-        private sealed class TestRangeResolver : RangeResolver<GenericSource, int>
-        {
-            internal TestRangeResolver([NotNull] Expression<Func<GenericSource, int>> selector) : base(selector, -5, 5) {}
         }
     }
 }

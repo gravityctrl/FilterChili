@@ -37,7 +37,7 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal abstract string Name { get; }
 
-        internal abstract bool HasDomainResolver { get; }
+        internal abstract bool HasFilterResolver { get; }
 
         internal abstract bool NeedsToBeResolved { get; set; }
 
@@ -45,48 +45,48 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal abstract Task SetEntities(Option<IQueryable<TSource>> allEntities, Option<IQueryable<TSource>> selectableEntities);
 
-        internal abstract DomainResolver<TSource> Domain();
+        internal abstract FilterResolver<TSource> Domain();
 
         internal abstract bool HasName(string name);
 
-        internal abstract bool TrySet<TSelector>(TSelector value);
+        internal abstract bool TrySet<TValue>(TValue value);
 
-        internal abstract bool TrySet<TSelector>(TSelector min, TSelector max);
+        internal abstract bool TrySet<TValue>(TValue min, TValue max);
 
-        internal abstract bool TrySet(JToken domainToken);
+        internal abstract bool TrySet(JToken filterToken);
 
         internal FilterSelector() {}
 
         #endregion
     }
 
-    public abstract class FilterSelector<TSource, TSelector> : FilterSelector<TSource> where TSelector : IComparable
+    public abstract class FilterSelector<TSource, TValue> : FilterSelector<TSource> where TValue : IComparable
     {
         internal override string Name => GetType().FormattedName();
 
-        internal override CalculationStrategy CalculationStrategy => DomainResolver.CalculationStrategy;
+        internal override CalculationStrategy CalculationStrategy => FilterResolver.CalculationStrategy;
 
-        protected readonly Expression<Func<TSource, TSelector>> Selector;
+        protected readonly Expression<Func<TSource, TValue>> Selector;
 
-        protected DomainResolver<TSource, TSelector> DomainResolver { private get; set; }
+        protected FilterResolver<TSource, TValue> FilterResolver { private get; set; }
 
-        internal override bool HasDomainResolver => DomainResolver != null;
+        internal override bool HasFilterResolver => FilterResolver != null;
 
         internal override bool NeedsToBeResolved
         {
-            get => DomainResolver?.NeedsToBeResolved ?? false;
+            get => FilterResolver?.NeedsToBeResolved ?? false;
             set
             {
-                if (DomainResolver == null)
+                if (FilterResolver == null)
                 {
                     throw new MissingResolverException(Name);
                 }
 
-                DomainResolver.NeedsToBeResolved = value;
+                FilterResolver.NeedsToBeResolved = value;
             }
         }
 
-        internal FilterSelector(Expression<Func<TSource, TSelector>> selector)
+        internal FilterSelector(Expression<Func<TSource, TValue>> selector)
         {
             Selector = selector;
         }
@@ -95,50 +95,50 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal override IQueryable<TSource> ApplyFilter(IQueryable<TSource> queryable)
         {
-            if (DomainResolver == null)
+            if (FilterResolver == null)
             {
                 throw new MissingResolverException(Name);
             }
 
-            return DomainResolver.ExecuteFilter(queryable);
+            return FilterResolver.ExecuteFilter(queryable);
         }
 
         internal override async Task SetEntities([NotNull] Option<IQueryable<TSource>> allEntities, [NotNull] Option<IQueryable<TSource>> selectableEntities)
         {
-            if (DomainResolver == null)
+            if (FilterResolver == null)
             {
                 throw new MissingResolverException(Name);
             }
 
-            await DomainResolver.SetEntities(allEntities, selectableEntities);
+            await FilterResolver.SetEntities(allEntities, selectableEntities);
         }
 
         [NotNull]
-        internal override DomainResolver<TSource> Domain()
+        internal override FilterResolver<TSource> Domain()
         {
-            var resolver = DomainResolver ?? throw new MissingResolverException(Name);
+            var resolver = FilterResolver ?? throw new MissingResolverException(Name);
             return resolver;
         }
 
         internal override bool HasName([NotNull] string name)
         {
-            return DomainResolver?.Name == name;
+            return FilterResolver?.Name == name;
         }
 
-        internal override bool TrySet(JToken domainToken)
+        internal override bool TrySet(JToken filterToken)
         {
-            return DomainResolver?.TrySet(domainToken) ?? false;
+            return FilterResolver?.TrySet(filterToken) ?? false;
         }
 
-        internal override bool TrySet<TSelectorTarget>(TSelectorTarget value)
+        internal override bool TrySet<TValueTarget>(TValueTarget value)
         {
             switch (value)
             {
-                case TSelector valueTarget:
+                case TValue valueTarget:
                 {
                     return TrySet(valueTarget);
                 }
-                case IEnumerable<TSelector> targetValues:
+                case IEnumerable<TValue> targetValues:
                 {
                     return TrySet(targetValues);
                 }
@@ -149,9 +149,9 @@ namespace GravityCTRL.FilterChili.Selectors
             }
         }
 
-        internal override bool TrySet<TSelectorTarget>(TSelectorTarget min, TSelectorTarget max)
+        internal override bool TrySet<TValueTarget>(TValueTarget min, TValueTarget max)
         {
-            if (min is TSelector minTarget && max is TSelector maxTarget)
+            if (min is TValue minTarget && max is TValue maxTarget)
             {
                 return TrySet(minTarget, maxTarget);
             }
@@ -163,11 +163,11 @@ namespace GravityCTRL.FilterChili.Selectors
 
         #region Private Methods
 
-        private bool TrySet(TSelector value)
+        private bool TrySet(TValue value)
         {
-            switch (DomainResolver)
+            switch (FilterResolver)
             {
-                case IComparisonResolver<TSelector> target:
+                case IComparisonResolver<TValue> target:
                 {
                     target.Set(value);
                     return true;
@@ -179,11 +179,11 @@ namespace GravityCTRL.FilterChili.Selectors
             }
         }
 
-        private bool TrySet(TSelector min, TSelector max)
+        private bool TrySet(TValue min, TValue max)
         {
-            switch (DomainResolver)
+            switch (FilterResolver)
             {
-                case IRangeResolver<TSelector> target:
+                case IRangeResolver<TValue> target:
                 {
                     target.Set(min, max);
                     return true;
@@ -195,16 +195,16 @@ namespace GravityCTRL.FilterChili.Selectors
             }
         }
 
-        private bool TrySet(IEnumerable<TSelector> values)
+        private bool TrySet(IEnumerable<TValue> values)
         {
-            switch (DomainResolver)
+            switch (FilterResolver)
             {
-                case IListResolver<TSelector> listTarget:
+                case IListResolver<TValue> listTarget:
                 {
                     listTarget.Set(values);
                     return true;
                 }
-                case IGroupResolver<TSelector> groupTarget:
+                case IGroupResolver<TValue> groupTarget:
                 {
                     groupTarget.Set(values);
                     return true;

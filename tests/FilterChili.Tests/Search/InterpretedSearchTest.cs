@@ -21,12 +21,12 @@ using Xunit;
 
 namespace GravityCTRL.FilterChili.Tests.Search
 {
-    public sealed class FragmentedSearchTest
+    public sealed class InterpretedSearchTest
     {
         [Fact]
         public void Should_Exclude_Ignore_Whitespaces_Items()
         {
-            var result = new FragmentedSearch("  ABC  def  ");
+            var result = new InterpretedSearch("  ABC  def  ");
             result.Should().BeEquivalentTo
             (
                 new IncludeFragment(FragmentType.Word, "ABC"), 
@@ -37,7 +37,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Ignore_Non_AlphaNumeric_Items()
         {
-            var result = new FragmentedSearch(" name.category! ?Foobert_ ");
+            var result = new InterpretedSearch(" name.category! ?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new IncludeFragment(FragmentType.Word, "name"),
@@ -49,7 +49,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Respect_Double_Quotes()
         {
-            var result = new FragmentedSearch(@" ""name.category!"" ?Foobert_ ");
+            var result = new InterpretedSearch(@" ""name.category!"" ?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new IncludeFragment(FragmentType.Phrase, "name.category!"),
@@ -60,7 +60,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Create_Phrases_If_Number_Of_Double_Quotes_Is_Odd()
         {
-            var result = new FragmentedSearch(@" ""name.category!"" ""?Foobert_ ");
+            var result = new InterpretedSearch(@" ""name.category!"" ""?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new IncludeFragment(FragmentType.Phrase, "name.category!"),
@@ -71,7 +71,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Create_Phrases_If_Double_Quotes_Are_Not_Delimited()
         {
-            var result = new FragmentedSearch(@" ""name.category!""""?Foobert_"" ");
+            var result = new InterpretedSearch(@" ""name.category!""""?Foobert_"" ");
             result.Should().BeEquivalentTo
             (
                 new IncludeFragment(FragmentType.Phrase, "name.category!"),
@@ -82,7 +82,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Create_Phrases_If_Double_Quotes_Are_Followed_By_Exclude_Statement()
         {
-            var result = new FragmentedSearch(@" ""name.category!""-Foobert ");
+            var result = new InterpretedSearch(@" ""name.category!""-Foobert ");
             result.Should().BeEquivalentTo
             (
                 new IncludeFragment(FragmentType.Phrase, "name.category!"),
@@ -93,7 +93,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Allow_Marking_Word_As_Unwanted()
         {
-            var result = new FragmentedSearch(@" -name.category! ?Foobert_ ");
+            var result = new InterpretedSearch(@" -name.category! ?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new ExcludeFragment(FragmentType.Word, "name"),
@@ -105,7 +105,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Allow_Marking_Phrase_As_Unwanted()
         {
-            var result = new FragmentedSearch(@" -""name.category!"" ?Foobert_ ");
+            var result = new InterpretedSearch(@" -""name.category!"" ?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new ExcludeFragment(FragmentType.Phrase, "name.category!"),
@@ -116,7 +116,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Create_Constrained_Include_Fragment_If_Colon_Is_Used_As_Separator()
         {
-            var result = new FragmentedSearch(@" name:category! ?Foobert_ ");
+            var result = new InterpretedSearch(@" name:category! ?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new ConstrainedIncludeFragment(FragmentType.Word, "category", "name"),
@@ -127,7 +127,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Not_Create_Constrained_Include_Fragment_If_Constraint_Name_Is_Empty()
         {
-            var result = new FragmentedSearch(@" :category! ?Foobert_ ");
+            var result = new InterpretedSearch(@" :category! ?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new IncludeFragment(FragmentType.Word, "Foobert")
@@ -137,7 +137,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Create_Constrained_Exclude_Fragment_If_Colon_Is_Used_As_Separator()
         {
-            var result = new FragmentedSearch(@" -name:category! ?Foobert_ ");
+            var result = new InterpretedSearch(@" -name:category! ?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new ConstrainedExcludeFragment(FragmentType.Word, "category", "name"),
@@ -148,7 +148,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Not_Create_Constrained_Exclude_Fragment_If_Constraint_Name_Is_Empty()
         {
-            var result = new FragmentedSearch(@" -:category! ?Foobert_ ");
+            var result = new InterpretedSearch(@" -:category! ?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new IncludeFragment(FragmentType.Word, "Foobert")
@@ -158,7 +158,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Create_Constrained_Include_Fragment_Using_Quotes_For_Constraint()
         {
-            var result = new FragmentedSearch(@" ""specific name"":category! ?Foobert_ ");
+            var result = new InterpretedSearch(@" ""specific name"":category! ?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new ConstrainedIncludeFragment(FragmentType.Word, "category", "specific name"),
@@ -169,7 +169,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Create_Constrained_Exclude_Fragment_Using_Quotes_For_Constraint()
         {
-            var result = new FragmentedSearch(@" -""specific name"":category! ?Foobert_ ");
+            var result = new InterpretedSearch(@" -""specific name"":category! ?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new ConstrainedExcludeFragment(FragmentType.Word, "category", "specific name"),
@@ -180,7 +180,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Create_Constrained_Include_Fragment_Using_Quotes_For_Text()
         {
-            var result = new FragmentedSearch(@" name:""specific category!"" ?Foobert_ ");
+            var result = new InterpretedSearch(@" name:""specific category!"" ?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new ConstrainedIncludeFragment(FragmentType.Phrase, "specific category!", "name"),
@@ -191,7 +191,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Create_Constrained_Exclude_Fragment_Using_Quotes_For_Text()
         {
-            var result = new FragmentedSearch(@" -name:""specific category!"" ?Foobert_ ");
+            var result = new InterpretedSearch(@" -name:""specific category!"" ?Foobert_ ");
             result.Should().BeEquivalentTo
             (
                 new ConstrainedExcludeFragment(FragmentType.Phrase, "specific category!", "name"),

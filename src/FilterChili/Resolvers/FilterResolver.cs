@@ -25,21 +25,21 @@ using Newtonsoft.Json.Linq;
 
 namespace GravityCTRL.FilterChili.Resolvers
 {
-    public abstract class DomainResolver
+    public abstract class FilterResolver
     {
         [UsedImplicitly]
         public string Name { get; protected set; }
 
         internal CalculationStrategy CalculationStrategy { get; set; }
 
-        internal DomainResolver(string name)
+        internal FilterResolver(string name)
         {
             Name = name;
             CalculationStrategy = CalculationStrategy.Full;
         }
     }
 
-    public abstract class DomainResolver<TSource> : DomainResolver
+    public abstract class FilterResolver<TSource> : FilterResolver
     {
         // ReSharper disable once StaticMemberInGenericType
         protected static readonly Type GenericSourceType;
@@ -56,24 +56,24 @@ namespace GravityCTRL.FilterChili.Resolvers
         [UsedImplicitly]
         public string TargetType => _selectorType.Name;
 
-        static DomainResolver()
+        static FilterResolver()
         {
             GenericSourceType = typeof(TSource);
         }
 
-        internal DomainResolver(string name, Type type) : base(name)
+        internal FilterResolver(string name, Type type) : base(name)
         {
             _selectorType = type;
         }
 
-        public abstract bool TrySet(JToken domainToken);
+        public abstract bool TrySet(JToken filterToken);
     }
 
-    public abstract class DomainResolver<TSource, TSelector> : DomainResolver<TSource> where TSelector : IComparable
+    public abstract class FilterResolver<TSource, TValue> : FilterResolver<TSource> where TValue : IComparable
     {
-        protected Expression<Func<TSource, TSelector>> Selector { get; }
+        protected Expression<Func<TSource, TValue>> Selector { get; }
 
-        internal DomainResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector.Name(), typeof(TSelector))
+        internal FilterResolver([NotNull] Expression<Func<TSource, TValue>> selector) : base(selector.Name(), typeof(TValue))
         {
             Selector = selector;
         }
@@ -81,36 +81,36 @@ namespace GravityCTRL.FilterChili.Resolvers
         internal IQueryable<TSource> ExecuteFilter(IQueryable<TSource> queryable)
         {
             var expression = FilterExpression();
-            return expression == null
-                ? queryable
-                : queryable.Where(expression);
+            return expression.TryGetValue(out var value)
+                ? queryable.Where(value)
+                : queryable;
         }
 
         internal abstract Task SetEntities([NotNull] Option<IQueryable<TSource>> allEntities, [NotNull] Option<IQueryable<TSource>> selectableEntities);
 
-        [CanBeNull]
-        protected abstract Expression<Func<TSource, bool>> FilterExpression();
+        [NotNull]
+        protected abstract Option<Expression<Func<TSource, bool>>> FilterExpression();
     }
 
-    public abstract class DomainResolver<TDomainResolver, TSource, TSelector> : DomainResolver<TSource, TSelector>
-        where TSelector : IComparable where TDomainResolver : DomainResolver<TDomainResolver, TSource, TSelector>
+    public abstract class FilterResolver<TFilterResolver, TSource, TValue> : FilterResolver<TSource, TValue>
+        where TValue : IComparable where TFilterResolver : FilterResolver<TFilterResolver, TSource, TValue>
     {
-        private readonly TDomainResolver _this;
+        private readonly TFilterResolver _this;
 
-        internal DomainResolver([NotNull] Expression<Func<TSource, TSelector>> selector) : base(selector)
+        internal FilterResolver([NotNull] Expression<Func<TSource, TValue>> selector) : base(selector)
         {
-            _this = (TDomainResolver)this;
+            _this = (TFilterResolver)this;
         }
 
         [UsedImplicitly]
-        public TDomainResolver UseName(string name)
+        public TFilterResolver UseName(string name)
         {
             Name = name;
             return _this;
         }
 
         [UsedImplicitly]
-        public TDomainResolver UseStrategy(CalculationStrategy calculationStrategy)
+        public TFilterResolver UseStrategy(CalculationStrategy calculationStrategy)
         {
             CalculationStrategy = calculationStrategy;
             return _this;

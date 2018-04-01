@@ -16,30 +16,31 @@
 
 using System;
 using System.Linq.Expressions;
+using GravityCTRL.FilterChili.Models;
 
 namespace GravityCTRL.FilterChili.Comparison
 {
-    internal sealed class GreaterThanComparer<TSource, TSelector> : Comparer<TSource, TSelector> where TSelector : IComparable
+    internal sealed class GreaterThanComparer<TSource, TValue> : Comparer<TSource, TValue> where TValue : IComparable
     {
-        private readonly TSelector _minValue;
+        private readonly TValue _minValue;
 
         public override string FilterType { get; } = "GreaterThan";
 
-        public GreaterThanComparer(TSelector minValue)
+        public GreaterThanComparer(TValue minValue)
         {
             _minValue = minValue;
         }
 
-        public override Expression<Func<TSource, bool>> FilterExpression(Expression<Func<TSource, TSelector>> selector, TSelector selectedValue)
+        public override Option<Expression<Func<TSource, bool>>> FilterExpression(Expression<Func<TSource, TValue>> selector, TValue selectedValue)
         {
             if (_minValue.CompareTo(selectedValue) >= 0)
             {
-                return null;
+                return Option.None<Expression<Func<TSource, bool>>>();
             }
 
             var valueConstant = Expression.Constant(selectedValue);
             var expression = Expression.GreaterThan(selector.Body, valueConstant);
-            return Expression.Lambda<Func<TSource, bool>>(expression, selector.Parameters);
+            return Option.Some(Expression.Lambda<Func<TSource, bool>>(expression, selector.Parameters));
         }
     }
 }

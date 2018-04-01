@@ -23,7 +23,6 @@ using FluentAssertions;
 using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -35,7 +34,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
         public ComparisonResolverTest()
         {
-            _testInstance = new TestComparisonResolver(new TestComparer(), source => source.Int);
+            _testInstance = new ComparisonResolver<GenericSource, int>(new TestComparer(), source => source.Int);
         }
 
         [Fact]
@@ -208,21 +207,15 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             result2.Should().HaveCount(0);
         }
 
-        private sealed class TestComparisonResolver : ComparisonResolver<GenericSource, int>
-        {
-            internal TestComparisonResolver(Comparer<GenericSource, int> comparer, [NotNull] Expression<Func<GenericSource, int>> selector) : base(comparer, selector) {}
-        }
-
         private sealed class TestComparer : Comparer<GenericSource, int>
         {
             public override string FilterType { get; } = "TestComparer";
 
-            [NotNull]
-            public override Expression<Func<GenericSource, bool>> FilterExpression(Expression<Func<GenericSource, int>> selector, int selectedValue)
+            public override Option<Expression<Func<GenericSource, bool>>> FilterExpression(Expression<Func<GenericSource, int>> selector, int selectedValue)
             {
                 var valueConstant = Expression.Constant(selectedValue);
                 var expression = Expression.Equal(selector.Body, valueConstant);
-                return Expression.Lambda<Func<GenericSource, bool>>(expression, selector.Parameters);
+                return Option.Some(Expression.Lambda<Func<GenericSource, bool>>(expression, selector.Parameters));
             }
         }
     }

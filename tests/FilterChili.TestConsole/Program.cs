@@ -105,7 +105,7 @@ namespace GravityCTRL.FilterChili.TestConsole
         }
 
         [ItemNotNull]
-        private static async Task<IEnumerable<DomainResolver<Product>>> PerformFilterAnalysis([NotNull] ProductFilterContext context)
+        private static async Task<IEnumerable<FilterResolver<Product>>> PerformFilterAnalysis([NotNull] ProductFilterContext context)
         {
             return await context.Domains();
         }
