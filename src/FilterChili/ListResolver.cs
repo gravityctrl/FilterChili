@@ -115,18 +115,17 @@ namespace GravityCTRL.FilterChili
             return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
         }
 
-        internal override async Task SetAvailableEntities([NotNull] IQueryable<TSource> queryable)
+        internal override async Task SetEntities(Option<IQueryable<TSource>> allEntities, Option<IQueryable<TSource>> selectableEntities)
         {
-            _availableValues = queryable is IAsyncEnumerable<TSource>
-                ? await queryable.Select(Selector).Distinct().ToListAsync()
-                : queryable.Select(Selector).Distinct().ToList();
-        }
+            if (allEntities.TryGetValue(out var all))
+            {
+                _availableValues = await CreateSelectorList(all);
+            }
 
-        internal override async Task SetSelectableEntities([NotNull] IQueryable<TSource> queryable)
-        {
-            _selectableValues = queryable is IAsyncEnumerable<TSource>
-                ? await queryable.Select(Selector).Distinct().ToListAsync()
-                : queryable.Select(Selector).Distinct().ToList();
+            if (selectableEntities.TryGetValue(out var selectable))
+            {
+                _selectableValues = await CreateSelectorList(selectable);
+            }
         }
 
         #endregion
@@ -134,21 +133,43 @@ namespace GravityCTRL.FilterChili
         #region Private Methods
 
         [NotNull]
+        private async Task<IReadOnlyList<TSelector>> CreateSelectorList([NotNull] IQueryable<TSource> queryable)
+        {
+            return queryable is IAsyncEnumerable<TSource>
+                ? await queryable.Select(Selector).Distinct().ToListAsync()
+                : queryable.Select(Selector).Distinct().ToList();
+        }
+
+        [NotNull]
         private IReadOnlyList<Item<TSelector>> CombineLists()
         {
-            if (_availableValues == null)
+            Dictionary<TSelector, Item<TSelector>> entities;
+            if (_availableValues != null)
+            {
+                entities = CreateDictionary(_availableValues, false);
+                if (_selectableValues != null)
+                {
+                    SetSelectableStatus(_selectableValues, entities);
+                }
+            }
+            else if (_selectableValues != null)
+            {
+                entities = CreateDictionary(_selectableValues, true);
+            }
+            else
             {
                 return SelectedValues.Select(value => new Item<TSelector> { Value = value, IsSelected = true }).ToList();
             }
 
-            var entities = _availableValues.ToDictionary(value => value, value => new Item<TSelector> { Value = value });
             SetSelectedStatus(SelectedValues, entities);
-            if (_selectableValues != null)
-            {
-                SetSelectableStatus(_selectableValues, entities);
-            }
 
             return entities.Values.ToList();
+        }
+
+        [NotNull]
+        private static Dictionary<TSelector, Item<TSelector>> CreateDictionary([NotNull] IEnumerable<TSelector> values, bool canBeSelected)
+        {
+            return values.ToDictionary(value => value, value => new Item<TSelector> { Value = value, CanBeSelected = canBeSelected });
         }
 
         private static void SetSelectedStatus([NotNull] IEnumerable<TSelector> selectedValues, IReadOnlyDictionary<TSelector, Item<TSelector>> dictionary)

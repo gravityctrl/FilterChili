@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using GravityCTRL.FilterChili.Exceptions;
+using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Search;
 using GravityCTRL.FilterChili.Selectors;
@@ -32,15 +34,13 @@ namespace GravityCTRL.FilterChili
         private readonly List<FilterSelector<TSource>> _filters;
         private readonly SearchResolver<TSource> _searchResolver;
 
-        [UsedImplicitly]
-        public CalculationStrategy CalculationStrategy { get; set; }
-
         internal ContextOptions(IQueryable<TSource> queryable, [NotNull] Action<ContextOptions<TSource>> configure)
         {
             _queryable = queryable;
             _filters = new List<FilterSelector<TSource>>();
             _searchResolver = new SearchResolver<TSource>();
             configure(this);
+            CheckPrerequisites();
         }
 
         #region Filters
@@ -190,19 +190,13 @@ namespace GravityCTRL.FilterChili
         [ItemNotNull]
         internal async Task<IEnumerable<DomainResolver<TSource>>> Domains()
         {
-            return await Domains(CalculationStrategy);
+            return await CalculateDomains(Option.None<CalculationStrategy>());
         }
 
         [ItemNotNull]
         internal async Task<IEnumerable<DomainResolver<TSource>>> Domains(CalculationStrategy calculationStrategy)
         {
-            if (!_filters.Any(f => f.NeedsToBeResolved))
-            {
-                return _filters.Select(filter => filter.Domain());
-            }
-
-            await Resolve(calculationStrategy);
-            return _filters.Select(filter => filter.Domain());
+            return await CalculateDomains(Option.Some(calculationStrategy));
         }
 
         internal void SetSearch(string search)
@@ -214,34 +208,76 @@ namespace GravityCTRL.FilterChili
 
         #region Private Methods
 
-        private async Task Resolve(CalculationStrategy calculationStrategy)
+        private void CheckPrerequisites()
+        {
+            var invalidFilter = _filters.FirstOrDefault(filter => !filter.HasDomainResolver);
+            if (invalidFilter != null)
+            {
+                throw new MissingResolverException(invalidFilter.Name);
+            }
+        }
+
+        [ItemNotNull]
+        private async Task<IEnumerable<DomainResolver<TSource>>> CalculateDomains([NotNull] Option<CalculationStrategy> calculationStrategy)
+        {
+            if (!_filters.Any(f => f.NeedsToBeResolved))
+            {
+                return _filters.Select(filter => filter.Domain());
+            }
+
+            await Resolve(calculationStrategy);
+            return _filters.Select(filter => filter.Domain());
+        }
+
+        private async Task Resolve([NotNull] Option<CalculationStrategy> calculationStrategy)
         {
             var queryable = _searchResolver.ApplySearch(_queryable);
-
-            // Check if this is unnecessary.
-            async Task ResolveFilterAtIndex(int ignoredIndex)
+            for (var index = 0; index < _filters.Count; index++)
             {
-                var currentFilter = _filters[ignoredIndex];
-                var selectableItems = queryable.AsQueryable();
-                if (currentFilter.NeedsToBeResolved)
-                {
-                    await currentFilter.SetAvailableEntities(selectableItems);
-                }
+                await ResolveFilterAtIndex(queryable, calculationStrategy, index);
+            }
+        }
 
-                if (calculationStrategy == CalculationStrategy.Full)
-                {
-                    var filtersToExecute = _filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
-                    selectableItems = filtersToExecute.Aggregate(selectableItems, (current, filterSelector) => filterSelector.ApplyFilter(current));
-                    await currentFilter.SetSelectableEntities(selectableItems);
-                }
+        private async Task ResolveFilterAtIndex([NotNull] IQueryable<TSource> queryable, [NotNull] Option<CalculationStrategy> calculationStrategy, int index)
+        {
+            var currentFilter = _filters[index];
+            var usedCalculationStrategy = calculationStrategy.TryGetValue(out var value) ? value : currentFilter.CalculationStrategy;
 
-                currentFilter.NeedsToBeResolved = false;
+            // ReSharper disable once ImplicitlyCapturedClosure
+            Option<IQueryable<TSource>> CreateAllEntitiesOption()
+            {
+                return ShouldSetAvailableItems(usedCalculationStrategy) && currentFilter.NeedsToBeResolved
+                    ? Option.Some(queryable)
+                    : Option.None<IQueryable<TSource>>();
             }
 
-            for (var i = 0; i < _filters.Count; i++)
+            // ReSharper disable once ImplicitlyCapturedClosure
+            Option<IQueryable<TSource>> CreateSelectableEntitiesOption()
             {
-                await ResolveFilterAtIndex(i);
+                IQueryable<TSource> CreateFilterAggregate()
+                {
+                    var filtersToExecute = _filters.Where((filterSelector, indexToFilter) => indexToFilter != index);
+                    var aggregate = filtersToExecute.Aggregate(queryable, (current, filterSelector) => filterSelector.ApplyFilter(current));
+                    return aggregate;
+                }
+
+                return ShouldSetSelectableItems(usedCalculationStrategy)
+                    ? Option.Some(CreateFilterAggregate())
+                    : Option.None<IQueryable<TSource>>();
             }
+
+            await currentFilter.SetEntities(CreateAllEntitiesOption(), CreateSelectableEntitiesOption());
+            currentFilter.NeedsToBeResolved = false;
+        }
+
+        private static bool ShouldSetAvailableItems(CalculationStrategy calculationStrategy)
+        {
+            return (calculationStrategy & CalculationStrategy.AvailableValues) == CalculationStrategy.AvailableValues;
+        }
+
+        private static bool ShouldSetSelectableItems(CalculationStrategy calculationStrategy)
+        {
+            return (calculationStrategy & CalculationStrategy.SelectableValues) == CalculationStrategy.SelectableValues;
         }
 
         #endregion

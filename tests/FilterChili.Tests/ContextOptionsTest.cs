@@ -54,7 +54,6 @@ namespace GravityCTRL.FilterChili.Tests
         [Fact]
         public void Should_Initialize_Correctly()
         {
-            _testInstance.CalculationStrategy.Should().Be(CalculationStrategy.Full);
             _contextOptionsInitialized.Should().BeTrue();
         }
 
@@ -88,7 +87,6 @@ namespace GravityCTRL.FilterChili.Tests
             var filter1 = _testInstance.Filter(source => source.Int).WithGreaterThan();
             var filter2 = _testInstance.Filter(source => source.Double).WithLessThanOrEqual();
             var filter3 = _testInstance.Filter(source => source.Float).WithRange();
-            _testInstance.CalculationStrategy = CalculationStrategy.Full;
 
             filter1.Set(1);
             await _testInstance.Domains();

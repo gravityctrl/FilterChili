@@ -20,6 +20,7 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Exceptions;
+using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Selectors;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using JetBrains.Annotations;
@@ -48,10 +49,10 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             Action applyFilterAction = () => _testInstance.ApplyFilter(queryable);
             applyFilterAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
-            Action setAvailableEntitiesAction = () => _testInstance.SetAvailableEntities(queryable).Wait();
+            Action setAvailableEntitiesAction = () => _testInstance.SetEntities(Option.Some(queryable), Option.None<IQueryable<GenericSource>>()).Wait();
             setAvailableEntitiesAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
-            Action setSelectableEntitiesAction = () => _testInstance.SetSelectableEntities(queryable).Wait();
+            Action setSelectableEntitiesAction = () => _testInstance.SetEntities(Option.None<IQueryable<GenericSource>>(), Option.Some(queryable)).Wait();
             setSelectableEntitiesAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
 
             Action needsToBeResolvedAction = () => _testInstance.NeedsToBeResolved = true;
@@ -83,10 +84,10 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
             Action applyFilterAction = () => _testInstance.ApplyFilter(queryable);
             applyFilterAction.Should().NotThrow<MissingResolverException>();
 
-            Action setAvailableEntitiesAction = () => _testInstance.SetAvailableEntities(queryable).Wait();
+            Action setAvailableEntitiesAction = () => _testInstance.SetEntities(Option.Some(queryable), Option.None<IQueryable<GenericSource>>()).Wait();
             setAvailableEntitiesAction.Should().NotThrow<MissingResolverException>();
 
-            Action setSelectableEntitiesAction = () => _testInstance.SetSelectableEntities(queryable).Wait();
+            Action setSelectableEntitiesAction = () => _testInstance.SetEntities(Option.None<IQueryable<GenericSource>>(), Option.Some(queryable)).Wait();
             setSelectableEntitiesAction.Should().NotThrow<MissingResolverException>();
 
             Action needsToBeResolvedAction = () => _testInstance.NeedsToBeResolved = true;

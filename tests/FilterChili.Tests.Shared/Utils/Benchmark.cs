@@ -22,7 +22,8 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Utils
 {
     public static class Benchmark
     {
-        public static TimeSpan Measure([NotNull] Action action)
+        [NotNull]
+        public static BenchmarkResult Measure([NotNull] Action action)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -30,7 +31,19 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Utils
             action();
 
             stopwatch.Stop();
-            return stopwatch.Elapsed;
+            return new BenchmarkResult(stopwatch.Elapsed);
+        }
+
+        [NotNull]
+        public static BenchmarkResult<T> Measure<T>([NotNull] Func<T> function)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            var result = function();
+
+            stopwatch.Stop();
+            return new BenchmarkResult<T>(stopwatch.Elapsed, result);
         }
     }
 }

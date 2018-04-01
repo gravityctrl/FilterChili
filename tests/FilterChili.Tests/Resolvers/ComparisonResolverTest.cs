@@ -21,6 +21,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Comparison;
+using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
@@ -105,7 +106,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         public async Task Should_Return_Null_For_SetAvailableEntities_If_Queryable_Is_Empty()
         {
             _testInstance.NeedsToBeResolved = false;
-            await _testInstance.SetAvailableEntities(new GenericSource[0].AsQueryable());
+            await _testInstance.SetEntities(Option.Some(new GenericSource[0].AsQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.TotalRange.Should().BeNull();
         }
@@ -114,7 +115,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         public async Task Should_Return_Null_For_SetSelectableEntities_If_Queryable_Is_Empty()
         {
             _testInstance.NeedsToBeResolved = false;
-            await _testInstance.SetSelectableEntities(new GenericSource[0].AsQueryable());
+            await _testInstance.SetEntities(Option.None<IQueryable<GenericSource>>(), Option.Some(new GenericSource[0].AsQueryable()));
 
             _testInstance.SelectableRange.Should().BeNull();
         }
@@ -131,12 +132,12 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 2 }
             };
 
-            await _testInstance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(items));
+            await _testInstance.SetEntities(Option.Some(new AsyncEnumerable<GenericSource>(items).AsQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.TotalRange.Min.Should().Be(-2);
             _testInstance.TotalRange.Max.Should().Be(2);
 
-            await _testInstance.SetAvailableEntities(new AsyncEnumerable<GenericSource>(new List<GenericSource>()));
+            await _testInstance.SetEntities(Option.Some(new AsyncEnumerable<GenericSource>(new List<GenericSource>()).AsQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.TotalRange.Should().BeNull();
         }
@@ -154,7 +155,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 2 }
             };
 
-            await _testInstance.SetAvailableEntities(items.AsQueryable());
+            await _testInstance.SetEntities(Option.Some(items.AsQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.TotalRange.Min.Should().Be(-2);
             _testInstance.TotalRange.Max.Should().Be(2);
@@ -173,7 +174,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 1 }
             };
 
-            await _testInstance.SetSelectableEntities(items.AsQueryable());
+            await _testInstance.SetEntities(Option.None<IQueryable<GenericSource>>(), Option.Some(items.AsQueryable()));
 
             _testInstance.SelectableRange.Min.Should().Be(-1);
             _testInstance.SelectableRange.Max.Should().Be(1);
