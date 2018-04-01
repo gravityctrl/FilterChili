@@ -23,13 +23,13 @@ using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Search
 {
-    internal sealed class FragmentedSearch : List<Fragment>
+    internal sealed class InterpretedSearch : List<Fragment>
     {
         private const char DOUBLE_QUOTE = '"';
         private const char ACTION_CHARACTER = ':';
         private const char EXCLUDE_CHARACTER = '-';
 
-        public FragmentedSearch([NotNull] string searchString)
+        public InterpretedSearch([NotNull] string searchString)
         {
             var phrases = CreateClassifiedFragments(searchString);
             AddRange(phrases);

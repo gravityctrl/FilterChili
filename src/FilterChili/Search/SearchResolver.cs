@@ -62,8 +62,8 @@ namespace GravityCTRL.FilterChili.Search
             }
 
             _searchString = searchString;
-            var fragmentedSearch = new FragmentedSearch(searchString);
-            _searchExpression = SetSearchExpression(fragmentedSearch);
+            var interpretedSearch = new InterpretedSearch(searchString);
+            _searchExpression = SetSearchExpression(interpretedSearch);
         }
 
         internal void AddSearcher(SearchSpecification<TSource> searchSpecification)
@@ -72,7 +72,7 @@ namespace GravityCTRL.FilterChili.Search
         }
 
         [CanBeNull]
-        private Expression<Func<TSource, bool>> SetSearchExpression(FragmentedSearch fragmentedSearch)
+        private Expression<Func<TSource, bool>> SetSearchExpression(InterpretedSearch interpretedSearch)
         {
             if (!_searchers.Any())
             {
@@ -81,7 +81,7 @@ namespace GravityCTRL.FilterChili.Search
 
             var expressions = new List<Expression>();
 
-            var constrainedIncludeFragments = fragmentedSearch.Where(fragment => fragment is ConstrainedIncludeFragment).Cast<ConstrainedIncludeFragment>().ToList();
+            var constrainedIncludeFragments = interpretedSearch.Where(fragment => fragment is ConstrainedIncludeFragment).Cast<ConstrainedIncludeFragment>().ToList();
             if (constrainedIncludeFragments.Any())
             {
                 foreach (var fragment in constrainedIncludeFragments)
@@ -97,7 +97,7 @@ namespace GravityCTRL.FilterChili.Search
                 }
             }
 
-            var constrainedExcludeFragments = fragmentedSearch.Where(fragment => fragment is ConstrainedExcludeFragment).Cast<ConstrainedExcludeFragment>().ToList();
+            var constrainedExcludeFragments = interpretedSearch.Where(fragment => fragment is ConstrainedExcludeFragment).Cast<ConstrainedExcludeFragment>().ToList();
             if (constrainedExcludeFragments.Any())
             {
                 foreach (var fragment in constrainedExcludeFragments)
@@ -113,7 +113,7 @@ namespace GravityCTRL.FilterChili.Search
                 }
             }
 
-            var includeFragments = fragmentedSearch.Where(fragment => fragment is IncludeFragment).Cast<IncludeFragment>().ToList();
+            var includeFragments = interpretedSearch.Where(fragment => fragment is IncludeFragment).Cast<IncludeFragment>().ToList();
             if (includeFragments.Any())
             {
                 var expression = IncludeExpressions(_searchers, includeFragments);
@@ -123,7 +123,7 @@ namespace GravityCTRL.FilterChili.Search
                 }
             }
 
-            var excludeFragments = fragmentedSearch.Where(fragment => fragment is ExcludeFragment).Cast<ExcludeFragment>().ToList();
+            var excludeFragments = interpretedSearch.Where(fragment => fragment is ExcludeFragment).Cast<ExcludeFragment>().ToList();
             if (excludeFragments.Any())
             {
                 var expression = ExcludeExpressions(_searchers, excludeFragments);
