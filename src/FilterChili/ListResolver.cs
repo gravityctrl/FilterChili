@@ -115,23 +115,30 @@ namespace GravityCTRL.FilterChili
             return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
         }
 
-        internal override async Task SetAvailableEntities([NotNull] IQueryable<TSource> queryable)
+        internal override async Task SetEntities(Option<IQueryable<TSource>> allEntities, Option<IQueryable<TSource>> selectableEntities)
         {
-            _availableValues = queryable is IAsyncEnumerable<TSource>
-                ? await queryable.Select(Selector).Distinct().ToListAsync()
-                : queryable.Select(Selector).Distinct().ToList();
-        }
+            if (allEntities.TryGetValue(out var all))
+            {
+                _availableValues = await CreateSelectorList(all);
+            }
 
-        internal override async Task SetSelectableEntities([NotNull] IQueryable<TSource> queryable)
-        {
-            _selectableValues = queryable is IAsyncEnumerable<TSource>
-                ? await queryable.Select(Selector).Distinct().ToListAsync()
-                : queryable.Select(Selector).Distinct().ToList();
+            if (selectableEntities.TryGetValue(out var selectable))
+            {
+                _selectableValues = await CreateSelectorList(selectable);
+            }
         }
 
         #endregion
 
         #region Private Methods
+
+        [NotNull]
+        private async Task<IReadOnlyList<TSelector>> CreateSelectorList([NotNull] IQueryable<TSource> queryable)
+        {
+            return queryable is IAsyncEnumerable<TSource>
+                ? await queryable.Select(Selector).Distinct().ToListAsync()
+                : queryable.Select(Selector).Distinct().ToList();
+        }
 
         [NotNull]
         private IReadOnlyList<Item<TSelector>> CombineLists()

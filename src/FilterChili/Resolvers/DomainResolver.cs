@@ -19,6 +19,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Extensions;
+using GravityCTRL.FilterChili.Models;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 
@@ -85,9 +86,7 @@ namespace GravityCTRL.FilterChili.Resolvers
                 : queryable.Where(expression);
         }
 
-        internal abstract Task SetAvailableEntities(IQueryable<TSource> queryable);
-
-        internal abstract Task SetSelectableEntities(IQueryable<TSource> queryable);
+        internal abstract Task SetEntities([NotNull] Option<IQueryable<TSource>> allEntities, [NotNull] Option<IQueryable<TSource>> selectableEntities);
 
         [CanBeNull]
         protected abstract Expression<Func<TSource, bool>> FilterExpression();
@@ -111,7 +110,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         }
 
         [UsedImplicitly]
-        public TDomainResolver UseCalculationStrategy(CalculationStrategy calculationStrategy)
+        public TDomainResolver UseStrategy(CalculationStrategy calculationStrategy)
         {
             CalculationStrategy = calculationStrategy;
             return _this;

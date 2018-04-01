@@ -46,11 +46,11 @@ namespace GravityCTRL.FilterChili
         private readonly Expression<Func<TSource, KeyValuePair>> _selectKeyValuePairExpression;
 
         private bool _needsToBeResolved;
-        private IReadOnlyList<KeyValuePair> _availableValues;
-        private IReadOnlyList<KeyValuePair> _selectableValues;
         private Option<TGroupSelector> _defaultGroupIdentifier;
 
         internal IReadOnlyList<TSelector> SelectedValues;
+        private Option<IReadOnlyList<KeyValuePair>> _groupList;
+        private Option<IReadOnlyList<TSelector>> _selectableList;
 
         public override string FilterType { get; } = "Group";
 
@@ -101,7 +101,6 @@ namespace GravityCTRL.FilterChili
         public void Set([NotNull] IEnumerable<TSelector> selectedValues)
         {
             SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
-            _selectableValues = null;
             _needsToBeResolved = true;
         }
 
@@ -109,33 +108,30 @@ namespace GravityCTRL.FilterChili
         public void Set(params TSelector[] selectedValues)
         {
             SelectedValues = selectedValues as IReadOnlyList<TSelector> ?? selectedValues.ToList();
-            _selectableValues = null;
             _needsToBeResolved = true;
         }
 
         [UsedImplicitly]
         public void SetGroups(IEnumerable<TGroupSelector> selectedValues)
         {
-            if (_availableValues == null)
+            if (!_groupList.TryGetValue(out var groups))
             {
                 return;
             }
 
-            SelectedValues = _availableValues.Where(group => selectedValues.Contains(group.GroupIdentifier)).Select(group => group.Value).ToList();
-            _selectableValues = null;
+            SelectedValues = groups.Where(group => selectedValues.Contains(group.GroupIdentifier)).Select(group => group.Value).ToList();
             _needsToBeResolved = true;
         }
 
         [UsedImplicitly]
         public void SetGroups(params TGroupSelector[] selectedValues)
         {
-            if (_availableValues == null)
+            if (!_groupList.TryGetValue(out var groups))
             {
                 return;
             }
 
-            SelectedValues = _availableValues.Where(group => selectedValues.Contains(group.GroupIdentifier)).Select(group => group.Value).ToList();
-            _selectableValues = null;
+            SelectedValues = groups.Where(group => selectedValues.Contains(group.GroupIdentifier)).Select(group => group.Value).ToList();
             _needsToBeResolved = true;
         }
 
@@ -196,20 +192,25 @@ namespace GravityCTRL.FilterChili
             return orExpression == null ? null : Expression.Lambda<Func<TSource, bool>>(orExpression, Selector.Parameters);
         }
 
-        internal override async Task SetAvailableEntities([NotNull] IQueryable<TSource> queryable)
+        internal override async Task SetEntities(Option<IQueryable<TSource>> allEntities, Option<IQueryable<TSource>> selectableEntities)
         {
-            var groupQueryable = queryable.Select(_selectKeyValuePairExpression);
-            _availableValues = groupQueryable is IAsyncEnumerable<KeyValuePair>
-                ? await groupQueryable.Distinct().ToListAsync()
-                : groupQueryable.Distinct().ToList();
-        }
+            var hasProvidedAllEntities = allEntities.TryGetValue(out var all);
+            var hasProvidedSelectableEntities = selectableEntities.TryGetValue(out var selectable);
 
-        internal override async Task SetSelectableEntities([NotNull] IQueryable<TSource> queryable)
-        {
-            var groupQueryable = queryable.Select(_selectKeyValuePairExpression);
-            _selectableValues = groupQueryable is IAsyncEnumerable<KeyValuePair>
-                ? await groupQueryable.Distinct().ToListAsync()
-                : groupQueryable.Distinct().ToList();
+            if (hasProvidedAllEntities)
+            {
+                var groupQueryable = all.Select(_selectKeyValuePairExpression);
+                _groupList = Option.Some(await CreateGroupList(groupQueryable));
+                _selectableList = hasProvidedSelectableEntities 
+                    ? Option.Some(await CreateSelectorList(selectable)) 
+                    : Option.None<IReadOnlyList<TSelector>>();
+            }
+            else if (hasProvidedSelectableEntities)
+            {
+                var selectableGroupQueryable = selectable.Select(_selectKeyValuePairExpression);
+                _groupList = Option.Some(await CreateGroupList(selectableGroupQueryable));
+                _selectableList = Option.None<IReadOnlyList<TSelector>>();
+            }
         }
 
         #endregion
@@ -217,25 +218,33 @@ namespace GravityCTRL.FilterChili
         #region Private Methods
 
         [NotNull]
+        private static async Task<IReadOnlyList<KeyValuePair>> CreateGroupList([NotNull] IQueryable<KeyValuePair> groupQueryable)
+        {
+            return groupQueryable is IAsyncEnumerable<KeyValuePair>
+                ? await groupQueryable.Distinct().ToListAsync()
+                : groupQueryable.Distinct().ToList();
+        }
+
+        [NotNull]
+        private async Task<IReadOnlyList<TSelector>> CreateSelectorList([NotNull] IQueryable<TSource> queryable)
+        {
+            return queryable is IAsyncEnumerable<TSource>
+                ? await queryable.Select(Selector).Distinct().ToListAsync()
+                : queryable.Select(Selector).Distinct().ToList();
+        }
+
+        [NotNull]
         private IReadOnlyList<Group<TGroupSelector, TSelector>> CombineLists()
         {
-            IReadOnlyDictionary<TGroupSelector, Dictionary<TSelector, Item<TSelector>>> groupDictionary;
-            if (_availableValues != null)
-            {
-                groupDictionary = CreateGroupDictionary(_availableValues, false);
-                if (_selectableValues != null)
-                {
-                    var selectableValues = _selectableValues.Select(kv => kv.Value).Distinct().ToList();
-                    SetSelectableStatus(selectableValues, groupDictionary);
-                }
-            }
-            else if (_selectableValues != null)
-            {
-                groupDictionary = CreateGroupDictionary(_selectableValues, true);
-            }
-            else
+            if (!_groupList.TryGetValue(out var source))
             {
                 return CreateResultUsingSelectedValues();
+            }
+
+            var groupDictionary = CreateGroupDictionary(source, false);
+            if (_selectableList.TryGetValue(out var selectable))
+            {
+                SetSelectableStatus(selectable, groupDictionary);
             }
 
             SetSelectedStatus(SelectedValues, groupDictionary);

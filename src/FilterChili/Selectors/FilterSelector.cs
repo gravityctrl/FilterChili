@@ -21,6 +21,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GravityCTRL.FilterChili.Exceptions;
 using GravityCTRL.FilterChili.Extensions;
+using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Resolvers;
 using GravityCTRL.FilterChili.Resolvers.Interfaces;
 using JetBrains.Annotations;
@@ -42,9 +43,7 @@ namespace GravityCTRL.FilterChili.Selectors
 
         internal abstract IQueryable<TSource> ApplyFilter(IQueryable<TSource> queryable);
 
-        internal abstract Task SetAvailableEntities(IQueryable<TSource> queryable);
-
-        internal abstract Task SetSelectableEntities(IQueryable<TSource> selectableItems);
+        internal abstract Task SetEntities(Option<IQueryable<TSource>> allEntities, Option<IQueryable<TSource>> selectableEntities);
 
         internal abstract DomainResolver<TSource> Domain();
 
@@ -104,24 +103,14 @@ namespace GravityCTRL.FilterChili.Selectors
             return DomainResolver.ExecuteFilter(queryable);
         }
 
-        internal override async Task SetAvailableEntities(IQueryable<TSource> queryable)
+        internal override async Task SetEntities([NotNull] Option<IQueryable<TSource>> allEntities, [NotNull] Option<IQueryable<TSource>> selectableEntities)
         {
             if (DomainResolver == null)
             {
                 throw new MissingResolverException(Name);
             }
 
-            await DomainResolver.SetAvailableEntities(queryable);
-        }
-
-        internal override async Task SetSelectableEntities(IQueryable<TSource> selectableItems)
-        {
-            if (DomainResolver == null)
-            {
-                throw new MissingResolverException(Name);
-            }
-
-            await DomainResolver.SetSelectableEntities(selectableItems);
+            await DomainResolver.SetEntities(allEntities, selectableEntities);
         }
 
         [NotNull]

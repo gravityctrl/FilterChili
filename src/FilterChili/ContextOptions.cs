@@ -232,31 +232,42 @@ namespace GravityCTRL.FilterChili
         private async Task Resolve([NotNull] Option<CalculationStrategy> calculationStrategy)
         {
             var queryable = _searchResolver.ApplySearch(_queryable);
-
-            async Task ResolveFilterAtIndex(int ignoredIndex)
+            for (var index = 0; index < _filters.Count; index++)
             {
-                var currentFilter = _filters[ignoredIndex];
-                var usedCalculationStrategy = calculationStrategy.TryGetValue(out var value) ? value : currentFilter.CalculationStrategy;
+                await ResolveFilterAtIndex(queryable, calculationStrategy, index);
+            }
+        }
 
-                if (ShouldSetAvailableItems(usedCalculationStrategy) && currentFilter.NeedsToBeResolved)
-                {
-                    await currentFilter.SetAvailableEntities(queryable.AsQueryable());
-                }
+        private async Task ResolveFilterAtIndex([NotNull] IQueryable<TSource> queryable, [NotNull] Option<CalculationStrategy> calculationStrategy, int index)
+        {
+            var currentFilter = _filters[index];
+            var usedCalculationStrategy = calculationStrategy.TryGetValue(out var value) ? value : currentFilter.CalculationStrategy;
 
-                if (ShouldSetSelectableItems(usedCalculationStrategy))
-                {
-                    var filtersToExecute = _filters.Where((filterSelector, indexToFilter) => indexToFilter != ignoredIndex);
-                    var selectableItems = filtersToExecute.Aggregate(queryable.AsQueryable(), (current, filterSelector) => filterSelector.ApplyFilter(current));
-                    await currentFilter.SetSelectableEntities(selectableItems);
-                }
-
-                currentFilter.NeedsToBeResolved = false;
+            // ReSharper disable once ImplicitlyCapturedClosure
+            Option<IQueryable<TSource>> CreateAllEntitiesOption()
+            {
+                return ShouldSetAvailableItems(usedCalculationStrategy) && currentFilter.NeedsToBeResolved
+                    ? Option.Some(queryable)
+                    : Option.None<IQueryable<TSource>>();
             }
 
-            for (var i = 0; i < _filters.Count; i++)
+            // ReSharper disable once ImplicitlyCapturedClosure
+            Option<IQueryable<TSource>> CreateSelectableEntitiesOption()
             {
-                await ResolveFilterAtIndex(i);
+                IQueryable<TSource> CreateFilterAggregate()
+                {
+                    var filtersToExecute = _filters.Where((filterSelector, indexToFilter) => indexToFilter != index);
+                    var aggregate = filtersToExecute.Aggregate(queryable, (current, filterSelector) => filterSelector.ApplyFilter(current));
+                    return aggregate;
+                }
+
+                return ShouldSetSelectableItems(usedCalculationStrategy)
+                    ? Option.Some(CreateFilterAggregate())
+                    : Option.None<IQueryable<TSource>>();
             }
+
+            await currentFilter.SetEntities(CreateAllEntitiesOption(), CreateSelectableEntitiesOption());
+            currentFilter.NeedsToBeResolved = false;
         }
 
         private static bool ShouldSetAvailableItems(CalculationStrategy calculationStrategy)
