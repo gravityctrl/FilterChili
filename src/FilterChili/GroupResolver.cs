@@ -363,7 +363,7 @@ namespace GravityCTRL.FilterChili
             );
         }
 
-        private static void SetSelectedStatus([NotNull] IReadOnlyDictionary<TGroupIdentifier, Dictionary<TValue, Item<TValue>>> dictionary, [NotNull] IReadOnlyList<TGroupIdentifier> groups)
+        private static void SetSelectedStatus([NotNull] IReadOnlyDictionary<TGroupIdentifier, Dictionary<TValue, Item<TValue>>> dictionary, [NotNull] IEnumerable<TGroupIdentifier> groups)
         {
             foreach (var selectedGroup in groups)
             {
