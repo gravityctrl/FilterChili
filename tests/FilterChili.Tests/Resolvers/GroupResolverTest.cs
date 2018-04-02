@@ -345,7 +345,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
-        public async Task Should_Set_TotalRange_On_Calling_SetAvailableEntities()
+        public async Task Should_Get_Groups_If_No_Default_Group_Identifier_Is_Provided()
         {
             _testInstance.NeedsToBeResolved = false;
             var items = new[]
@@ -422,7 +422,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
-        public async Task Should_Get_Groups_For_Values_As_Selection_Input()
+        public async Task Should_Get_Groups_With_Values_As_Selection_Input()
         {
             _testInstance.NeedsToBeResolved = false;
             _testInstance.UseDefaultGroup("Unknown");
@@ -515,7 +515,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
-        public async Task Should_Get_Groups_For_Groups_As_Selection_Input()
+        public async Task Should_Get_Groups_With_Groups_As_Selection_Input()
         {
             _testInstance.NeedsToBeResolved = false;
             _testInstance.UseDefaultGroup("Unknown");
@@ -628,7 +628,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
-        public void Should_Get_Groups_If_There_Are_Only_Selected_Ones_And_Default_Group_Is_Defined()
+        public void Should_Get_Groups_If_There_Are_Only_Values_As_Selection_And_Default_Group_Is_Defined()
         {
             _testInstance.NeedsToBeResolved = false;
             _testInstance.UseDefaultGroup("Unknown");
@@ -663,7 +663,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
-        public void Should_Get_Groups_If_There_Are_Only_Selected_Groups()
+        public void Should_Get_Groups_If_There_Are_Groups_As_Selection()
         {
             _testInstance.NeedsToBeResolved = false;
             _testInstance.SetGroups("Group1", "Group2");
@@ -688,7 +688,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
-        public void Should_Not_Get_Values_If_There_Are_Only_Selected_Ones_And_Default_Group_Is_Undefined()
+        public void Should_Not_Get_Values_If_There_Are_Only_Values_As_Selection_And_Default_Group_Is_Undefined()
         {
             _testInstance.NeedsToBeResolved = false;
             _testInstance.Set(-1, 2);
