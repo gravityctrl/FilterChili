@@ -36,6 +36,8 @@ namespace GravityCTRL.FilterChili
             where TValue : IComparable 
             where TGroupIdentifier : IComparable
     {
+        [NotNull] private readonly Expression<Func<TSource, TGroupIdentifier>> _groupSelector;
+
         // ReSharper disable StaticMemberInGenericType
         private static readonly PropertyInfo GroupIdentifierProperty;
         private static readonly PropertyInfo ValueProperty;
@@ -54,7 +56,7 @@ namespace GravityCTRL.FilterChili
         public override string FilterType { get; } = "Group";
 
         [NotNull]
-        internal IReadOnlyList<TValue> SelectedValues { get; private set; }
+        internal Either<IReadOnlyList<TValue>, IReadOnlyList<TGroupIdentifier>> Selection { get; private set; }
 
         [NotNull]
         [UsedImplicitly]
@@ -73,8 +75,9 @@ namespace GravityCTRL.FilterChili
 
         internal GroupResolver([NotNull] Expression<Func<TSource, TValue>> selector, [NotNull] Expression<Func<TSource, TGroupIdentifier>> groupSelector) : base(selector)
         {
+            _groupSelector = groupSelector;
             NeedsToBeResolved = true;
-            SelectedValues = new List<TValue>();
+            Selection = new List<TValue>();
 
             _defaultGroupIdentifier = Option.None<TGroupIdentifier>();
 
@@ -96,40 +99,28 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public void Set([NotNull] IEnumerable<TValue> selectedValues)
         {
-            SelectedValues = selectedValues as IReadOnlyList<TValue> ?? selectedValues.ToList();
+            Selection = Either.Some<IReadOnlyList<TValue>, IReadOnlyList<TGroupIdentifier>>(selectedValues as IReadOnlyList<TValue> ?? selectedValues.ToList());
             NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
         public void Set(params TValue[] selectedValues)
         {
-            SelectedValues = selectedValues as IReadOnlyList<TValue> ?? selectedValues.ToList();
+            Selection = Either.Some<IReadOnlyList<TValue>, IReadOnlyList<TGroupIdentifier>>(selectedValues as IReadOnlyList<TValue> ?? selectedValues.ToList());
             NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
-        public void SetGroups(IEnumerable<TGroupIdentifier> selectedValues)
+        public void SetGroups([NotNull] IEnumerable<TGroupIdentifier> selectedValues)
         {
-            // Todo: Rethink this.
-            if (!_groupList.TryGetValue(out var groups))
-            {
-                return;
-            }
-
-            SelectedValues = groups.Where(group => selectedValues.Contains(group.GroupIdentifier)).Select(group => group.Value).ToList();
+            Selection = Either.Some<IReadOnlyList<TValue>, IReadOnlyList<TGroupIdentifier>>(selectedValues as IReadOnlyList<TGroupIdentifier> ?? selectedValues.ToList());
             NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
         public void SetGroups(params TGroupIdentifier[] selectedValues)
         {
-            // Todo: Rethink this.
-            if (!_groupList.TryGetValue(out var groups))
-            {
-                return;
-            }
-
-            SelectedValues = groups.Where(group => selectedValues.Contains(group.GroupIdentifier)).Select(group => group.Value).ToList();
+            Selection = Either.Some<IReadOnlyList<TValue>, IReadOnlyList<TGroupIdentifier>>(selectedValues as IReadOnlyList<TGroupIdentifier> ?? selectedValues.ToList());
             NeedsToBeResolved = true;
         }
 
@@ -179,17 +170,43 @@ namespace GravityCTRL.FilterChili
 
         internal override Option<Expression<Func<TSource, bool>>> FilterExpression()
         {
-            if (!SelectedValues.Any())
-            {
-                return Option.None<Expression<Func<TSource, bool>>>();
-            }
+            var result = Option.None<Expression<Func<TSource, bool>>>();
 
-            var selectedValueExpressions = SelectedValues.Select(selector => Expression.Constant(selector));
-            var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Equal(expression, Selector.Body));
-            var orExpression = equalsExpressions.Or();
-            return orExpression.TryGetValue(out var value)
-                ? Option.Some(Expression.Lambda<Func<TSource, bool>>(value, Selector.Parameters))
-                : Option.None<Expression<Func<TSource, bool>>>();
+            Selection.Match
+            (
+                values =>
+                {
+                    if (!values.Any())
+                    {
+                        return;
+                    }
+
+                    var selectedValueExpressions = values.Select(selector => Expression.Constant(selector));
+                    var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Equal(expression, Selector.Body));
+                    var orExpression = equalsExpressions.Or();
+                    if (orExpression.TryGetValue(out var value))
+                    {
+                        result = Option.Some(Expression.Lambda<Func<TSource, bool>>(value, Selector.Parameters));
+                    }
+                },
+                groups =>
+                {
+                    if (!groups.Any())
+                    {
+                        return;
+                    }
+
+                    var selectedValueExpressions = groups.Select(selector => Expression.Constant(selector));
+                    var equalsExpressions = selectedValueExpressions.Select(expression => Expression.Equal(expression, _groupSelector.Body));
+                    var orExpression = equalsExpressions.Or();
+                    if (orExpression.TryGetValue(out var value))
+                    {
+                        result = Option.Some(Expression.Lambda<Func<TSource, bool>>(value, _groupSelector.Parameters));
+                    }
+                }
+            );
+
+            return result;
         }
 
         internal override async Task SetEntities(Option<IQueryable<TSource>> allEntities, Option<IQueryable<TSource>> selectableEntities)
@@ -247,7 +264,7 @@ namespace GravityCTRL.FilterChili
                 SetSelectableStatus(selectable, groupDictionary);
             }
 
-            SetSelectedStatus(SelectedValues, groupDictionary);
+            SetSelectedStatus(Selection, groupDictionary);
 
             var result = groupDictionary.Select(kv => new Group<TGroupIdentifier, TValue>
             {
@@ -307,33 +324,69 @@ namespace GravityCTRL.FilterChili
         private IReadOnlyList<Group<TGroupIdentifier, TValue>> CreateResultUsingSelectedValues()
         {
             var list = new List<Group<TGroupIdentifier, TValue>>();
-            if (SelectedValues.Count <= 0 || !_defaultGroupIdentifier.TryGetValue(out var identifier))
-            {
-                return list;
-            }
 
-            var group = new Group<TGroupIdentifier, TValue>
-            {
-                Identifier = identifier,
-                Values = SelectedValues.Select(value => new Item<TValue> { Value = value, IsSelected = true, CanBeSelected = false }).ToList()
-            };
+            Selection.Match
+            (
+                values =>
+                {
+                    if (values.Count <= 0 || !_defaultGroupIdentifier.TryGetValue(out var identifier))
+                    {
+                        return;
+                    }
 
-            list.Add(group);
+                    var group = new Group<TGroupIdentifier, TValue>
+                    {
+                        Identifier = identifier,
+                        Values = values.Select(value => new Item<TValue> { Value = value, IsSelected = true, CanBeSelected = false }).ToList()
+                    };
+
+                    list.Add(group);
+                },
+                groups =>
+                {
+                    var result = groups.Select(group => new Group<TGroupIdentifier, TValue> { Identifier = group });
+                    list.AddRange(result);
+                }
+            );
+
             return list;
         }
 
-        private static void SetSelectedStatus(IReadOnlyList<TValue> selectedValues, [NotNull] IReadOnlyDictionary<TGroupIdentifier, Dictionary<TValue, Item<TValue>>> dictionary)
+        private static void SetSelectedStatus(Either<IReadOnlyList<TValue>, IReadOnlyList<TGroupIdentifier>> selection, [NotNull] IReadOnlyDictionary<TGroupIdentifier, Dictionary<TValue, Item<TValue>>> dictionary)
         {
-            foreach (var valueDictionary in dictionary.Values)
-            {
-                foreach (var selectedValue in selectedValues)
+            selection.Match
+            (
+                values =>
                 {
-                    if (valueDictionary.TryGetValue(selectedValue, out var selectable))
+                    foreach (var valueDictionary in dictionary.Values)
                     {
-                        selectable.IsSelected = true;
+                        foreach (var selectedValue in values)
+                        {
+                            if (valueDictionary.TryGetValue(selectedValue, out var selectable))
+                            {
+                                selectable.IsSelected = true;
+                            }
+                        }
+                    }
+                },
+                groups =>
+                {
+                    foreach (var selectedGroup in groups)
+                    {
+                        if (!dictionary.TryGetValue(selectedGroup, out var dict))
+                        {
+                            continue;
+                        }
+
+                        foreach (var selectedValue in dict.Values)
+                        {
+                            selectedValue.IsSelected = true;
+                        }
                     }
                 }
-            }
+            );
+
+            
         }
 
         private static void SetSelectableStatus(IReadOnlyList<TValue> selectableValues, [NotNull] IReadOnlyDictionary<TGroupIdentifier, Dictionary<TValue, Item<TValue>>> dictionary)

@@ -44,7 +44,8 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.TargetType.Should().Be("Int32");
 
             _testInstance.NeedsToBeResolved.Should().BeTrue();
-            _testInstance.SelectedValues.Should().BeEmpty();
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().BeEmpty();
             _testInstance.Groups.Should().BeEmpty();
         }
 
@@ -54,7 +55,9 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             _testInstance.Set(-1, 1);
 
-            _testInstance.SelectedValues.Should().Contain(new[] {-1, 1});
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().Contain(new[] { -1, 1 });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
@@ -64,7 +67,9 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             _testInstance.Set(new List<int> { -1, 1 });
 
-            _testInstance.SelectedValues.Should().Contain(new[] { -1, 1 });
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().Contain(new[] { -1, 1 });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
@@ -89,23 +94,17 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             _testInstance.SetGroups("Category1", "Category3");
 
-            _testInstance.SelectedValues.Should().Contain(new[] { -2, -1, 2, 3 });
+            _testInstance.Selection.TryGetRight(out var right).Should().BeTrue();
+            right.Should().Contain(new[] { "Category1", "Category3" });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
 
             _testInstance.SetGroups(new List<string> { "Category1", "Category3" });
 
-            _testInstance.SelectedValues.Should().Contain(new[] { -2, -1, 2, 3 });
+            _testInstance.Selection.TryGetRight(out right).Should().BeTrue();
+            right.Should().Contain(new[] { "Category1", "Category3" });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Should_Not_Set_Selected_Values_With_SetGroups_Method_When_There_Were_No_Entities_Set_Beforehand()
-        {
-            _testInstance.NeedsToBeResolved = false;
-            _testInstance.SetGroups("Category1", "Category3");
-
-            _testInstance.SelectedValues.Should().BeEmpty();
-            _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
         [Fact]
@@ -129,19 +128,10 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             _testInstance.TrySet(JToken.Parse(@"{ ""groups"": [ ""Category1"", ""Category3"" ] }"));
 
-            _testInstance.SelectedValues.Should().Contain(new[] { -2, -1, 2, 3 });
+            _testInstance.Selection.TryGetRight(out var right).Should().BeTrue();
+            right.Should().Contain(new[] { "Category1", "Category3" });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Should_Not_Set_Selected_Values_With_TrySet_If_JToken_Is_Correct_Groups_Collection_When_There_Were_No_Entities_Set_Beforehand()
-        {
-            _testInstance.NeedsToBeResolved = false;
-
-            _testInstance.TrySet(JToken.Parse(@"{ ""groups"": [ ""Category1"", ""Category3"" ] }"));
-
-            _testInstance.SelectedValues.Should().BeEmpty();
-            _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
         [Fact]
@@ -150,7 +140,9 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             _testInstance.TrySet(JToken.Parse(@"{ ""values"": [ -2, 2 ] }"));
 
-            _testInstance.SelectedValues.Should().Contain(new[] { -2, 2 });
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().Contain(new[] { -2, 2 });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
@@ -160,7 +152,9 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             _testInstance.TrySet(JToken.Parse(@"{ ""values"": [ ""-3"", ""3"" ] }"));
 
-            _testInstance.SelectedValues.Should().Contain(new[] { -3, 3 });
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().Contain(new[] { -3, 3 });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
@@ -177,7 +171,10 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             Action func = () => _testInstance.TrySet(JToken.Parse(@"{ ""values"": [ ""-3a"", ""3a"" ] }"));
 
             func.Should().Throw<FormatException>();
-            _testInstance.SelectedValues.Should().BeEmpty();
+
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().BeEmpty();
+
             _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
@@ -187,7 +184,9 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             _testInstance.TrySet(JToken.Parse(@"{ ""value"": [ -4, 4 ] }"));
 
-            _testInstance.SelectedValues.Should().BeEmpty();
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().BeEmpty();
+
             _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
