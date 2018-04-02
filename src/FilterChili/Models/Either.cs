@@ -39,22 +39,12 @@ namespace GravityCTRL.FilterChili.Models
         [NotNull]
         public static implicit operator Either<TLeft, TRight>(TLeft value)
         {
-            if (typeof(TLeft) == typeof(TRight))
-            {
-                throw new InvalidOperationException();
-            }
-
             return new Left<TLeft, TRight>(value);
         }
 
         [NotNull]
         public static implicit operator Either<TLeft, TRight>(TRight value)
         {
-            if (typeof(TLeft) == typeof(TRight))
-            {
-                throw new InvalidOperationException();
-            }
-
             return new Right<TLeft, TRight>(value);
         }
     }
@@ -105,7 +95,7 @@ namespace GravityCTRL.FilterChili.Models
             return false;
         }
 
-        public static void Match<TLeft, TRight>(this Either<TLeft, TRight> either, Action<TLeft> onLeft, Action<TRight> onRight)
+        public static void Match<TLeft, TRight>([NotNull] this Either<TLeft, TRight> either, Action<TLeft> onLeft, Action<TRight> onRight)
         {
             switch (either)
             {
@@ -122,7 +112,7 @@ namespace GravityCTRL.FilterChili.Models
             }
         }
 
-        public static TResult Match<TLeft, TRight, TResult>(this Either<TLeft, TRight> either, Func<TLeft, TResult> onLeft, Func<TRight, TResult> onRight)
+        public static TResult Match<TLeft, TRight, TResult>([NotNull] this Either<TLeft, TRight> either, Func<TLeft, TResult> onLeft, Func<TRight, TResult> onRight)
         {
             switch (either)
             {
@@ -136,7 +126,7 @@ namespace GravityCTRL.FilterChili.Models
                 }
                 default:
                 {
-                    return default;
+                    throw new ArgumentException(nameof(either));
                 }
             }
         }

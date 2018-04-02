@@ -36,7 +36,8 @@ namespace GravityCTRL.FilterChili
             where TValue : IComparable 
             where TGroupIdentifier : IComparable
     {
-        [NotNull] private readonly Expression<Func<TSource, TGroupIdentifier>> _groupSelector;
+        [NotNull]
+        private readonly Expression<Func<TSource, TGroupIdentifier>> _groupSelector;
 
         // ReSharper disable StaticMemberInGenericType
         private static readonly PropertyInfo GroupIdentifierProperty;
@@ -99,28 +100,28 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public void Set([NotNull] IEnumerable<TValue> selectedValues)
         {
-            Selection = Either.Left<List<TValue>, List<TGroupIdentifier>>(selectedValues as List<TValue> ?? selectedValues.ToList());
+            Selection = selectedValues as List<TValue> ?? selectedValues.ToList();
             NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
         public void Set([NotNull] params TValue[] selectedValues)
         {
-            Selection = Either.Left<List<TValue>, List<TGroupIdentifier>>(selectedValues as List<TValue> ?? selectedValues.ToList());
+            Selection = selectedValues as List<TValue> ?? selectedValues.ToList();
             NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
         public void SetGroups([NotNull] IEnumerable<TGroupIdentifier> selectedValues)
         {
-            Selection = Either.Right<List<TValue>, List<TGroupIdentifier>>(selectedValues as List<TGroupIdentifier> ?? selectedValues.ToList());
+            Selection = selectedValues as List<TGroupIdentifier> ?? selectedValues.ToList();
             NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
         public void SetGroups([NotNull] params TGroupIdentifier[] selectedValues)
         {
-            Selection = Either.Right<List<TValue>, List<TGroupIdentifier>>(selectedValues as List<TGroupIdentifier> ?? selectedValues.ToList());
+            Selection = selectedValues as List<TGroupIdentifier> ?? selectedValues.ToList();
             NeedsToBeResolved = true;
         }
 
