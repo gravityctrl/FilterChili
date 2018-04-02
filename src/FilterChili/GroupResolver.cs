@@ -175,7 +175,7 @@ namespace GravityCTRL.FilterChili
 
         #region Internal Methods
 
-        protected override Option<Expression<Func<TSource, bool>>> FilterExpression()
+        internal override Option<Expression<Func<TSource, bool>>> FilterExpression()
         {
             if (!SelectedValues.Any())
             {
