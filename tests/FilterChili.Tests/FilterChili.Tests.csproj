@@ -36,6 +36,7 @@
   <ItemGroup>
     <None Remove="Resources\allfilters.json" />
     <None Remove="Resources\greaterthanfilter.json" />
+    <None Remove="Resources\groupfilter.json" />
     <None Remove="Resources\invalidfilter.json" />
     <None Remove="Resources\listfilter.json" />
     <None Remove="Resources\notexistingfilter.json" />
@@ -45,6 +46,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\allfilters.json" />
     <EmbeddedResource Include="Resources\greaterthanfilter.json" />
+    <EmbeddedResource Include="Resources\groupfilter.json" />
     <EmbeddedResource Include="Resources\invalidfilter.json" />
     <EmbeddedResource Include="Resources\listfilter.json" />
     <EmbeddedResource Include="Resources\notexistingfilter.json" />

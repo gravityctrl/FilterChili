@@ -33,11 +33,13 @@ namespace GravityCTRL.FilterChili.Tests
     {
         private readonly JObject _rangeObject;
         private readonly JObject _listObject;
+        private readonly JObject _groupObject;
         private readonly JObject _greaterThanObject;
         private readonly JArray _allArrayObject;
         private readonly JObject _invalidFilterObject;
         private readonly JObject _notExistingFilterObject;
         private readonly string[] _allowedNames;
+        private readonly string[] _allowedCategories;
 
         public FilterContextTest()
         {
@@ -46,6 +48,9 @@ namespace GravityCTRL.FilterChili.Tests
 
             var listJson = AppResourceHelper.Load("listfilter.json");
             _listObject = JObject.Parse(listJson);
+
+            var groupJson = AppResourceHelper.Load("groupfilter.json");
+            _groupObject = JObject.Parse(groupJson);
 
             var greaterThanJson = AppResourceHelper.Load("greaterthanfilter.json");
             _greaterThanObject = JObject.Parse(greaterThanJson);
@@ -60,6 +65,7 @@ namespace GravityCTRL.FilterChili.Tests
             _notExistingFilterObject = JObject.Parse(notExistingFilterJson);
 
             _allowedNames = new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" };
+            _allowedCategories = new[] { "Metal", "Plastic" };
         }
 
         [Fact]
@@ -99,7 +105,7 @@ namespace GravityCTRL.FilterChili.Tests
         }
 
         [Fact]
-        public async Task Should_Set_Filter_With_TrySet_Json()
+        public async Task Should_Set_Filter_With_TrySet_Json_Including_List_Filter()
         {
             var filterContext = new ProductFilterContext(CreateTestProducts().AsQueryable());
 
@@ -110,6 +116,24 @@ namespace GravityCTRL.FilterChili.Tests
             var filterResults = filterContext.ApplyFilters();
             filterResults.Should().NotContain(entity => entity.Rating < 1 || entity.Rating > 7);
             filterResults.Should().NotContain(entity => !_allowedNames.Contains(entity.Name));
+            filterResults.Should().NotContain(entity => entity.Sold <= 600);
+
+            var domains = await filterContext.Domains();
+            domains.Should().HaveCount(3);
+        }
+
+        [Fact]
+        public async Task Should_Set_Filter_With_TrySet_Json_Including_Group_Filter()
+        {
+            var filterContext = new ProductFilterContext(CreateTestProducts().AsQueryable());
+
+            filterContext.TrySet(_rangeObject);
+            filterContext.TrySet(_groupObject);
+            filterContext.TrySet(_greaterThanObject);
+
+            var filterResults = filterContext.ApplyFilters();
+            filterResults.Should().NotContain(entity => entity.Rating < 1 || entity.Rating > 7);
+            filterResults.Should().NotContain(entity => !_allowedCategories.Contains(entity.Category));
             filterResults.Should().NotContain(entity => entity.Sold <= 600);
 
             var domains = await filterContext.Domains();

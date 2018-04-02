@@ -44,7 +44,8 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.TargetType.Should().Be("Int32");
 
             _testInstance.NeedsToBeResolved.Should().BeTrue();
-            _testInstance.SelectedValues.Should().BeEmpty();
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().BeEmpty();
             _testInstance.Groups.Should().BeEmpty();
         }
 
@@ -54,7 +55,9 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             _testInstance.Set(-1, 1);
 
-            _testInstance.SelectedValues.Should().Contain(new[] {-1, 1});
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().Contain(new[] { -1, 1 });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
@@ -64,7 +67,33 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             _testInstance.Set(new List<int> { -1, 1 });
 
-            _testInstance.SelectedValues.Should().Contain(new[] { -1, 1 });
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().Contain(new[] { -1, 1 });
+
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Should_Set_Groups_Correctly_With_Params()
+        {
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.SetGroups("Category1", "Category2");
+
+            _testInstance.Selection.TryGetRight(out var right).Should().BeTrue();
+            right.Should().Contain(new[] { "Category1", "Category2" });
+
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Should_Set_Groups_Correctly_Without_Params()
+        {
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.SetGroups(new List<string> { "Category1", "Category2" });
+
+            _testInstance.Selection.TryGetRight(out var right).Should().BeTrue();
+            right.Should().Contain(new[] { "Category1", "Category2" });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
@@ -89,23 +118,17 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             _testInstance.SetGroups("Category1", "Category3");
 
-            _testInstance.SelectedValues.Should().Contain(new[] { -2, -1, 2, 3 });
+            _testInstance.Selection.TryGetRight(out var right).Should().BeTrue();
+            right.Should().Contain(new[] { "Category1", "Category3" });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
 
             _testInstance.SetGroups(new List<string> { "Category1", "Category3" });
 
-            _testInstance.SelectedValues.Should().Contain(new[] { -2, -1, 2, 3 });
+            _testInstance.Selection.TryGetRight(out right).Should().BeTrue();
+            right.Should().Contain(new[] { "Category1", "Category3" });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Should_Not_Set_Selected_Values_With_SetGroups_Method_When_There_Were_No_Entities_Set_Beforehand()
-        {
-            _testInstance.NeedsToBeResolved = false;
-            _testInstance.SetGroups("Category1", "Category3");
-
-            _testInstance.SelectedValues.Should().BeEmpty();
-            _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
         [Fact]
@@ -129,19 +152,10 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             _testInstance.TrySet(JToken.Parse(@"{ ""groups"": [ ""Category1"", ""Category3"" ] }"));
 
-            _testInstance.SelectedValues.Should().Contain(new[] { -2, -1, 2, 3 });
+            _testInstance.Selection.TryGetRight(out var right).Should().BeTrue();
+            right.Should().Contain(new[] { "Category1", "Category3" });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Should_Not_Set_Selected_Values_With_TrySet_If_JToken_Is_Correct_Groups_Collection_When_There_Were_No_Entities_Set_Beforehand()
-        {
-            _testInstance.NeedsToBeResolved = false;
-
-            _testInstance.TrySet(JToken.Parse(@"{ ""groups"": [ ""Category1"", ""Category3"" ] }"));
-
-            _testInstance.SelectedValues.Should().BeEmpty();
-            _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
         [Fact]
@@ -150,7 +164,9 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             _testInstance.TrySet(JToken.Parse(@"{ ""values"": [ -2, 2 ] }"));
 
-            _testInstance.SelectedValues.Should().Contain(new[] { -2, 2 });
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().Contain(new[] { -2, 2 });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
@@ -160,7 +176,9 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             _testInstance.TrySet(JToken.Parse(@"{ ""values"": [ ""-3"", ""3"" ] }"));
 
-            _testInstance.SelectedValues.Should().Contain(new[] { -3, 3 });
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().Contain(new[] { -3, 3 });
+
             _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
@@ -177,7 +195,10 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             Action func = () => _testInstance.TrySet(JToken.Parse(@"{ ""values"": [ ""-3a"", ""3a"" ] }"));
 
             func.Should().Throw<FormatException>();
-            _testInstance.SelectedValues.Should().BeEmpty();
+
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().BeEmpty();
+
             _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
@@ -187,7 +208,9 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.NeedsToBeResolved = false;
             _testInstance.TrySet(JToken.Parse(@"{ ""value"": [ -4, 4 ] }"));
 
-            _testInstance.SelectedValues.Should().BeEmpty();
+            _testInstance.Selection.TryGetLeft(out var left).Should().BeTrue();
+            left.Should().BeEmpty();
+
             _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
@@ -210,17 +233,34 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
-        public void Should_Return_Null_If_There_Are_No_Items()
+        public void Should_Return_No_FilterExpression_If_There_Are_No_Values_As_Selection()
         {
             var items = new[]
             {
-                new GenericSource { String = "Piza" },
-                new GenericSource { String = "Chicken" },
-                new GenericSource { String = "Chese" },
-                new GenericSource { String = "Tuna" },
-                new GenericSource { String = "Tun" }
+                new GenericSource { Int = -2, String = "Piza" },
+                new GenericSource { Int = -1, String = "Chicken" },
+                new GenericSource { Int = 0, String = "Chese" },
+                new GenericSource { Int = 1, String = "Tuna" },
+                new GenericSource { Int = 2, String = "Tun" }
             };
 
+            var result = _testInstance.ExecuteFilter(items.AsQueryable());
+            result.Should().HaveCount(5);
+        }
+
+        [Fact]
+        public void Should_Return_No_FilterExpression_If_There_Are_No_Groups_As_Selection()
+        {
+            var items = new[]
+            {
+                new GenericSource { Int = -2, String = "Piza" },
+                new GenericSource { Int = -1, String = "Chicken" },
+                new GenericSource { Int = 0, String = "Chese" },
+                new GenericSource { Int = 1, String = "Tuna" },
+                new GenericSource { Int = 2, String = "Tun" }
+            };
+
+            _testInstance.SetGroups();
             var result = _testInstance.ExecuteFilter(items.AsQueryable());
             result.Should().HaveCount(5);
         }
@@ -305,7 +345,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
-        public async Task Should_Set_TotalRange_On_Calling_SetAvailableEntities()
+        public async Task Should_Get_Groups_If_No_Default_Group_Identifier_Is_Provided()
         {
             _testInstance.NeedsToBeResolved = false;
             var items = new[]
@@ -382,7 +422,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
-        public async Task Should_Not_Set_CanBeSelected_If_There_Are_No_Selectable_Values()
+        public async Task Should_Get_Groups_With_Values_As_Selection_Input()
         {
             _testInstance.NeedsToBeResolved = false;
             _testInstance.UseDefaultGroup("Unknown");
@@ -475,7 +515,120 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
-        public void Should_Get_Values_If_There_Are_Only_Selected_Ones_And_Default_Group_Is_Defined()
+        public async Task Should_Get_Groups_With_Groups_As_Selection_Input()
+        {
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.UseDefaultGroup("Unknown");
+
+            var items = new[]
+            {
+                new GenericSource { Int = -2, String = "Category1" },
+                new GenericSource { Int = -1, String = "Category1" },
+                new GenericSource { Int = 2, String = "Category1" },
+                new GenericSource { Int = 0, String = "Category2" },
+                new GenericSource { Int = 1, String = "Category2" },
+                new GenericSource { Int = 2, String = "Category3" },
+                new GenericSource { Int = 2, String = "Category4" },
+                new GenericSource { Int = 3 }
+            };
+
+            await _testInstance.SetEntities(Option.Some(items.AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            _testInstance.SetGroups("Category2", "Category3", "InvalidCategory");
+
+            var expected = new[]
+            {
+                new Group<string, int>
+                {
+                    Identifier = "Category1",
+                    Values = new []
+                    {
+                        new Item<int>
+                        {
+                            CanBeSelected = false,
+                            IsSelected = false,
+                            Value = -2
+                        },
+                        new Item<int>
+                        {
+                            CanBeSelected = false,
+                            IsSelected = false,
+                            Value = -1
+                        },
+                        new Item<int>
+                        {
+                            CanBeSelected = false,
+                            IsSelected = false,
+                            Value = 2
+                        }
+                    }
+                },
+                new Group<string, int>
+                {
+                    Identifier = "Category2",
+                    Values = new []
+                    {
+                        new Item<int>
+                        {
+                            CanBeSelected = false,
+                            IsSelected = true,
+                            Value = 0
+                        },
+                        new Item<int>
+                        {
+                            CanBeSelected = false,
+                            IsSelected = true,
+                            Value = 1
+                        }
+                    }
+                },
+                new Group<string, int>
+                {
+                    Identifier = "Category3",
+                    Values = new []
+                    {
+                        new Item<int>
+                        {
+                            CanBeSelected = false,
+                            IsSelected = true,
+                            Value = 2
+                        }
+                    }
+                },
+                new Group<string, int>
+                {
+                    Identifier = "Category4",
+                    Values = new []
+                    {
+                        new Item<int>
+                        {
+                            CanBeSelected = false,
+                            IsSelected = false,
+                            Value = 2
+                        }
+                    }
+                },
+                new Group<string, int>
+                {
+                    Identifier = "Unknown",
+                    Values = new []
+                    {
+                        new Item<int>
+                        {
+                            CanBeSelected = false,
+                            IsSelected = false,
+                            Value = 3
+                        }
+                    }
+                }
+            };
+
+            var expectedJson = JsonConvert.SerializeObject(expected);
+            JsonConvert.SerializeObject(_testInstance.Groups).Should().Be(expectedJson);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Should_Get_Groups_If_There_Are_Only_Values_As_Selection_And_Default_Group_Is_Defined()
         {
             _testInstance.NeedsToBeResolved = false;
             _testInstance.UseDefaultGroup("Unknown");
@@ -510,7 +663,32 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         }
 
         [Fact]
-        public void Should_Not_Get_Values_If_There_Are_Only_Selected_Ones_And_Default_Group_Is_Undefined()
+        public void Should_Get_Groups_If_There_Are_Groups_As_Selection()
+        {
+            _testInstance.NeedsToBeResolved = false;
+            _testInstance.SetGroups("Group1", "Group2");
+
+            var expected = new[]
+            {
+                new Group<string, int>
+                {
+                    Identifier = "Group1",
+                    Values = null
+                },
+                new Group<string, int>
+                {
+                    Identifier = "Group2",
+                    Values = null
+                }
+            };
+
+            var expectedJson = JsonConvert.SerializeObject(expected);
+            JsonConvert.SerializeObject(_testInstance.Groups).Should().Be(expectedJson);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Should_Not_Get_Values_If_There_Are_Only_Values_As_Selection_And_Default_Group_Is_Undefined()
         {
             _testInstance.NeedsToBeResolved = false;
             _testInstance.Set(-1, 2);
