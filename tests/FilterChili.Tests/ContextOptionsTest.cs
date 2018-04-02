@@ -33,6 +33,7 @@ namespace GravityCTRL.FilterChili.Tests
         private readonly ContextOptions<GenericSource> _testInstance;
 
         private bool _contextOptionsInitialized;
+        private readonly IQueryable<GenericSource> _queryable;
 
         public ContextOptionsTest()
         {
@@ -45,8 +46,8 @@ namespace GravityCTRL.FilterChili.Tests
             testGenericSources.RuleFor(entity => entity.String, faker => faker.Commerce.Product());
             var items = testGenericSources.GenerateLazy(20).ToList();
 
-            var queryable = items.AsQueryable();
-            _testInstance = new ContextOptions<GenericSource>(queryable, options =>
+            _queryable = items.AsQueryable();
+            _testInstance = new ContextOptions<GenericSource>(_queryable, options =>
             {
                 _contextOptionsInitialized = true;
             });
@@ -56,6 +57,18 @@ namespace GravityCTRL.FilterChili.Tests
         public void Should_Initialize_Correctly()
         {
             _contextOptionsInitialized.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Should_Check_Prerequisites()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Action action = () => new ContextOptions<GenericSource>(_queryable, options =>
+            {
+                options.Filter(source => source.String);
+            });
+
+            action.Should().Throw<MissingResolverException>().WithMessage("StringFilterSelector<GenericSource>");
         }
 
         [Fact]
