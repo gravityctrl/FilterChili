@@ -57,7 +57,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             _testInstance.SelectedRange.Min.Should().Be(-1);
             _testInstance.SelectedRange.Max.Should().Be(1);
-            _testInstance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
         [Fact]
@@ -68,7 +68,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             _testInstance.SelectedRange.Min.Should().Be(-2);
             _testInstance.SelectedRange.Max.Should().Be(2);
-            _testInstance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             _testInstance.SelectedRange.Min.Should().Be(-3);
             _testInstance.SelectedRange.Max.Should().Be(3);
-            _testInstance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
         [Fact]
@@ -97,7 +97,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             func.Should().Throw<FormatException>();
             _testInstance.SelectedRange.Min.Should().Be(-5);
             _testInstance.SelectedRange.Max.Should().Be(5);
-            _testInstance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             _testInstance.SelectedRange.Min.Should().Be(-5);
             _testInstance.SelectedRange.Max.Should().Be(5);
-            _testInstance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
         [Fact]
@@ -170,7 +170,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.TotalRange.Max.Should().Be(2);
             _testInstance.SelectedRange.Min.Should().Be(-5);
             _testInstance.SelectedRange.Max.Should().Be(5);
-            _testInstance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
         [Fact]
@@ -190,7 +190,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.SelectableRange.Max.Should().Be(1);
             _testInstance.SelectedRange.Min.Should().Be(-5);
             _testInstance.SelectedRange.Max.Should().Be(5);
-            _testInstance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
         [Fact]
@@ -207,7 +207,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             };
 
             _testInstance.Set(-1, 1);
-            _testInstance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
 
             var result1 = _testInstance.ExecuteFilter(items.AsQueryable());
             result1.Should().HaveCount(3);
@@ -233,7 +233,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             };
 
             _testInstance.Set(-6, 1);
-            _testInstance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
 
             var result = _testInstance.ExecuteFilter(items.AsQueryable());
             result.Should().HaveCount(4);
@@ -256,7 +256,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             };
 
             _testInstance.Set(-1, 6);
-            _testInstance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
 
             var result = _testInstance.ExecuteFilter(items.AsQueryable());
             result.Should().HaveCount(4);
@@ -279,7 +279,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             };
 
             _testInstance.Set(-6, 6);
-            _testInstance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
 
             var result = _testInstance.ExecuteFilter(items.AsQueryable());
             result.Should().HaveCount(5);
