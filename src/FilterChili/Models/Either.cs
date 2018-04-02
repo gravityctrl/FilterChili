@@ -95,5 +95,24 @@ namespace GravityCTRL.FilterChili.Models
                 }
             }
         }
+
+        public static TResult Match<TLeft, TRight, TResult>(this Either<TLeft, TRight> either, Func<TLeft, TResult> onLeft, Func<TRight, TResult> onRight)
+        {
+            switch (either)
+            {
+                case Left<TLeft, TRight> left:
+                {
+                    return onLeft(left.Value);
+                }
+                case Right<TLeft, TRight> right:
+                {
+                    return onRight(right.Value);
+                }
+                default:
+                {
+                    return default;
+                }
+            }
+        }
     }
 }
