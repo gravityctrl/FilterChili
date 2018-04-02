@@ -77,7 +77,7 @@ namespace GravityCTRL.FilterChili
         {
             _groupSelector = groupSelector;
             NeedsToBeResolved = true;
-            Selection = new List<TValue>();
+            Selection = new Left<List<TValue>, List<TGroupIdentifier>>(new List<TValue>());
 
             _defaultGroupIdentifier = Option.None<TGroupIdentifier>();
 
@@ -99,28 +99,28 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public void Set([NotNull] IEnumerable<TValue> selectedValues)
         {
-            Selection = selectedValues as List<TValue> ?? selectedValues.ToList();
+            Selection = Either.Left<List<TValue>, List<TGroupIdentifier>>(selectedValues as List<TValue> ?? selectedValues.ToList());
             NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
         public void Set([NotNull] params TValue[] selectedValues)
         {
-            Selection = selectedValues as List<TValue> ?? selectedValues.ToList();
+            Selection = Either.Left<List<TValue>, List<TGroupIdentifier>>(selectedValues as List<TValue> ?? selectedValues.ToList());
             NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
         public void SetGroups([NotNull] IEnumerable<TGroupIdentifier> selectedValues)
         {
-            Selection = selectedValues as List<TGroupIdentifier> ?? selectedValues.ToList();
+            Selection = Either.Right<List<TValue>, List<TGroupIdentifier>>(selectedValues as List<TGroupIdentifier> ?? selectedValues.ToList());
             NeedsToBeResolved = true;
         }
 
         [UsedImplicitly]
         public void SetGroups([NotNull] params TGroupIdentifier[] selectedValues)
         {
-            Selection = selectedValues as List<TGroupIdentifier> ?? selectedValues.ToList();
+            Selection = Either.Right<List<TValue>, List<TGroupIdentifier>>(selectedValues as List<TGroupIdentifier> ?? selectedValues.ToList());
             NeedsToBeResolved = true;
         }
 
@@ -255,7 +255,7 @@ namespace GravityCTRL.FilterChili
         {
             if (!_groupList.TryGetValue(out var source))
             {
-                return CreateResultUsingSelectedValues();
+                return CreateResultUsingSelection();
             }
 
             var groupDictionary = CreateGroupDictionary(source, false);
@@ -321,7 +321,7 @@ namespace GravityCTRL.FilterChili
         }
 
         [NotNull]
-        private IReadOnlyList<Group<TGroupIdentifier, TValue>> CreateResultUsingSelectedValues()
+        private IReadOnlyList<Group<TGroupIdentifier, TValue>> CreateResultUsingSelection()
         {
             return Selection.Match
             (

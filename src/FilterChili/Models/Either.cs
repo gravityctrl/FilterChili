@@ -1,4 +1,20 @@
-﻿using System;
+﻿// This file is part of FilterChili.
+// Copyright © 2017 Sebastian Krogull.
+// 
+// FilterChili is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as 
+// published by the Free Software Foundation, either version 3 
+// of the License, or any later version.
+// 
+// FilterChili is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public 
+// License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
+
+using System;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Models
@@ -6,13 +22,13 @@ namespace GravityCTRL.FilterChili.Models
     internal abstract class Either
     {
         [NotNull]
-        public static Either<TLeft, TRight> Some<TLeft, TRight>(TLeft left)
+        public static Either<TLeft, TRight> Left<TLeft, TRight>(TLeft left)
         {
             return new Left<TLeft, TRight>(left);
         }
 
         [NotNull]
-        public static Either<TLeft, TRight> Some<TLeft, TRight>(TRight right)
+        public static Either<TLeft, TRight> Right<TLeft, TRight>(TRight right)
         {
             return new Right<TLeft, TRight>(right);
         }
@@ -23,12 +39,22 @@ namespace GravityCTRL.FilterChili.Models
         [NotNull]
         public static implicit operator Either<TLeft, TRight>(TLeft value)
         {
+            if (typeof(TLeft) == typeof(TRight))
+            {
+                throw new InvalidOperationException();
+            }
+
             return new Left<TLeft, TRight>(value);
         }
 
         [NotNull]
         public static implicit operator Either<TLeft, TRight>(TRight value)
         {
+            if (typeof(TLeft) == typeof(TRight))
+            {
+                throw new InvalidOperationException();
+            }
+
             return new Right<TLeft, TRight>(value);
         }
     }
