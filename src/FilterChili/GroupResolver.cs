@@ -355,7 +355,7 @@ namespace GravityCTRL.FilterChili
             return result.ToList();
         }
 
-        private static void SetSelectedStatus(Either<List<TValue>, List<TGroupIdentifier>> selection, [NotNull] IReadOnlyDictionary<TGroupIdentifier, Dictionary<TValue, Item<TValue>>> dictionary)
+        private static void SetSelectedStatus([NotNull] Either<List<TValue>, List<TGroupIdentifier>> selection, [NotNull] IReadOnlyDictionary<TGroupIdentifier, Dictionary<TValue, Item<TValue>>> dictionary)
         {
             selection.Match
             (

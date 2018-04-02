@@ -96,33 +96,31 @@ namespace GravityCTRL.FilterChili.Tests.Models
         }
 
         [NotNull]
-        private string LeftFunction(int value)
+        private static string LeftFunction(int value)
         {
             value.Should().Be(3);
             return "left";
         }
 
         [NotNull]
-        private string RightFunction(double value)
+        private static string RightFunction(double value)
         {
             value.Should().Be(5.0);
             return "right";
         }
 
-        [NotNull]
         private void LeftAction(int value)
         {
             value.Should().Be(3);
             _isLeft = true;
         }
 
-        [NotNull]
         private void RightAction(double value)
         {
             value.Should().Be(5.0);
             _isRight = true;
         }
 
-        private class InvalidEither : Either<int, double> {}
+        private sealed class InvalidEither : Either<int, double> {}
     }
 }
