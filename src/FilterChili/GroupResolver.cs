@@ -110,6 +110,7 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public void SetGroups(IEnumerable<TGroupIdentifier> selectedValues)
         {
+            // Todo: Rethink this.
             if (!_groupList.TryGetValue(out var groups))
             {
                 return;
@@ -122,6 +123,7 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public void SetGroups(params TGroupIdentifier[] selectedValues)
         {
+            // Todo: Rethink this.
             if (!_groupList.TryGetValue(out var groups))
             {
                 return;
