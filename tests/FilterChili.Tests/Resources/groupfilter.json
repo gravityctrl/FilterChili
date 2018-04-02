@@ -1,0 +1,9 @@
+﻿{
+  "name": "Name",
+  "filter": {
+    "groups": [
+      "Metal",
+      "Plastic"
+    ]
+  }
+}

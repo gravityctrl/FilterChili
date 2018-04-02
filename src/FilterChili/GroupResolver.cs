@@ -265,7 +265,7 @@ namespace GravityCTRL.FilterChili
                 SetSelectableStatus(selectable, groupDictionary);
             }
 
-            SetSelectedStatus(Selection, groupDictionary);
+            SetSelectedStatus(groupDictionary);
 
             var result = groupDictionary.Select(kv => new Group<TGroupIdentifier, TValue>
             {
@@ -355,9 +355,9 @@ namespace GravityCTRL.FilterChili
             return result.ToList();
         }
 
-        private static void SetSelectedStatus([NotNull] Either<List<TValue>, List<TGroupIdentifier>> selection, [NotNull] IReadOnlyDictionary<TGroupIdentifier, Dictionary<TValue, Item<TValue>>> dictionary)
+        private void SetSelectedStatus([NotNull] IReadOnlyDictionary<TGroupIdentifier, Dictionary<TValue, Item<TValue>>> dictionary)
         {
-            selection.Match
+            Selection.Match
             (
                 values => SetSelectedStatus(dictionary, values),
                 groups => SetSelectedStatus(dictionary, groups)
