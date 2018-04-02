@@ -110,6 +110,7 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public void SetGroups(IEnumerable<TGroupIdentifier> selectedValues)
         {
+            // Todo: Rethink this.
             if (!_groupList.TryGetValue(out var groups))
             {
                 return;
@@ -122,6 +123,7 @@ namespace GravityCTRL.FilterChili
         [UsedImplicitly]
         public void SetGroups(params TGroupIdentifier[] selectedValues)
         {
+            // Todo: Rethink this.
             if (!_groupList.TryGetValue(out var groups))
             {
                 return;
@@ -175,7 +177,7 @@ namespace GravityCTRL.FilterChili
 
         #region Internal Methods
 
-        protected override Option<Expression<Func<TSource, bool>>> FilterExpression()
+        internal override Option<Expression<Func<TSource, bool>>> FilterExpression()
         {
             if (!SelectedValues.Any())
             {

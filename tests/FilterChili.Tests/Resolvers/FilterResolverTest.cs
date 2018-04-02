@@ -23,7 +23,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
     public sealed class FilterResolverTest
     {
         [Fact]
-        public void Should_Update_Name_Of_Resolver_When_Calling_Use_Name_And_Return_Same_Instance()
+        public void Should_Update_Name_Of_Resolver_When_Calling_UseName_And_Return_Same_Instance()
         {
             var testInstance = new RangeResolver<GenericSource, int>(_ => 1, int.MinValue, int.MaxValue);
             testInstance.Name.Should().Be(null);
@@ -43,6 +43,19 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             testInstance.UseName("SomeName2").Should().Be(testInstance);
             testInstance.Name.Should().Be("SomeName2");
+        }
+
+        [Fact]
+        public void Should_Update_Calculation_Strategy_When_Calling_UseStrategy_And_Return_Same_Instance()
+        {
+            var testInstance = new RangeResolver<GenericSource, int>(_ => 1, int.MinValue, int.MaxValue);
+            testInstance.Name.Should().Be(null);
+
+            testInstance.UseStrategy(CalculationStrategy.AvailableValues).Should().Be(testInstance);
+            testInstance.CalculationStrategy.Should().Be(CalculationStrategy.AvailableValues);
+
+            testInstance.UseStrategy(CalculationStrategy.SelectableValues).Should().Be(testInstance);
+            testInstance.CalculationStrategy.Should().Be(CalculationStrategy.SelectableValues);
         }
     }
 }

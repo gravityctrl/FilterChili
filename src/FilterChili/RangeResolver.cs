@@ -86,7 +86,7 @@ namespace GravityCTRL.FilterChili
 
         #region Internal Methods
 
-        protected override Option<Expression<Func<TSource, bool>>> FilterExpression()
+        internal override Option<Expression<Func<TSource, bool>>> FilterExpression()
         {
             if (_min.CompareTo(SelectedRange.Min) < 0 && _max.CompareTo(SelectedRange.Max) > 0)
             {

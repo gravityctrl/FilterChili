@@ -89,7 +89,7 @@ namespace GravityCTRL.FilterChili.Resolvers
         internal abstract Task SetEntities([NotNull] Option<IQueryable<TSource>> allEntities, [NotNull] Option<IQueryable<TSource>> selectableEntities);
 
         [NotNull]
-        protected abstract Option<Expression<Func<TSource, bool>>> FilterExpression();
+        internal abstract Option<Expression<Func<TSource, bool>>> FilterExpression();
     }
 
     public abstract class FilterResolver<TFilterResolver, TSource, TValue> : FilterResolver<TSource, TValue>

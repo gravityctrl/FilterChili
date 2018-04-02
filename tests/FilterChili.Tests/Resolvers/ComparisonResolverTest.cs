@@ -57,7 +57,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.Set(1);
 
             _testInstance.SelectedValue.Should().Be(1);
-            _testInstance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.TrySet(JToken.Parse(@"{ ""value"": 2 }"));
 
             _testInstance.SelectedValue.Should().Be(2);
-            _testInstance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
         [Fact]
@@ -77,7 +77,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.TrySet(JToken.Parse(@"{ ""value"": ""3"" }"));
 
             _testInstance.SelectedValue.Should().Be(3);
-            _testInstance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
 
             func.Should().Throw<FormatException>();
             _testInstance.SelectedValue.Should().Be(0);
-            _testInstance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
         [Fact]
@@ -98,7 +98,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.TrySet(JToken.Parse(@"{ ""values"": 4 }"));
 
             _testInstance.SelectedValue.Should().Be(0);
-            _testInstance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
         [Fact]
@@ -159,7 +159,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.TotalRange.Min.Should().Be(-2);
             _testInstance.TotalRange.Max.Should().Be(2);
             _testInstance.SelectedValue.Should().Be(0);
-            _testInstance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
         [Fact]
@@ -178,7 +178,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             _testInstance.SelectableRange.Min.Should().Be(-1);
             _testInstance.SelectableRange.Max.Should().Be(1);
             _testInstance.SelectedValue.Should().Be(0);
-            _testInstance.NeedsToBeResolved.Should().Be(false);
+            _testInstance.NeedsToBeResolved.Should().BeFalse();
         }
 
         [Fact]
@@ -195,7 +195,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             };
 
             _testInstance.Set(1);
-            _testInstance.NeedsToBeResolved.Should().Be(true);
+            _testInstance.NeedsToBeResolved.Should().BeTrue();
 
             var result1 = _testInstance.ExecuteFilter(items.AsQueryable());
             result1.Should().HaveCount(1);
