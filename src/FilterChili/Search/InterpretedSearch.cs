@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using GravityCTRL.FilterChili.Models;
 using GravityCTRL.FilterChili.Search.Fragments;
 using JetBrains.Annotations;
 
@@ -28,100 +29,33 @@ namespace GravityCTRL.FilterChili.Search
         private const char DOUBLE_QUOTE = '"';
         private const char ACTION_CHARACTER = ':';
         private const char EXCLUDE_CHARACTER = '-';
+        private const char SEPARATOR_CHARACTER = ',';
+
+        private readonly StringBuilder _stringBuilder;
+
+        private bool _shallExclude;
+        private bool _foundSeparator;
+        private Option<string> _propertyName;
+        private int _quoteCount;
+        private Guid _groupId;
+
 
         public InterpretedSearch([NotNull] string searchString)
         {
+            _stringBuilder = new StringBuilder();
+
+            _groupId = Guid.NewGuid();
+            _shallExclude = false;
+            _foundSeparator = false;
+            _propertyName = Option.None<string>();
+            _quoteCount = 0;
+
             var phrases = CreateClassifiedFragments(searchString);
             AddRange(phrases);
         }
 
-        private static IEnumerable<Fragment> CreateClassifiedFragments([NotNull] string text)
+        private IEnumerable<Fragment> CreateClassifiedFragments([NotNull] string text)
         {
-            var stringBuilder = new StringBuilder();
-
-            var shallExclude = false;
-            string propertyName = null;
-            var quoteCount = 0;
-
-            Fragment CreateClassifiedFragment()
-            {
-                var phrase = ExtractPhrase(stringBuilder);
-                if (string.IsNullOrWhiteSpace(phrase))
-                {
-                    return null;
-                }
-
-                Fragment fragment;
-                if (propertyName != null)
-                {
-                    if (propertyName == string.Empty)
-                    {
-                        propertyName = null;
-                        return null;
-                    }
-                    
-                    if (shallExclude)
-                    {
-                        if (quoteCount > 0)
-                        {
-                            fragment = new ConstrainedExcludeFragment(FragmentType.Phrase, phrase, propertyName);
-                            quoteCount = 0;
-                        }
-                        else
-                        {
-                            fragment = new ConstrainedExcludeFragment(FragmentType.Word, phrase, propertyName);
-                        }
-
-                        shallExclude = false;
-                    }
-                    else
-                    {
-                        if (quoteCount > 0)
-                        {
-                            fragment = new ConstrainedIncludeFragment(FragmentType.Phrase, phrase, propertyName);
-                            quoteCount = 0;
-                        }
-                        else
-                        {
-                            fragment = new ConstrainedIncludeFragment(FragmentType.Word, phrase, propertyName);
-                        }
-                    }
-
-                    propertyName = null;
-                }
-                else
-                {
-                    if (shallExclude)
-                    {
-                        if (quoteCount > 0)
-                        {
-                            fragment = new ExcludeFragment(FragmentType.Phrase, phrase);
-                            quoteCount = 0;
-                        }
-                        else
-                        {
-                            fragment = new ExcludeFragment(FragmentType.Word, phrase);
-                        }
-
-                        shallExclude = false;
-                    }
-                    else
-                    {
-                        if (quoteCount > 0)
-                        {
-                            fragment = new IncludeFragment(FragmentType.Phrase, phrase);
-                            quoteCount = 0;
-                        }
-                        else
-                        {
-                            fragment = new IncludeFragment(FragmentType.Word, phrase);
-                        }
-                    }
-                }
-
-                return fragment;
-            }
-
             using (var reader = new StringReader(text))
             {
                 int readCharacter;
@@ -130,22 +64,22 @@ namespace GravityCTRL.FilterChili.Search
                     var character = Convert.ToChar(readCharacter);
                     if (character == DOUBLE_QUOTE)
                     {
-                        if (quoteCount == 2)
+                        if (_quoteCount == 2)
                         {
                             var fragment = CreateClassifiedFragment();
-                            if (fragment != null)
+                            if (fragment.TryGetValue(out var value))
                             {
-                                yield return fragment;
+                                yield return value;
                             }
                         }
 
-                        quoteCount++;
+                        _quoteCount++;
                         continue;
                     }
 
-                    if (quoteCount == 1)
+                    if (_quoteCount == 1)
                     {
-                        stringBuilder.Append(character);
+                        _stringBuilder.Append(character);
                         continue;
                     }
 
@@ -154,22 +88,32 @@ namespace GravityCTRL.FilterChili.Search
                     {
                         case EXCLUDE_CHARACTER:
                         {
-                            if (quoteCount == 2)
+                            if (_quoteCount == 2)
                             {
                                 var fragment = CreateClassifiedFragment();
-                                if (fragment != null)
+                                if (fragment.TryGetValue(out var value))
                                 {
-                                    yield return fragment;
+                                    yield return value;
                                 }
                             }
 
-                            shallExclude = true;
+                            _shallExclude = true;
                             continue;
                         }
                         case ACTION_CHARACTER:
                         {
-                            propertyName = ExtractPhrase(stringBuilder);
-                            quoteCount = 0;
+                            _propertyName = Option.Some(ExtractPhrase());
+                            _quoteCount = 0;
+                            continue;
+                        }
+                        case SEPARATOR_CHARACTER:
+                        {
+                            _foundSeparator = true;
+                            var fragment = CreateClassifiedFragment();
+                            if (fragment.TryGetValue(out var value))
+                            {
+                                yield return value;
+                            }
                             continue;
                         }
                     }
@@ -177,28 +121,130 @@ namespace GravityCTRL.FilterChili.Search
                     if (!char.IsLetterOrDigit(character))
                     {
                         var fragment = CreateClassifiedFragment();
-                        if (fragment != null)
+                        if (fragment.TryGetValue(out var value))
                         {
-                            yield return fragment;
+                            yield return value;
                         }
                         continue;
                     }
 
-                    stringBuilder.Append(character);
+                    _stringBuilder.Append(character);
                 }
 
                 var lastFragment = CreateClassifiedFragment();
-                if (lastFragment != null)
+                if (lastFragment.TryGetValue(out var lastValue))
                 {
-                    yield return lastFragment;
+                    yield return lastValue;
                 }
             }
         }
 
-        private static string ExtractPhrase([NotNull] StringBuilder stringBuilder)
+        [NotNull]
+        private Option<Fragment> CreateClassifiedFragment()
         {
-            var phrase = stringBuilder.ToString();
-            stringBuilder.Clear();
+            var phrase = ExtractPhrase();
+            if (string.IsNullOrWhiteSpace(phrase))
+            {
+                return Option.None<Fragment>();
+            }
+
+            Fragment fragment;
+            if (_propertyName.TryGetValue(out var propertyName))
+            {
+                if (propertyName.Trim() == string.Empty)
+                {
+                    if (_foundSeparator)
+                    {
+                        _foundSeparator = false;
+                    }
+                    else
+                    {
+                        _propertyName = Option.None<string>();
+                    }
+
+                    return Option.None<Fragment>();
+                }
+
+                if (_shallExclude)
+                {
+                    if (_quoteCount > 0)
+                    {
+                        fragment = new ConstrainedExcludeFragment(FragmentType.Phrase, phrase, propertyName);
+                        _quoteCount = 0;
+                    }
+                    else
+                    {
+                        fragment = new ConstrainedExcludeFragment(FragmentType.Word, phrase, propertyName);
+                    }
+                }
+                else
+                {
+                    if (_quoteCount > 0)
+                    {
+                        fragment = new ConstrainedIncludeFragment(FragmentType.Phrase, phrase, propertyName);
+                        _quoteCount = 0;
+                    }
+                    else
+                    {
+                        fragment = new ConstrainedIncludeFragment(FragmentType.Word, phrase, propertyName);
+                    }
+                }
+
+                if (_foundSeparator)
+                {
+                    _foundSeparator = false;
+                }
+                else
+                {
+                    _shallExclude = false;
+                    _propertyName = Option.None<string>();
+                }
+            }
+            else
+            {
+                if (_shallExclude)
+                {
+                    if (_quoteCount > 0)
+                    {
+                        fragment = new ExcludeFragment(FragmentType.Phrase, phrase) { GroupId = _groupId };
+                        _quoteCount = 0;
+                    }
+                    else
+                    {
+                        fragment = new ExcludeFragment(FragmentType.Word, phrase) { GroupId = _groupId };
+                    }
+                }
+                else
+                {
+                    if (_quoteCount > 0)
+                    {
+                        fragment = new IncludeFragment(FragmentType.Phrase, phrase) { GroupId = _groupId };
+                        _quoteCount = 0;
+                    }
+                    else
+                    {
+                        fragment = new IncludeFragment(FragmentType.Word, phrase) { GroupId = _groupId };
+                    }
+                }
+
+                if (_foundSeparator)
+                {
+                    _foundSeparator = false;
+                }
+                else
+                {
+                    _groupId = Guid.NewGuid();
+                    _shallExclude = false;
+                }
+            }
+
+            return fragment;
+        }
+
+        private string ExtractPhrase()
+        {
+            var phrase = _stringBuilder.ToString();
+            _stringBuilder.Clear();
             return phrase.Trim();
         }
     }

@@ -32,15 +32,25 @@ namespace GravityCTRL.FilterChili.Tests.Search
 
         [Theory]
         [InlineData("abc", new[] { "abc" })]
+        [InlineData("abc,def", new[] { "abc", "def" })]
         [InlineData("vwx", new[] { "def", "jkl", "pqr" })]
+        [InlineData("vwx,stu", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("-abc", new[] { "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-abc,def", new[] { "ghi", "jkl", "mno", "pqr" })]
         [InlineData("-vwx", new[] { "abc", "ghi", "mno" })]
+        [InlineData("-vwx,stu", new string[] {})]
         [InlineData("name:abc", new[] { "abc" })]
+        [InlineData("name:abc,def", new[] { "abc", "def" })]
         [InlineData("category:vwx", new[] { "def", "jkl", "pqr" })]
+        [InlineData("category:vwx,stu", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("-name:abc", new[] { "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-name:abc,def", new[] { "ghi", "jkl", "mno", "pqr" })]
         [InlineData("-category:vwx", new[] { "abc", "ghi", "mno" })]
+        [InlineData("-category:vwx,stu", new string[] {})]
         [InlineData("notthere:abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("notthere:abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("-notthere:abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-notthere:abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         public void Should_Resolve_Search_Correctly(string searchString, string[] expectedResults)
         {
             var specification1 = new SearchSpecification<TestSource>(source => source.Name);
@@ -71,15 +81,25 @@ namespace GravityCTRL.FilterChili.Tests.Search
 
         [Theory]
         [InlineData("abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("vwx", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("vwx,stu", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("-abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("-vwx", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-vwx,stu", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("name:abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("name:abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("category:vwx", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("category:vwx,stu", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("-name:abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-name:abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("-category:vwx", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-category:vwx,stu", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("notthere:abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("notthere:abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("-notthere:abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-notthere:abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         public void Should_Resolve_Search_Correctly_If_No_Searchers_Are_Defined(string searchString, string[] expectedResults)
         {
             _testInstance.SetSearchString(searchString);

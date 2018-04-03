@@ -14,12 +14,15 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Search.Fragments
 {
     internal abstract class Fragment
     {
+        public Guid GroupId { get; set; }
+
         public string Text { get; }
 
         [UsedImplicitly]

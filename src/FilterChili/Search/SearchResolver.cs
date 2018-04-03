@@ -88,32 +88,40 @@ namespace GravityCTRL.FilterChili.Search
             var constrainedIncludeFragments = interpretedSearch.Where(fragment => fragment is ConstrainedIncludeFragment).Cast<ConstrainedIncludeFragment>().ToList();
             if (constrainedIncludeFragments.Any())
             {
-                foreach (var fragment in constrainedIncludeFragments)
+                var constrainedIncludeGroups = constrainedIncludeFragments.GroupBy(fragment => fragment.PropertyName);
+                foreach (var constrainedIncludeGroup in constrainedIncludeGroups)
                 {
-                    var requestedSearcher = _searchers.SingleOrDefault(searcher => string.Equals(fragment.PropertyName, searcher.Name, StringComparison.InvariantCultureIgnoreCase));
+                    var requestedSearcher = _searchers.SingleOrDefault(searcher => string.Equals(constrainedIncludeGroup.Key, searcher.Name, StringComparison.InvariantCultureIgnoreCase));
                     if (requestedSearcher == null)
                     {
                         continue;
                     }
 
-                    var expression = requestedSearcher.IncludeExpression(fragment.Text);
-                    expressions.Add(expression);
+                    var orExpression = constrainedIncludeGroup.Select(value => requestedSearcher.IncludeExpression(value.Text)).Or();
+                    if (orExpression.TryGetValue(out var or))
+                    {
+                        expressions.Add(or);
+                    }
                 }
             }
 
             var constrainedExcludeFragments = interpretedSearch.Where(fragment => fragment is ConstrainedExcludeFragment).Cast<ConstrainedExcludeFragment>().ToList();
             if (constrainedExcludeFragments.Any())
             {
-                foreach (var fragment in constrainedExcludeFragments)
+                var constrainedExcludeGroups = constrainedExcludeFragments.GroupBy(fragment => fragment.PropertyName);
+                foreach (var constrainedIncludeGroup in constrainedExcludeGroups)
                 {
-                    var requestedSearcher = _searchers.SingleOrDefault(searcher => string.Equals(fragment.PropertyName, searcher.Name, StringComparison.InvariantCultureIgnoreCase));
+                    var requestedSearcher = _searchers.SingleOrDefault(searcher => string.Equals(constrainedIncludeGroup.Key, searcher.Name, StringComparison.InvariantCultureIgnoreCase));
                     if (requestedSearcher == null)
                     {
                         continue;
                     }
 
-                    var expression = Expression.Not(requestedSearcher.ExcludeExpression(fragment.Text));
-                    expressions.Add(expression);
+                    var orExpression = constrainedIncludeGroup.Select(value => requestedSearcher.ExcludeExpression(value.Text)).Or();
+                    if (orExpression.TryGetValue(out var or))
+                    {
+                        expressions.Add(Expression.Not(or));
+                    }
                 }
             }
 
@@ -154,17 +162,22 @@ namespace GravityCTRL.FilterChili.Search
             {
                 foreach (var searcher in usedSearchers)
                 {
+                    var includeExpressionGroups = includeFragments
+                        .GroupBy(fragment => fragment.GroupId)
+                        .Select(group => group.Select(fragment => searcher.IncludeExpression(fragment.Text)).Or())
+                        .SelectValues()
+                        .ToList();
+
                     if (searcher.IncludeAcceptsMultipleInputs)
                     {
-                        var includeExpressions = includeFragments.Select(fragment => searcher.IncludeExpression(fragment.Text));
-                        if (includeExpressions.And().TryGetValue(out var includes))
+                        if (includeExpressionGroups.And().TryGetValue(out var includes))
                         {
                             yield return includes;
                         }
                     }
-                    else if (includeFragments.Count == 1)
+                    else if (includeExpressionGroups.Count == 1)
                     {
-                        yield return searcher.IncludeExpression(includeFragments.First().Text);
+                        yield return includeExpressionGroups.First();
                     }
                 }
             }
