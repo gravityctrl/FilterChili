@@ -35,7 +35,7 @@ namespace GravityCTRL.FilterChili.Search
 
         private bool _shallExclude;
         private bool _foundSeparator;
-        private string _propertyName;
+        private Option<string> _propertyName;
         private int _quoteCount;
         private Guid _groupId;
 
@@ -47,7 +47,7 @@ namespace GravityCTRL.FilterChili.Search
             _groupId = Guid.NewGuid();
             _shallExclude = false;
             _foundSeparator = false;
-            _propertyName = null;
+            _propertyName = Option.None<string>();
             _quoteCount = 0;
 
             var phrases = CreateClassifiedFragments(searchString);
@@ -102,7 +102,7 @@ namespace GravityCTRL.FilterChili.Search
                         }
                         case ACTION_CHARACTER:
                         {
-                            _propertyName = ExtractPhrase();
+                            _propertyName = Option.Some(ExtractPhrase());
                             _quoteCount = 0;
                             continue;
                         }
@@ -149,11 +149,19 @@ namespace GravityCTRL.FilterChili.Search
             }
 
             Fragment fragment;
-            if (_propertyName != null)
+            if (_propertyName.TryGetValue(out var propertyName))
             {
-                if (_propertyName == string.Empty)
+                if (propertyName.Trim() == string.Empty)
                 {
-                    _propertyName = null;
+                    if (_foundSeparator)
+                    {
+                        _foundSeparator = false;
+                    }
+                    else
+                    {
+                        _propertyName = Option.None<string>();
+                    }
+
                     return Option.None<Fragment>();
                 }
 
@@ -161,24 +169,24 @@ namespace GravityCTRL.FilterChili.Search
                 {
                     if (_quoteCount > 0)
                     {
-                        fragment = new ConstrainedExcludeFragment(FragmentType.Phrase, phrase, _propertyName);
+                        fragment = new ConstrainedExcludeFragment(FragmentType.Phrase, phrase, propertyName);
                         _quoteCount = 0;
                     }
                     else
                     {
-                        fragment = new ConstrainedExcludeFragment(FragmentType.Word, phrase, _propertyName);
+                        fragment = new ConstrainedExcludeFragment(FragmentType.Word, phrase, propertyName);
                     }
                 }
                 else
                 {
                     if (_quoteCount > 0)
                     {
-                        fragment = new ConstrainedIncludeFragment(FragmentType.Phrase, phrase, _propertyName);
+                        fragment = new ConstrainedIncludeFragment(FragmentType.Phrase, phrase, propertyName);
                         _quoteCount = 0;
                     }
                     else
                     {
-                        fragment = new ConstrainedIncludeFragment(FragmentType.Word, phrase, _propertyName);
+                        fragment = new ConstrainedIncludeFragment(FragmentType.Word, phrase, propertyName);
                     }
                 }
 
@@ -189,7 +197,7 @@ namespace GravityCTRL.FilterChili.Search
                 else
                 {
                     _shallExclude = false;
-                    _propertyName = null;
+                    _propertyName = Option.None<string>();
                 }
             }
             else

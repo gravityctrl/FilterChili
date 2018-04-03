@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using System.Linq;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Search;
 using GravityCTRL.FilterChili.Search.Fragments;
@@ -31,6 +32,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new IncludeFragment(FragmentType.Word, "ABC"), 
                 new IncludeFragment(FragmentType.Word, "def")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
         }
 
         [Fact]
@@ -42,6 +44,20 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new IncludeFragment(FragmentType.Word, "category"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(3);
+        }
+
+        [Fact]
+        public void Should_Create_Fragment_Lists()
+        {
+            var result = new InterpretedSearch(" name.category,foo! ?Foobert_ ");
+            result.Should().BeEquivalentTo(new[] {
+                new IncludeFragment(FragmentType.Word, "name"),
+                new IncludeFragment(FragmentType.Word, "category"),
+                new IncludeFragment(FragmentType.Word, "foo"),
+                new IncludeFragment(FragmentType.Word, "Foobert")
+            }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(3);
         }
 
         [Fact]
@@ -52,6 +68,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new IncludeFragment(FragmentType.Phrase, "name.category!"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
         }
 
         [Fact]
@@ -62,6 +79,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new IncludeFragment(FragmentType.Phrase, "name.category!"),
                 new IncludeFragment(FragmentType.Phrase, "?Foobert_")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
         }
 
         [Fact]
@@ -72,6 +90,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new IncludeFragment(FragmentType.Phrase, "name.category!"),
                 new IncludeFragment(FragmentType.Phrase, "?Foobert_")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
         }
 
         [Fact]
@@ -82,6 +101,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new IncludeFragment(FragmentType.Phrase, "name.category!"),
                 new ExcludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
         }
 
         [Fact]
@@ -93,6 +113,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new IncludeFragment(FragmentType.Word, "category"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(3);
         }
 
         [Fact]
@@ -103,6 +124,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new ExcludeFragment(FragmentType.Phrase, "name.category!"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
         }
 
         [Fact]
@@ -113,6 +135,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new ConstrainedIncludeFragment(FragmentType.Word, "category", "name"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
         }
 
         [Fact]
@@ -122,6 +145,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
             result.Should().BeEquivalentTo(new[] {
                 new IncludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(1);
         }
 
         [Fact]
@@ -132,6 +156,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new ConstrainedExcludeFragment(FragmentType.Word, "category", "name"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
         }
 
         [Fact]
@@ -141,6 +166,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
             result.Should().BeEquivalentTo(new[] {
                 new IncludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(1);
         }
 
         [Fact]
@@ -151,6 +177,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new ConstrainedIncludeFragment(FragmentType.Word, "category", "specific name"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
         }
 
         [Fact]
@@ -161,6 +188,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new ConstrainedExcludeFragment(FragmentType.Word, "category", "specific name"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
         }
 
         [Fact]
@@ -171,6 +199,7 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new ConstrainedIncludeFragment(FragmentType.Phrase, "specific category!", "name"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
         }
 
         [Fact]
@@ -181,6 +210,99 @@ namespace GravityCTRL.FilterChili.Tests.Search
                 new ConstrainedExcludeFragment(FragmentType.Phrase, "specific category!", "name"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
             }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
+        }
+
+        [Fact]
+        public void Should_Create_Constrained_Include_Fragments_If_Colon_Is_Used_As_Separator()
+        {
+            var result = new InterpretedSearch(@" name:category1,category2! ?Foobert_ ");
+            result.Should().BeEquivalentTo(new Fragment[] {
+                new ConstrainedIncludeFragment(FragmentType.Word, "category1", "name"),
+                new ConstrainedIncludeFragment(FragmentType.Word, "category2", "name"),
+                new IncludeFragment(FragmentType.Word, "Foobert")
+            }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
+        }
+
+        [Fact]
+        public void Should_Not_Create_Constrained_Include_Fragments_If_Constraint_Name_Is_Empty()
+        {
+            var result = new InterpretedSearch(@" :category1,category2! ?Foobert_ ");
+            result.Should().BeEquivalentTo(new[] {
+                new IncludeFragment(FragmentType.Word, "Foobert")
+            }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void Should_Create_Constrained_Exclude_Fragments_If_Colon_Is_Used_As_Separator()
+        {
+            var result = new InterpretedSearch(@" -name:category1,category2! ?Foobert_ ");
+            result.Should().BeEquivalentTo(new Fragment[] {
+                new ConstrainedExcludeFragment(FragmentType.Word, "category1", "name"),
+                new ConstrainedExcludeFragment(FragmentType.Word, "category2", "name"),
+                new IncludeFragment(FragmentType.Word, "Foobert")
+            }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
+        }
+
+        [Fact]
+        public void Should_Not_Create_Constrained_Exclude_Fragments_If_Constraint_Name_Is_Empty()
+        {
+            var result = new InterpretedSearch(@" -:category1,category2! ?Foobert_ ");
+            result.Should().BeEquivalentTo(new[] {
+                new IncludeFragment(FragmentType.Word, "Foobert")
+            }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void Should_Create_Constrained_Include_Fragments_Using_Quotes_For_Constraint()
+        {
+            var result = new InterpretedSearch(@" ""specific name"":category1,category2! ?Foobert_ ");
+            result.Should().BeEquivalentTo(new Fragment[] {
+                new ConstrainedIncludeFragment(FragmentType.Word, "category1", "specific name"),
+                new ConstrainedIncludeFragment(FragmentType.Word, "category2", "specific name"),
+                new IncludeFragment(FragmentType.Word, "Foobert")
+            }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
+        }
+
+        [Fact]
+        public void Should_Create_Constrained_Exclude_Fragments_Using_Quotes_For_Constraint()
+        {
+            var result = new InterpretedSearch(@" -""specific name"":category1,category2! ?Foobert_ ");
+            result.Should().BeEquivalentTo(new Fragment[] {
+                new ConstrainedExcludeFragment(FragmentType.Word, "category1", "specific name"),
+                new ConstrainedExcludeFragment(FragmentType.Word, "category2", "specific name"),
+                new IncludeFragment(FragmentType.Word, "Foobert")
+            }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
+        }
+
+        [Fact]
+        public void Should_Create_Constrained_Include_Fragments_Using_Quotes_For_Text()
+        {
+            var result = new InterpretedSearch(@" name:""specific category 1 !"",""specific category 2 !"" ?Foobert_ ");
+            result.Should().BeEquivalentTo(new Fragment[] {
+                new ConstrainedIncludeFragment(FragmentType.Phrase, "specific category 1 !", "name"),
+                new ConstrainedIncludeFragment(FragmentType.Phrase, "specific category 2 !", "name"),
+                new IncludeFragment(FragmentType.Word, "Foobert")
+            }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
+        }
+
+        [Fact]
+        public void Should_Create_Constrained_Exclude_Fragments_Using_Quotes_For_Text()
+        {
+            var result = new InterpretedSearch(@" -name:""specific category 1 !"",""specific category 2 !"" ?Foobert_ ");
+            result.Should().BeEquivalentTo(new Fragment[] {
+                new ConstrainedExcludeFragment(FragmentType.Phrase, "specific category 1 !", "name"),
+                new ConstrainedExcludeFragment(FragmentType.Phrase, "specific category 2 !", "name"),
+                new IncludeFragment(FragmentType.Word, "Foobert")
+            }, config => config.Excluding(fragment => fragment.GroupId));
+            result.Select(fragment => fragment.GroupId).Distinct().Should().HaveCount(2);
         }
     }
 }
