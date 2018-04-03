@@ -164,7 +164,7 @@ namespace GravityCTRL.FilterChili.Tests
             _testInstance.SetSearch("cheese");
 
             var results = _testInstance.ApplyFilters();
-            results.Should().OnlyContain(result => result.String.ToLowerInvariant() == "cheese");
+            results.Should().NotContain(result => result.String.ToLowerInvariant() != "cheese");
         }
     }
 }
