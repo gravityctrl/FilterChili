@@ -15,6 +15,7 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace GravityCTRL.FilterChili.Models
@@ -76,6 +77,18 @@ namespace GravityCTRL.FilterChili.Models
 
             value = default;
             return false;
+        }
+
+        [ItemNotNull]
+        public static IEnumerable<T> SelectValues<T>([NotNull] this IEnumerable<Option<T>> options)
+        {
+            foreach (var option in options)
+            {
+                if (option.TryGetValue(out var value))
+                {
+                    yield return value;
+                }
+            }
         }
     }
 }

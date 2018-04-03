@@ -27,176 +27,160 @@ namespace GravityCTRL.FilterChili.Tests.Search
         public void Should_Exclude_Ignore_Whitespaces_Items()
         {
             var result = new InterpretedSearch("  ABC  def  ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new [] {
                 new IncludeFragment(FragmentType.Word, "ABC"), 
                 new IncludeFragment(FragmentType.Word, "def")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Ignore_Non_AlphaNumeric_Items()
         {
             var result = new InterpretedSearch(" name.category! ?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new[] {
                 new IncludeFragment(FragmentType.Word, "name"),
                 new IncludeFragment(FragmentType.Word, "category"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Respect_Double_Quotes()
         {
             var result = new InterpretedSearch(@" ""name.category!"" ?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new[] {
                 new IncludeFragment(FragmentType.Phrase, "name.category!"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Create_Phrases_If_Number_Of_Double_Quotes_Is_Odd()
         {
             var result = new InterpretedSearch(@" ""name.category!"" ""?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new[] {
                 new IncludeFragment(FragmentType.Phrase, "name.category!"),
                 new IncludeFragment(FragmentType.Phrase, "?Foobert_")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Create_Phrases_If_Double_Quotes_Are_Not_Delimited()
         {
             var result = new InterpretedSearch(@" ""name.category!""""?Foobert_"" ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new[] {
                 new IncludeFragment(FragmentType.Phrase, "name.category!"),
                 new IncludeFragment(FragmentType.Phrase, "?Foobert_")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Create_Phrases_If_Double_Quotes_Are_Followed_By_Exclude_Statement()
         {
             var result = new InterpretedSearch(@" ""name.category!""-Foobert ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new Fragment[] {
                 new IncludeFragment(FragmentType.Phrase, "name.category!"),
                 new ExcludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Allow_Marking_Word_As_Unwanted()
         {
             var result = new InterpretedSearch(@" -name.category! ?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new Fragment[] {
                 new ExcludeFragment(FragmentType.Word, "name"),
                 new IncludeFragment(FragmentType.Word, "category"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Allow_Marking_Phrase_As_Unwanted()
         {
             var result = new InterpretedSearch(@" -""name.category!"" ?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new Fragment[] {
                 new ExcludeFragment(FragmentType.Phrase, "name.category!"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Create_Constrained_Include_Fragment_If_Colon_Is_Used_As_Separator()
         {
             var result = new InterpretedSearch(@" name:category! ?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new Fragment[] {
                 new ConstrainedIncludeFragment(FragmentType.Word, "category", "name"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Not_Create_Constrained_Include_Fragment_If_Constraint_Name_Is_Empty()
         {
             var result = new InterpretedSearch(@" :category! ?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new[] {
                 new IncludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Create_Constrained_Exclude_Fragment_If_Colon_Is_Used_As_Separator()
         {
             var result = new InterpretedSearch(@" -name:category! ?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new Fragment[] {
                 new ConstrainedExcludeFragment(FragmentType.Word, "category", "name"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Not_Create_Constrained_Exclude_Fragment_If_Constraint_Name_Is_Empty()
         {
             var result = new InterpretedSearch(@" -:category! ?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new[] {
                 new IncludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Create_Constrained_Include_Fragment_Using_Quotes_For_Constraint()
         {
             var result = new InterpretedSearch(@" ""specific name"":category! ?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new Fragment[] {
                 new ConstrainedIncludeFragment(FragmentType.Word, "category", "specific name"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Create_Constrained_Exclude_Fragment_Using_Quotes_For_Constraint()
         {
             var result = new InterpretedSearch(@" -""specific name"":category! ?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new Fragment[] {
                 new ConstrainedExcludeFragment(FragmentType.Word, "category", "specific name"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Create_Constrained_Include_Fragment_Using_Quotes_For_Text()
         {
             var result = new InterpretedSearch(@" name:""specific category!"" ?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new Fragment[] {
                 new ConstrainedIncludeFragment(FragmentType.Phrase, "specific category!", "name"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
 
         [Fact]
         public void Should_Create_Constrained_Exclude_Fragment_Using_Quotes_For_Text()
         {
             var result = new InterpretedSearch(@" -name:""specific category!"" ?Foobert_ ");
-            result.Should().BeEquivalentTo
-            (
+            result.Should().BeEquivalentTo(new Fragment[] {
                 new ConstrainedExcludeFragment(FragmentType.Phrase, "specific category!", "name"),
                 new IncludeFragment(FragmentType.Word, "Foobert")
-            );
+            }, config => config.Excluding(fragment => fragment.GroupId));
         }
     }
 }
