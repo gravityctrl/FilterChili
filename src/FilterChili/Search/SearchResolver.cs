@@ -91,7 +91,10 @@ namespace GravityCTRL.FilterChili.Search
                 var constrainedIncludeGroups = constrainedIncludeFragments.GroupBy(fragment => fragment.PropertyName);
                 foreach (var constrainedIncludeGroup in constrainedIncludeGroups)
                 {
-                    var requestedSearcher = _searchers.SingleOrDefault(searcher => string.Equals(constrainedIncludeGroup.Key, searcher.Name, StringComparison.InvariantCultureIgnoreCase));
+                    var requestedSearcher = _searchers.SingleOrDefault(searcher => 
+                        searcher.Names.Any(name => string.Equals(constrainedIncludeGroup.Key, name, StringComparison.InvariantCultureIgnoreCase))
+                    );
+
                     if (requestedSearcher == null)
                     {
                         continue;
@@ -111,7 +114,10 @@ namespace GravityCTRL.FilterChili.Search
                 var constrainedExcludeGroups = constrainedExcludeFragments.GroupBy(fragment => fragment.PropertyName);
                 foreach (var constrainedIncludeGroup in constrainedExcludeGroups)
                 {
-                    var requestedSearcher = _searchers.SingleOrDefault(searcher => string.Equals(constrainedIncludeGroup.Key, searcher.Name, StringComparison.InvariantCultureIgnoreCase));
+                    var requestedSearcher = _searchers.SingleOrDefault(searcher =>
+                        searcher.Names.Any(name => string.Equals(constrainedIncludeGroup.Key, name, StringComparison.InvariantCultureIgnoreCase))
+                    );
+
                     if (requestedSearcher == null)
                     {
                         continue;
@@ -162,6 +168,11 @@ namespace GravityCTRL.FilterChili.Search
             {
                 foreach (var searcher in usedSearchers)
                 {
+                    if (searcher.IsDisabledForGeneralRequests)
+                    {
+                        continue;
+                    }
+
                     var includeExpressionGroups = includeFragments
                         .GroupBy(fragment => fragment.GroupId)
                         .Select(group => group.Select(fragment => searcher.IncludeExpression(fragment.Text)).Or())
@@ -192,6 +203,11 @@ namespace GravityCTRL.FilterChili.Search
             {
                 foreach (var searcher in usedSearchers)
                 {
+                    if (searcher.IsDisabledForGeneralRequests)
+                    {
+                        continue;
+                    }
+
                     var excludeExpressions = excludeFragments.Select(fragment => searcher.ExcludeExpression(fragment.Text));
                     if (excludeExpressions.Or().TryGetValue(out var orExpression))
                     {

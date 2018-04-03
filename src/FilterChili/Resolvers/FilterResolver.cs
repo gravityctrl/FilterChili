@@ -103,9 +103,9 @@ namespace GravityCTRL.FilterChili.Resolvers
         }
 
         [UsedImplicitly]
-        public TFilterResolver UseName(string name)
+        public TFilterResolver UseName([NotNull] string name)
         {
-            Name = name;
+            Name = name.Trim();
             return _this;
         }
 

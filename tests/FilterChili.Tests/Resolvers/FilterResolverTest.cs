@@ -28,7 +28,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             var testInstance = new RangeResolver<GenericSource, int>(_ => 1, int.MinValue, int.MaxValue);
             testInstance.Name.Should().Be(null);
 
-            testInstance.UseName("SomeName").Should().Be(testInstance);
+            testInstance.UseName(" SomeName ").Should().Be(testInstance);
             testInstance.Name.Should().Be("SomeName");
         }
 

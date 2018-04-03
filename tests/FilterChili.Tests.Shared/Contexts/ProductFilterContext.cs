@@ -53,8 +53,8 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
             NameSearch = options.Search(product => product.Name);
             CategorySearch = options.Search(product => product.Category);
             IdSearch = options.Search(product => product.Id.ToString()).UseEquals();
-            RatingSearch = options.Search(product => product.Rating.ToString()).UseEquals();
-            SoldSearch = options.Search(product => product.Sold.ToString()).UseEquals();
+            RatingSearch = options.Search(product => product.Rating.ToString()).UseEquals().RequirePropertyMention();
+            SoldSearch = options.Search(product => product.Sold.ToString()).UseEquals().UseAliases("abc", "def").RequirePropertyMention();
 
             NameFilter = options.Filter(product => product.Name).WithGroup(product => product.Category).UseDefaultGroup("Unknown");
             RatingFilter = options.Filter(product => product.Rating).WithRange();

@@ -25,6 +25,15 @@ namespace GravityCTRL.FilterChili.Extensions
 {
     internal static class EnumerableExtensions
     {
+        public static IEnumerable<T> Append<T>(this T value, IEnumerable<T> values)
+        {
+            yield return value;
+            foreach (var item in values)
+            {
+                yield return item;
+            }
+        }
+
         [NotNull]
         public static Option<Expression> Or([NotNull] this IEnumerable<Expression> expressions)
         {
