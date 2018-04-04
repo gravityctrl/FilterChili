@@ -38,7 +38,7 @@ namespace GravityCTRL.FilterChili
         public string Name { get; private set; }
 
         [NotNull]
-        internal IReadOnlyList<string> Names => _aliases.TryGetValue(out var aliases) ? Name.Append(aliases).ToArray() : new[] { Name };
+        internal IEnumerable<string> Names => _aliases.TryGetValue(out var aliases) ? Name.Append(aliases).ToArray() : new[] { Name };
 
         internal bool IncludeAcceptsMultipleInputs => _includeExpressionProvider.AcceptsMultipleSearchInputs;
 

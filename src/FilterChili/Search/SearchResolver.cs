@@ -192,7 +192,7 @@ namespace GravityCTRL.FilterChili.Search
         }
 
         [ItemNotNull]
-        private static IEnumerable<Expression> IncludeExpressions([NotNull] IReadOnlyCollection<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<IncludeFragment> includeFragments)
+        private static IEnumerable<Expression> IncludeExpressions([NotNull] IEnumerable<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<IncludeFragment> includeFragments)
         {
             foreach (var searcher in usedSearchers)
             {
@@ -222,7 +222,7 @@ namespace GravityCTRL.FilterChili.Search
         }
 
         [ItemNotNull]
-        private static IEnumerable<Expression> ExcludeExpressions([NotNull] IReadOnlyCollection<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<ExcludeFragment> excludeFragments)
+        private static IEnumerable<Expression> ExcludeExpressions([NotNull] IEnumerable<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<ExcludeFragment> excludeFragments)
         {
             foreach (var searcher in usedSearchers)
             {
