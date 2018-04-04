@@ -31,16 +31,11 @@ namespace GravityCTRL.FilterChili
 {
     public sealed class ComparisonResolver<TSource, TValue> 
         : FilterResolver<ComparisonResolver<TSource, TValue>, TSource, TValue>, IComparisonResolver<TValue>
-            where TValue : IComparable
+        where TValue : IComparable
     {
         private readonly Comparer<TSource, TValue> _comparer;
-        private bool _needsToBeResolved;
 
-        internal override bool NeedsToBeResolved
-        {
-            get => _needsToBeResolved;
-            set => _needsToBeResolved = value;
-        }
+        internal override bool NeedsToBeResolved { get; set; }
 
         public override string FilterType => _comparer.FilterType;
 
@@ -56,13 +51,13 @@ namespace GravityCTRL.FilterChili
         internal ComparisonResolver(Comparer<TSource, TValue> comparer, [NotNull] Expression<Func<TSource, TValue>> selector) : base(selector)
         {
             _comparer = comparer;
-            _needsToBeResolved = true;
+            NeedsToBeResolved = true;
         }
 
         public void Set(TValue value)
         {
             SelectedValue = value;
-            _needsToBeResolved = true;
+            NeedsToBeResolved = true;
         }
 
         public override bool TrySet([NotNull] JToken filterToken)

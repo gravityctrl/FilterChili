@@ -135,7 +135,7 @@ namespace GravityCTRL.FilterChili.Tests
             _testInstance.GetFilter("Float").TryGetValue(out var floatFilter).Should().BeTrue();
             floatFilter.Domain().Name.Should().Be("Float");
 
-            _testInstance.GetFilter("Byte").TryGetValue(out var _).Should().BeFalse();
+            _testInstance.GetFilter("Byte").TryGetValue(out _).Should().BeFalse();
         }
 
         [Fact]
