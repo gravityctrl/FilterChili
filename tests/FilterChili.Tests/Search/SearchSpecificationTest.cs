@@ -36,8 +36,23 @@ namespace GravityCTRL.FilterChili.Tests.Search
         [Fact]
         public void Should_Set_Name_On_Calling_UseName()
         {
-            _testInstance.UseName("Foobert");
+            _testInstance.UseName("Foobert").Should().Be(_testInstance);
             _testInstance.Name.Should().Be("Foobert");
+            _testInstance.Names.Should().BeEquivalentTo("Foobert");
+        }
+
+        [Fact]
+        public void Should_Set_Aliases_On_Calling_UseAliases()
+        {
+            _testInstance.UseAliases(" Alias1 ", " TestText ", " Dabbert ").Should().Be(_testInstance);
+            _testInstance.Names.Should().BeEquivalentTo("String", "Alias1", "TestText", "Dabbert");
+        }
+
+        [Fact]
+        public void Should_Set_IsDisabledForGeneralRequests_To_True_On_Calling_RequirePropertyMention()
+        {
+            _testInstance.RequirePropertyMention().Should().Be(_testInstance);
+            _testInstance.IsDisabledForGeneralRequests.Should().BeTrue();
         }
 
         [Fact]

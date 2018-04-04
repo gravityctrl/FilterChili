@@ -80,6 +80,108 @@ namespace GravityCTRL.FilterChili.Tests.Search
         }
 
         [Theory]
+        [InlineData("abc", new[] { "abc" })]
+        [InlineData("abc,def", new[] { "abc", "def" })]
+        [InlineData("vwx", new string[] { })]
+        [InlineData("vwx,stu", new string[] { })]
+        [InlineData("-abc", new[] { "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-abc,def", new[] { "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-vwx", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-vwx,stu", new [] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("name:abc", new[] { "abc" })]
+        [InlineData("name:abc,def", new[] { "abc", "def" })]
+        [InlineData("category:vwx", new[] { "def", "jkl", "pqr" })]
+        [InlineData("category:vwx,stu", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-name:abc", new[] { "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-name:abc,def", new[] { "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-category:vwx", new[] { "abc", "ghi", "mno" })]
+        [InlineData("-category:vwx,stu", new string[] { })]
+        [InlineData("notthere:abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("notthere:abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-notthere:abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-notthere:abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        public void Should_Ignore_Required_Property_Mention_SearchDefinitions_Correctly(string searchString, string[] expectedResults)
+        {
+            var specification1 = new SearchSpecification<TestSource>(source => source.Name);
+            var specification2 = new SearchSpecification<TestSource>(source => source.Category).UseEquals().RequirePropertyMention();
+
+            _testInstance.AddSearcher(specification1);
+            _testInstance.AddSearcher(specification2);
+
+            _testInstance.SetSearchString(searchString);
+
+            var items = new[]
+            {
+                new TestSource { Name = "abc", Category = "stu" },
+                new TestSource { Name = "def", Category = "vwx" },
+                new TestSource { Name = "ghi", Category = "stu" },
+                new TestSource { Name = "jkl", Category = "vwx" },
+                new TestSource { Name = "mno", Category = "stu" },
+                new TestSource { Name = "pqr", Category = "vwx" }
+            };
+
+            var result1 = _testInstance.ApplySearch(items.AsQueryable());
+            result1.Select(element => element.Name).Should().BeEquivalentTo(expectedResults);
+
+            _testInstance.SetSearchString(searchString);
+            var result2 = _testInstance.ApplySearch(items.AsQueryable());
+            result2.Select(element => element.Name).Should().BeEquivalentTo(expectedResults);
+        }
+
+        [Theory]
+        [InlineData("abc", new[] { "abc" })]
+        [InlineData("abc,def", new[] { "abc", "def" })]
+        [InlineData("vwx", new[] { "def", "jkl", "pqr" })]
+        [InlineData("vwx,stu", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-abc", new[] { "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-abc,def", new[] { "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-vwx", new[] { "abc", "ghi", "mno" })]
+        [InlineData("-vwx,stu", new string[] { })]
+        [InlineData("name:abc", new[] { "abc" })]
+        [InlineData("name:abc,def", new[] { "abc", "def" })]
+        [InlineData("cat:vwx", new[] { "def", "jkl", "pqr" })]
+        [InlineData("cat:vwx,stu", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("kategorie:vwx", new[] { "def", "jkl", "pqr" })]
+        [InlineData("kategorie:vwx,stu", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-name:abc", new[] { "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-name:abc,def", new[] { "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-cat:vwx", new[] { "abc", "ghi", "mno" })]
+        [InlineData("-cat:vwx,stu", new string[] { })]
+        [InlineData("-Kategorie:vwx", new[] { "abc", "ghi", "mno" })]
+        [InlineData("-Kategorie:vwx,stu", new string[] { })]
+        [InlineData("notthere:abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("notthere:abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-notthere:abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        [InlineData("-notthere:abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
+        public void Should_Resolve_Search_Correctly_Using_Aliases(string searchString, string[] expectedResults)
+        {
+            var specification1 = new SearchSpecification<TestSource>(source => source.Name);
+            var specification2 = new SearchSpecification<TestSource>(source => source.Category).UseEquals().UseAliases(" cat ", " Kategorie ");
+
+            _testInstance.AddSearcher(specification1);
+            _testInstance.AddSearcher(specification2);
+
+            _testInstance.SetSearchString(searchString);
+
+            var items = new[]
+            {
+                new TestSource { Name = "abc", Category = "stu" },
+                new TestSource { Name = "def", Category = "vwx" },
+                new TestSource { Name = "ghi", Category = "stu" },
+                new TestSource { Name = "jkl", Category = "vwx" },
+                new TestSource { Name = "mno", Category = "stu" },
+                new TestSource { Name = "pqr", Category = "vwx" }
+            };
+
+            var result1 = _testInstance.ApplySearch(items.AsQueryable());
+            result1.Select(element => element.Name).Should().BeEquivalentTo(expectedResults);
+
+            _testInstance.SetSearchString(searchString);
+            var result2 = _testInstance.ApplySearch(items.AsQueryable());
+            result2.Select(element => element.Name).Should().BeEquivalentTo(expectedResults);
+        }
+
+        [Theory]
         [InlineData("abc", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("abc,def", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
         [InlineData("vwx", new[] { "abc", "def", "ghi", "jkl", "mno", "pqr" })]
