@@ -83,74 +83,7 @@ namespace GravityCTRL.FilterChili.Search
                 return Option.None<Expression<Func<TSource, bool>>>();
             }
 
-            var expressions = new List<Expression>();
-
-            var constrainedIncludeFragments = interpretedSearch.Where(fragment => fragment is ConstrainedIncludeFragment).Cast<ConstrainedIncludeFragment>().ToList();
-            if (constrainedIncludeFragments.Any())
-            {
-                var constrainedIncludeGroups = constrainedIncludeFragments.GroupBy(fragment => fragment.PropertyName);
-                foreach (var constrainedIncludeGroup in constrainedIncludeGroups)
-                {
-                    var requestedSearcher = _searchers.SingleOrDefault(searcher => 
-                        searcher.Names.Any(name => string.Equals(constrainedIncludeGroup.Key, name, StringComparison.InvariantCultureIgnoreCase))
-                    );
-
-                    if (requestedSearcher == null)
-                    {
-                        continue;
-                    }
-
-                    var orExpression = constrainedIncludeGroup.Select(value => requestedSearcher.IncludeExpression(value.Text)).Or();
-                    if (orExpression.TryGetValue(out var or))
-                    {
-                        expressions.Add(or);
-                    }
-                }
-            }
-
-            var constrainedExcludeFragments = interpretedSearch.Where(fragment => fragment is ConstrainedExcludeFragment).Cast<ConstrainedExcludeFragment>().ToList();
-            if (constrainedExcludeFragments.Any())
-            {
-                var constrainedExcludeGroups = constrainedExcludeFragments.GroupBy(fragment => fragment.PropertyName);
-                foreach (var constrainedIncludeGroup in constrainedExcludeGroups)
-                {
-                    var requestedSearcher = _searchers.SingleOrDefault(searcher =>
-                        searcher.Names.Any(name => string.Equals(constrainedIncludeGroup.Key, name, StringComparison.InvariantCultureIgnoreCase))
-                    );
-
-                    if (requestedSearcher == null)
-                    {
-                        continue;
-                    }
-
-                    var orExpression = constrainedIncludeGroup.Select(value => requestedSearcher.ExcludeExpression(value.Text)).Or();
-                    if (orExpression.TryGetValue(out var or))
-                    {
-                        expressions.Add(Expression.Not(or));
-                    }
-                }
-            }
-
-            var includeFragments = interpretedSearch.Where(fragment => fragment is IncludeFragment).Cast<IncludeFragment>().ToList();
-            if (includeFragments.Any())
-            {
-                var expression = IncludeExpressions(_searchers, includeFragments);
-                if (expression.TryGetValue(out var includes))
-                {
-                    expressions.Add(includes);
-                }
-            }
-
-            var excludeFragments = interpretedSearch.Where(fragment => fragment is ExcludeFragment).Cast<ExcludeFragment>().ToList();
-            if (excludeFragments.Any())
-            {
-                var expression = ExcludeExpressions(_searchers, excludeFragments);
-                if (expression.TryGetValue(out var excludes))
-                {
-                    expressions.Add(excludes);
-                }
-            }
-
+            var expressions = CreateExpressions(interpretedSearch);
             var searchExpression = expressions.And();
             if (!searchExpression.TryGetValue(out var searches))
             {
@@ -161,65 +94,149 @@ namespace GravityCTRL.FilterChili.Search
             return Option.Some(Expression.Lambda<Func<TSource, bool>>(rewrittenExpression, ParameterExpression));
         }
 
-        [NotNull]
-        private static Option<Expression> IncludeExpressions([NotNull] IReadOnlyCollection<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<IncludeFragment> includeFragments)
+        [ItemNotNull]
+        private IEnumerable<Expression> CreateExpressions([NotNull] InterpretedSearch interpretedSearch)
         {
-            IEnumerable<Expression> CreateIncludeExpressions()
+            foreach (var constrainedIncludeExpression in CreateConstrainedIncludeExpressions(interpretedSearch)) yield return constrainedIncludeExpression;
+            foreach (var constrainedExcludeExpression in CreateConstrainedExcludeExpressions(interpretedSearch)) yield return constrainedExcludeExpression;
+            if (CreateIncludeExpression(interpretedSearch).TryGetValue(out var includeExpression)) yield return includeExpression;
+            if (CreateExcludeExpression(interpretedSearch).TryGetValue(out var excludeExpression)) yield return excludeExpression;
+        }
+
+        [ItemNotNull]
+        private IEnumerable<Expression> CreateConstrainedExcludeExpressions([NotNull] InterpretedSearch interpretedSearch)
+        {
+            var constrainedExcludeFragments = interpretedSearch.Where(fragment => fragment is ConstrainedExcludeFragment).Cast<ConstrainedExcludeFragment>().ToList();
+            if (!constrainedExcludeFragments.Any())
             {
-                foreach (var searcher in usedSearchers)
-                {
-                    if (searcher.IsDisabledForGeneralRequests)
-                    {
-                        continue;
-                    }
-
-                    var includeExpressionGroups = includeFragments
-                        .GroupBy(fragment => fragment.GroupId)
-                        .Select(group => group.Select(fragment => searcher.IncludeExpression(fragment.Text)).Or())
-                        .SelectValues()
-                        .ToList();
-
-                    if (searcher.IncludeAcceptsMultipleInputs)
-                    {
-                        if (includeExpressionGroups.And().TryGetValue(out var includes))
-                        {
-                            yield return includes;
-                        }
-                    }
-                    else if (includeExpressionGroups.Count == 1)
-                    {
-                        yield return includeExpressionGroups.First();
-                    }
-                }
+                yield break;
             }
 
-            return CreateIncludeExpressions().Or();
+            var constrainedExcludeGroups = constrainedExcludeFragments.GroupBy(fragment => fragment.PropertyName);
+            foreach (var constrainedIncludeGroup in constrainedExcludeGroups)
+            {
+                var requestedSearcher = _searchers.SingleOrDefault(searcher =>
+                    searcher.Names.Any(name => string.Equals(constrainedIncludeGroup.Key, name, StringComparison.InvariantCultureIgnoreCase))
+                );
+
+                if (requestedSearcher == null)
+                {
+                    continue;
+                }
+
+                var orExpression = constrainedIncludeGroup.Select(value => requestedSearcher.ExcludeExpression(value.Text)).Or();
+                if (orExpression.TryGetValue(out var or))
+                {
+                    yield return Expression.Not(or);
+                }
+            }
+        }
+
+        [ItemNotNull]
+        private IEnumerable<Expression> CreateConstrainedIncludeExpressions([NotNull] InterpretedSearch interpretedSearch)
+        {
+            var constrainedIncludeFragments = interpretedSearch.Where(fragment => fragment is ConstrainedIncludeFragment).Cast<ConstrainedIncludeFragment>().ToList();
+            if (!constrainedIncludeFragments.Any())
+            {
+                yield break;
+            }
+
+            var constrainedIncludeGroups = constrainedIncludeFragments.GroupBy(fragment => fragment.PropertyName);
+            foreach (var constrainedIncludeGroup in constrainedIncludeGroups)
+            {
+                var requestedSearcher = _searchers.SingleOrDefault(searcher =>
+                    searcher.Names.Any(name => string.Equals(constrainedIncludeGroup.Key, name, StringComparison.InvariantCultureIgnoreCase))
+                );
+
+                if (requestedSearcher == null)
+                {
+                    continue;
+                }
+
+                var orExpression = constrainedIncludeGroup.Select(value => requestedSearcher.IncludeExpression(value.Text)).Or();
+                if (orExpression.TryGetValue(out var or))
+                {
+                    yield return or;
+                }
+            }
         }
 
         [NotNull]
-        private static Option<UnaryExpression> ExcludeExpressions([NotNull] IReadOnlyCollection<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<ExcludeFragment> excludeFragments)
+        private Option<UnaryExpression> CreateExcludeExpression([NotNull] InterpretedSearch interpretedSearch)
         {
-            IEnumerable<Expression> CreateExcludeExpressions()
+            var excludeFragments = interpretedSearch.Where(fragment => fragment is ExcludeFragment).Cast<ExcludeFragment>().ToList();
+            if (!excludeFragments.Any())
             {
-                foreach (var searcher in usedSearchers)
-                {
-                    if (searcher.IsDisabledForGeneralRequests)
-                    {
-                        continue;
-                    }
-
-                    var excludeExpressions = excludeFragments.Select(fragment => searcher.ExcludeExpression(fragment.Text));
-                    if (excludeExpressions.Or().TryGetValue(out var orExpression))
-                    {
-                        yield return orExpression;
-                    }
-                }
+                return Option.None<UnaryExpression>();
             }
 
-            var expression = CreateExcludeExpressions().Or();
-            return expression.TryGetValue(out var value) 
-                ? Option.Some(Expression.Not(value)) 
+            var expression = ExcludeExpressions(_searchers, excludeFragments).Or();
+            return expression.TryGetValue(out var excludes) 
+                ? Option.Some(Expression.Not(excludes)) 
                 : Option.None<UnaryExpression>();
+        }
+
+        [NotNull]
+        private Option<Expression> CreateIncludeExpression([NotNull] InterpretedSearch interpretedSearch)
+        {
+            var includeFragments = interpretedSearch.Where(fragment => fragment is IncludeFragment).Cast<IncludeFragment>().ToList();
+            if (!includeFragments.Any())
+            {
+                return Option.None<Expression>();
+            }
+
+            var expression = IncludeExpressions(_searchers, includeFragments).Or();
+            return expression.TryGetValue(out var includes) 
+                ? Option.Some(includes) 
+                : Option.None<Expression>();
+        }
+
+        [ItemNotNull]
+        private static IEnumerable<Expression> IncludeExpressions([NotNull] IReadOnlyCollection<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<IncludeFragment> includeFragments)
+        {
+            foreach (var searcher in usedSearchers)
+            {
+                if (searcher.IsDisabledForGeneralRequests)
+                {
+                    continue;
+                }
+
+                var includeExpressionGroups = includeFragments
+                    .GroupBy(fragment => fragment.GroupId)
+                    .Select(group => group.Select(fragment => searcher.IncludeExpression(fragment.Text)).Or())
+                    .SelectValues()
+                    .ToList();
+
+                if (searcher.IncludeAcceptsMultipleInputs)
+                {
+                    if (includeExpressionGroups.And().TryGetValue(out var includes))
+                    {
+                        yield return includes;
+                    }
+                }
+                else if (includeExpressionGroups.Count == 1)
+                {
+                    yield return includeExpressionGroups.First();
+                }
+            }
+        }
+
+        [ItemNotNull]
+        private static IEnumerable<Expression> ExcludeExpressions([NotNull] IReadOnlyCollection<SearchSpecification<TSource>> usedSearchers, [NotNull] IReadOnlyCollection<ExcludeFragment> excludeFragments)
+        {
+            foreach (var searcher in usedSearchers)
+            {
+                if (searcher.IsDisabledForGeneralRequests)
+                {
+                    continue;
+                }
+
+                var excludeExpressions = excludeFragments.Select(fragment => searcher.ExcludeExpression(fragment.Text));
+                if (excludeExpressions.Or().TryGetValue(out var orExpression))
+                {
+                    yield return orExpression;
+                }
+            }
         }
     }
 }
