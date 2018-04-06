@@ -41,21 +41,21 @@ namespace GravityCTRL.FilterChili.Tests.Comparison
         public void Should_Return_Instance_If_SelectedValue_Is_Greater_Than_Min()
         {
             var expression = _testInstance.FilterExpression(p => p.Id, 1);
-            expression.TryGetValue(out var _).Should().BeTrue();
+            expression.TryGetValue(out _).Should().BeTrue();
         }
 
         [Fact]
         public void Should_Return_Null_If_SelectedValue_Is_Equal_To_Min()
         {
             var expression = _testInstance.FilterExpression(p => p.Id, 0);
-            expression.TryGetValue(out var _).Should().BeFalse();
+            expression.TryGetValue(out _).Should().BeFalse();
         }
 
         [Fact]
         public void Should_Return_Null_If_SelectedValue_Is_Less_Than_Min()
         {
             var expression = _testInstance.FilterExpression(p => p.Id, -1);
-            expression.TryGetValue(out var _).Should().BeFalse();
+            expression.TryGetValue(out _).Should().BeFalse();
         }
     }
 }
