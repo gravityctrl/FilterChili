@@ -30,11 +30,11 @@
     <PackageProjectUrl>https://github.com/gravityctrl/FilterChili</PackageProjectUrl>
     <PackageTags>Filter Context Sensitive Entities Data Analysis Search</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
     <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
-    <Version Condition=" '$(BUILD_BUILDNUMBER)' == '' Or '$(IsRelease)' == 'true' ">1.0.0-rc1</Version>
-    <Version Condition=" '$(BUILD_BUILDNUMBER)' != '' And '$(IsRelease)' != 'true' ">1.0.0-beta$(BUILD_BUILDNUMBER)</Version>
+    <Version Condition=" '$(BUILD_BUILDNUMBER)' == '' Or '$(IsRelease)' == 'true' ">2.0.0-rc1</Version>
+    <Version Condition=" '$(BUILD_BUILDNUMBER)' != '' And '$(IsRelease)' != 'true' ">2.0.0-beta$(BUILD_BUILDNUMBER)</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
