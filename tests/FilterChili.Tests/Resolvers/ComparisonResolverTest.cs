@@ -131,12 +131,12 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 2 }
             };
 
-            await _testInstance.SetEntities(Option.Some(new AsyncEnumerable<GenericSource>(items).AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(items).AsQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.TotalRange.Min.Should().Be(-2);
             _testInstance.TotalRange.Max.Should().Be(2);
 
-            await _testInstance.SetEntities(Option.Some(new AsyncEnumerable<GenericSource>(new List<GenericSource>()).AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(new List<GenericSource>()).AsQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.TotalRange.Should().BeNull();
         }

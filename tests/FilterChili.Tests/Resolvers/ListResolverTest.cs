@@ -172,7 +172,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 2 }
             };
 
-            await _testInstance.SetEntities(Option.Some(new AsyncEnumerable<GenericSource>(items).AsQueryable()), Option.Some(items.AsQueryable().Skip(1).Take(3)));
+            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(items).AsQueryable()), Option.Some(items.AsQueryable().Skip(1).Take(3)));
 
             var expected = new[]
             {
@@ -211,7 +211,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             var expectedJson = JsonConvert.SerializeObject(expected);
             JsonConvert.SerializeObject(_testInstance.Values).Should().Be(expectedJson);
 
-            await _testInstance.SetEntities(Option.Some(new AsyncEnumerable<GenericSource>(new List<GenericSource>()).AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(new List<GenericSource>()).AsQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.Values.Should().BeEmpty();
         }

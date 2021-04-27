@@ -23,7 +23,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
 {
     public sealed class DataContext : DbContext
     {
-        private static readonly LoggerFactory Factory;
+        private static readonly ILoggerFactory Factory;
 
         [UsedImplicitly]
         private const string LOCALDB = "(localdb)\\mssqllocaldb";
@@ -35,9 +35,7 @@ namespace GravityCTRL.FilterChili.Tests.Shared.Contexts
 
         static DataContext()
         {
-            var factory = new LoggerFactory();
-            factory.AddConsole();
-            Factory = factory;
+            Factory = LoggerFactory.Create(opt => opt.AddConsole());
         }
 
         private DataContext([NotNull] DbContextOptions options) : base(options) {}

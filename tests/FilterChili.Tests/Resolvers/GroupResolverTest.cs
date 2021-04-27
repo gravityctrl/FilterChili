@@ -114,7 +114,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 3, String = "Category3" }
             };
 
-            await _testInstance.SetEntities(Option.Some(new AsyncEnumerable<GenericSource>(items).AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(items).AsQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.SetGroups("Category1", "Category3");
 
@@ -148,7 +148,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 3, String = "Category3" }
             };
 
-            await _testInstance.SetEntities(Option.Some(new AsyncEnumerable<GenericSource>(items).AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(items).AsQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.TrySet(JToken.Parse(@"{ ""groups"": [ ""Category1"", ""Category3"" ] }"));
 
@@ -280,7 +280,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 3 }
             };
 
-            await _testInstance.SetEntities(Option.Some(new AsyncEnumerable<GenericSource>(items).AsQueryable()), Option.Some(items.AsQueryable().Skip(1).Take(4)));
+            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(items).AsQueryable()), Option.Some(items.AsQueryable().Skip(1).Take(4)));
 
             var expected = new[]
             {
@@ -339,7 +339,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             var expectedJson = JsonConvert.SerializeObject(expected);
             JsonConvert.SerializeObject(_testInstance.Groups).Should().Be(expectedJson);
 
-            await _testInstance.SetEntities(Option.Some(new AsyncEnumerable<GenericSource>(new List<GenericSource>()).AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(new List<GenericSource>()).AsQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.Groups.Should().BeEmpty();
         }

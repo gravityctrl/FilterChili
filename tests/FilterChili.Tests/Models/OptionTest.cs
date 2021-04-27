@@ -51,7 +51,7 @@ namespace GravityCTRL.FilterChili.Tests.Models
             Action action = () => Option.Some((GenericSource)null);
             action.Should()
                 .Throw<ArgumentNullException>()
-                .WithMessage($"Value cannot be null.{Environment.NewLine}Parameter name: value");
+                .WithMessage("Value cannot be null*Parameter*value*");
         }
 
         [Fact]
