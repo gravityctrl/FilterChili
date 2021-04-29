@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Models;
+using GravityCTRL.FilterChili.Tests.Shared.MockSupport;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -114,7 +115,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 3, String = "Category3" }
             };
 
-            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(items).AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(items.ToAsyncQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.SetGroups("Category1", "Category3");
 
@@ -148,7 +149,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 3, String = "Category3" }
             };
 
-            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(items).AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(items.ToAsyncQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.TrySet(JToken.Parse(@"{ ""groups"": [ ""Category1"", ""Category3"" ] }"));
 
@@ -218,7 +219,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         public async Task Should_Return_Null_For_SetAvailableEntities_If_Queryable_Is_Empty()
         {
             _testInstance.NeedsToBeResolved = false;
-            await _testInstance.SetEntities(Option.Some(new GenericSource[0].AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(Enumerable.Empty<GenericSource>().AsQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.Groups.Should().BeEmpty();
         }
@@ -227,7 +228,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         public async Task Should_Return_Null_For_SetSelectableEntities_If_Queryable_Is_Empty()
         {
             _testInstance.NeedsToBeResolved = false;
-            await _testInstance.SetEntities(Option.None<IQueryable<GenericSource>>(), Option.Some(new GenericSource[0].AsQueryable()));
+            await _testInstance.SetEntities(Option.None<IQueryable<GenericSource>>(), Option.Some(Enumerable.Empty<GenericSource>().AsQueryable()));
 
             _testInstance.Groups.Should().BeEmpty();
         }
@@ -280,7 +281,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 3 }
             };
 
-            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(items).AsQueryable()), Option.Some(items.AsQueryable().Skip(1).Take(4)));
+            await _testInstance.SetEntities(Option.Some(items.ToAsyncQueryable()), Option.Some(items.AsQueryable().Skip(1).Take(4)));
 
             var expected = new[]
             {
@@ -339,7 +340,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             var expectedJson = JsonConvert.SerializeObject(expected);
             JsonConvert.SerializeObject(_testInstance.Groups).Should().Be(expectedJson);
 
-            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(new List<GenericSource>()).AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(Enumerable.Empty<GenericSource>().ToAsyncQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.Groups.Should().BeEmpty();
         }

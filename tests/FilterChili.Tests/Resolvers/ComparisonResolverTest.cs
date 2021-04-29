@@ -15,13 +15,13 @@
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Comparison;
 using GravityCTRL.FilterChili.Models;
+using GravityCTRL.FilterChili.Tests.Shared.MockSupport;
 using GravityCTRL.FilterChili.Tests.TestSupport.Models;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -105,7 +105,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         public async Task Should_Return_Null_For_SetAvailableEntities_If_Queryable_Is_Empty()
         {
             _testInstance.NeedsToBeResolved = false;
-            await _testInstance.SetEntities(Option.Some(new GenericSource[0].AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(Enumerable.Empty<GenericSource>().AsQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.TotalRange.Should().BeNull();
         }
@@ -114,7 +114,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
         public async Task Should_Return_Null_For_SetSelectableEntities_If_Queryable_Is_Empty()
         {
             _testInstance.NeedsToBeResolved = false;
-            await _testInstance.SetEntities(Option.None<IQueryable<GenericSource>>(), Option.Some(new GenericSource[0].AsQueryable()));
+            await _testInstance.SetEntities(Option.None<IQueryable<GenericSource>>(), Option.Some(Enumerable.Empty<GenericSource>().AsQueryable()));
 
             _testInstance.SelectableRange.Should().BeNull();
         }
@@ -131,12 +131,12 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
                 new GenericSource { Int = 2 }
             };
 
-            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(items).AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(items.ToAsyncQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.TotalRange.Min.Should().Be(-2);
             _testInstance.TotalRange.Max.Should().Be(2);
 
-            await _testInstance.SetEntities(Option.Some(new List<GenericSource>(new List<GenericSource>()).AsQueryable()), Option.None<IQueryable<GenericSource>>());
+            await _testInstance.SetEntities(Option.Some(Enumerable.Empty<GenericSource>().ToAsyncQueryable()), Option.None<IQueryable<GenericSource>>());
 
             _testInstance.TotalRange.Should().BeNull();
         }
@@ -203,7 +203,7 @@ namespace GravityCTRL.FilterChili.Tests.Resolvers
             var expectedItem = items[3];
             result1.First().Should().Be(expectedItem);
 
-            var result2 = _testInstance.ExecuteFilter(new GenericSource[0].AsQueryable());
+            var result2 = _testInstance.ExecuteFilter(Enumerable.Empty<GenericSource>().AsQueryable());
             result2.Should().HaveCount(0);
         }
 
