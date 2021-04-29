@@ -47,7 +47,7 @@ namespace GravityCTRL.FilterChili.Tests
             var items = testGenericSources.GenerateLazy(20).ToList();
 
             _queryable = items.AsQueryable();
-            _testInstance = new ContextOptions<GenericSource>(_queryable, options =>
+            _testInstance = new ContextOptions<GenericSource>(_queryable, _ =>
             {
                 _contextOptionsInitialized = true;
             });

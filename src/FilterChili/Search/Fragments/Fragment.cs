@@ -21,7 +21,7 @@ namespace GravityCTRL.FilterChili.Search.Fragments
 {
     internal abstract class Fragment
     {
-        public Guid GroupId { get; set; }
+        public Guid GroupId { get; init; }
 
         public string Text { get; }
 

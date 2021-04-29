@@ -30,11 +30,9 @@ namespace GravityCTRL.FilterChili.Tests.TestSupport.Utils
             var assembly = Assembly.GetExecutingAssembly();
             var resource = $"{RESOURCES_NAMESPACE}.{resourceName}";
 
-            using (var stream = assembly.GetManifestResourceStream(resource))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
+            using var stream = assembly.GetManifestResourceStream(resource);
+            using var reader = new StreamReader(stream!);
+            return reader.ReadToEnd();
         }
     }
 }

@@ -222,8 +222,8 @@ namespace GravityCTRL.FilterChili.Tests.Search
 
         private sealed class TestSource
         {
-            public string Name { get; set; }
-            public string Category { get; set; }
+            public string Name { get; init; }
+            public string Category { get; init; }
         }
     }
 }

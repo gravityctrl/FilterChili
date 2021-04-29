@@ -37,53 +37,51 @@ namespace GravityCTRL.FilterChili.TestConsole
 
         public static void Main()
         {
-            using (var dataContext = DataContext.CreateInMemory(Guid.NewGuid().ToString()))
+            using var dataContext = DataContext.CreateInMemory(Guid.NewGuid().ToString());
+            dataContext.Migrate();
+
+            var service = new ProductService(dataContext);
+            service.AddRange(CreateTestProducts()).Wait();
+
+            string readline = null;
+            do
             {
-                dataContext.Migrate();
-
-                var service = new ProductService(dataContext);
-                service.AddRange(CreateTestProducts()).Wait();
-
-                string readline = null;
-                do
+                var input = readline;
+                Console.Clear();
+                if (string.Equals(input, "exit", StringComparison.OrdinalIgnoreCase))
                 {
-                    var input = readline;
-                    Console.Clear();
-                    if (string.Equals(input, "exit", StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    var filterContext = new ProductFilterContext(service.Entities);
-
-                    var benchmarkResult1 = Benchmark.Measure(() =>
-                    {
-                        filterContext.SetSearch(input);
-                        filterContext.TrySet("Rating", 1, 7);
-                        filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
-                        filterContext.TrySet("Sold", 600);
-                    });
-
-                    // ReSharper disable once ImplicitlyCapturedClosure
-                    var benchmarkResult2 = Benchmark.Measure(() => PerformResultAnalysis(filterContext).Result);
-
-                    // ReSharper disable once ImplicitlyCapturedClosure
-                    var benchmarkResult3 = Benchmark.Measure(() => PerformFilterAnalysis(filterContext).Result);
-
-                    Console.WriteLine(JsonUtils.Convert(benchmarkResult2.Result));
-                    Console.WriteLine(JsonUtils.Convert(benchmarkResult3.Result));
-
-                    Console.WriteLine("Duration {0}", benchmarkResult1.ElapsedTime);
-                    Console.WriteLine("Duration {0}", benchmarkResult2.ElapsedTime);
-                    Console.WriteLine("Duration {0}", benchmarkResult3.ElapsedTime);
-
-                    Console.Write($"{Environment.NewLine}ENTER SEARCH TERMS: ");
-                    readline = Console.ReadLine()?.ToLowerInvariant();
+                    continue;
                 }
-                while (!string.Equals(readline, "exit", StringComparison.OrdinalIgnoreCase));
 
-                dataContext.Delete();
+                var filterContext = new ProductFilterContext(service.Entities);
+
+                var benchmarkResult1 = Benchmark.Measure(() =>
+                {
+                    filterContext.SetSearch(input);
+                    filterContext.TrySet("Rating", 1, 7);
+                    filterContext.TrySet("Name", new[] { "Piza", "Chicken", "Chese", "Fish", "Tun" });
+                    filterContext.TrySet("Sold", 600);
+                });
+
+                // ReSharper disable once ImplicitlyCapturedClosure
+                var benchmarkResult2 = Benchmark.Measure(() => PerformResultAnalysis(filterContext).Result);
+
+                // ReSharper disable once ImplicitlyCapturedClosure
+                var benchmarkResult3 = Benchmark.Measure(() => PerformFilterAnalysis(filterContext).Result);
+
+                Console.WriteLine(JsonUtils.Convert(benchmarkResult2.Result));
+                Console.WriteLine(JsonUtils.Convert(benchmarkResult3.Result));
+
+                Console.WriteLine("Duration {0}", benchmarkResult1.ElapsedTime);
+                Console.WriteLine("Duration {0}", benchmarkResult2.ElapsedTime);
+                Console.WriteLine("Duration {0}", benchmarkResult3.ElapsedTime);
+
+                Console.Write($"{Environment.NewLine}ENTER SEARCH TERMS: ");
+                readline = Console.ReadLine()?.ToLowerInvariant();
             }
+            while (!string.Equals(readline, "exit", StringComparison.OrdinalIgnoreCase));
+
+            dataContext.Delete();
         }
 
         private static IEnumerable<Product> CreateTestProducts()

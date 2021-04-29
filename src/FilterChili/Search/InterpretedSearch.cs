@@ -56,13 +56,36 @@ namespace GravityCTRL.FilterChili.Search
 
         private IEnumerable<Fragment> CreateClassifiedFragments([NotNull] string text)
         {
-            using (var reader = new StringReader(text))
+            using var reader = new StringReader(text);
+            int readCharacter;
+            while ((readCharacter = reader.Read()) != -1)
             {
-                int readCharacter;
-                while ((readCharacter = reader.Read()) != -1)
+                var character = Convert.ToChar(readCharacter);
+                if (character == DOUBLE_QUOTE)
                 {
-                    var character = Convert.ToChar(readCharacter);
-                    if (character == DOUBLE_QUOTE)
+                    if (_quoteCount == 2)
+                    {
+                        var fragment = CreateClassifiedFragment();
+                        if (fragment.TryGetValue(out var value))
+                        {
+                            yield return value;
+                        }
+                    }
+
+                    _quoteCount++;
+                    continue;
+                }
+
+                if (_quoteCount == 1)
+                {
+                    _stringBuilder.Append(character);
+                    continue;
+                }
+
+                // ReSharper disable once SwitchStatementMissingSomeCases
+                switch (character)
+                {
+                    case EXCLUDE_CHARACTER:
                     {
                         if (_quoteCount == 2)
                         {
@@ -73,53 +96,18 @@ namespace GravityCTRL.FilterChili.Search
                             }
                         }
 
-                        _quoteCount++;
+                        _shallExclude = true;
                         continue;
                     }
-
-                    if (_quoteCount == 1)
+                    case ACTION_CHARACTER:
                     {
-                        _stringBuilder.Append(character);
+                        _propertyName = Option.Some(ExtractPhrase());
+                        _quoteCount = 0;
                         continue;
                     }
-
-                    // ReSharper disable once SwitchStatementMissingSomeCases
-                    switch (character)
+                    case SEPARATOR_CHARACTER:
                     {
-                        case EXCLUDE_CHARACTER:
-                        {
-                            if (_quoteCount == 2)
-                            {
-                                var fragment = CreateClassifiedFragment();
-                                if (fragment.TryGetValue(out var value))
-                                {
-                                    yield return value;
-                                }
-                            }
-
-                            _shallExclude = true;
-                            continue;
-                        }
-                        case ACTION_CHARACTER:
-                        {
-                            _propertyName = Option.Some(ExtractPhrase());
-                            _quoteCount = 0;
-                            continue;
-                        }
-                        case SEPARATOR_CHARACTER:
-                        {
-                            _foundSeparator = true;
-                            var fragment = CreateClassifiedFragment();
-                            if (fragment.TryGetValue(out var value))
-                            {
-                                yield return value;
-                            }
-                            continue;
-                        }
-                    }
-
-                    if (!char.IsLetterOrDigit(character))
-                    {
+                        _foundSeparator = true;
                         var fragment = CreateClassifiedFragment();
                         if (fragment.TryGetValue(out var value))
                         {
@@ -127,15 +115,25 @@ namespace GravityCTRL.FilterChili.Search
                         }
                         continue;
                     }
-
-                    _stringBuilder.Append(character);
                 }
 
-                var lastFragment = CreateClassifiedFragment();
-                if (lastFragment.TryGetValue(out var lastValue))
+                if (!char.IsLetterOrDigit(character))
                 {
-                    yield return lastValue;
+                    var fragment = CreateClassifiedFragment();
+                    if (fragment.TryGetValue(out var value))
+                    {
+                        yield return value;
+                    }
+                    continue;
                 }
+
+                _stringBuilder.Append(character);
+            }
+
+            var lastFragment = CreateClassifiedFragment();
+            if (lastFragment.TryGetValue(out var lastValue))
+            {
+                yield return lastValue;
             }
         }
 

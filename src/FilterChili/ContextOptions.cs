@@ -256,7 +256,7 @@ namespace GravityCTRL.FilterChili
             {
                 IQueryable<TSource> CreateFilterAggregate()
                 {
-                    var filtersToExecute = _filters.Where((filterSelector, indexToFilter) => indexToFilter != index);
+                    var filtersToExecute = _filters.Where((_, indexToFilter) => indexToFilter != index);
                     var aggregate = filtersToExecute.Aggregate(queryable, (current, filterSelector) => filterSelector.ApplyFilter(current));
                     return aggregate;
                 }
