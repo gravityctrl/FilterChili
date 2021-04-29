@@ -6,14 +6,7 @@
     <IsPackable>false</IsPackable>
     <AssemblyName>GravityCTRL.FilterChili.Tests</AssemblyName>
     <RootNamespace>GravityCTRL.FilterChili.TestConsole</RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <LangVersion>7.2</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

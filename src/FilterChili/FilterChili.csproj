@@ -35,15 +35,11 @@
     <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
     <Version Condition=" '$(BUILD_BUILDNUMBER)' == '' Or '$(IsRelease)' == 'true' ">2.0.0-rc1</Version>
     <Version Condition=" '$(BUILD_BUILDNUMBER)' != '' And '$(IsRelease)' != 'true' ">2.0.0-beta$(BUILD_BUILDNUMBER)</Version>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile></DocumentationFile>
-    <LangVersion>7.2</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
