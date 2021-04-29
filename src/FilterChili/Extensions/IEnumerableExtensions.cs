@@ -56,7 +56,7 @@ namespace GravityCTRL.FilterChili.Extensions
                 return Option.None<Expression>();
             }
 
-            var expression = expressionList[0];
+            var expression = expressionList.First();
             if (expressionList.Count == 1)
             {
                 return Option.Some(expression);

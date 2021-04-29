@@ -41,7 +41,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         [Fact]
         public void Should_Throw_Exception_If_No_Resolver_Was_Specified()
         {
-            var queryable = new GenericSource[0].AsQueryable();
+            var queryable = Enumerable.Empty<GenericSource>().AsQueryable();
 
             Action domainAction = () => _testInstance.Domain();
             domainAction.Should().Throw<MissingResolverException>().WithMessage(nameof(TestFilterSelector));
@@ -76,7 +76,7 @@ namespace GravityCTRL.FilterChili.Tests.Selectors
         {
             _testInstance.Comparison();
 
-            var queryable = new GenericSource[0].AsQueryable();
+            var queryable = Enumerable.Empty<GenericSource>().AsQueryable();
 
             Action domainAction = () => _testInstance.Domain();
             domainAction.Should().NotThrow<MissingResolverException>();

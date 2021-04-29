@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public 
 // License along with FilterChili. If not, see <http://www.gnu.org/licenses/>.
 
+using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
 using GravityCTRL.FilterChili.Extensions;
@@ -27,8 +28,8 @@ namespace GravityCTRL.FilterChili.Tests.Extensions
         [Fact]
         public void Should_Return_Null_If_Expressions_Are_Empty()
         {
-            new Expression[0].Or().TryGetValue(out _).Should().BeFalse();
-            new Expression[0].And().TryGetValue(out _).Should().BeFalse();
+            Enumerable.Empty<Expression>().Or().TryGetValue(out _).Should().BeFalse();
+            Enumerable.Empty<Expression>().And().TryGetValue(out _).Should().BeFalse();
         }
 
         [Fact]
