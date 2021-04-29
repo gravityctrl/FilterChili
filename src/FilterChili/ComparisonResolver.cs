@@ -95,12 +95,10 @@ namespace GravityCTRL.FilterChili
         [ItemCanBeNull]
         private static async Task<Range<TValue>> SetRange([NotNull] IQueryable<TValue> queryable)
         {
-            if (queryable is IAsyncEnumerable<TValue> _)
-            {
-                return await ResolveRangeAsync(queryable);
-            }
-
-            return ResolveRange(queryable);
+            return queryable is IAsyncEnumerable<TValue> 
+                ? await ResolveRangeAsync(queryable) 
+                // ReSharper disable once MethodHasAsyncOverload
+                : ResolveRange(queryable);
         }
 
         [CanBeNull]
