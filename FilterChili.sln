@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilterChili.TestConsole", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilterChili.Tests.Shared", "tests\FilterChili.Tests.Shared\FilterChili.Tests.Shared.csproj", "{4519F4FB-D190-4A41-841D-8336AB410943}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecondGeneration", "src\SecondGeneration\SecondGeneration.csproj", "{6EBCC0E8-0784-4120-995E-EED4B649A9EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{4519F4FB-D190-4A41-841D-8336AB410943}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4519F4FB-D190-4A41-841D-8336AB410943}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4519F4FB-D190-4A41-841D-8336AB410943}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EBCC0E8-0784-4120-995E-EED4B649A9EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EBCC0E8-0784-4120-995E-EED4B649A9EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EBCC0E8-0784-4120-995E-EED4B649A9EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EBCC0E8-0784-4120-995E-EED4B649A9EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +60,7 @@ Global
 		{9376E896-60FF-4DE2-8573-95DDA415CCE8} = {706169E9-1644-4528-A1A4-602C357D31A3}
 		{0C23FCFC-C55C-443D-A157-A200DDF3E650} = {706169E9-1644-4528-A1A4-602C357D31A3}
 		{4519F4FB-D190-4A41-841D-8336AB410943} = {706169E9-1644-4528-A1A4-602C357D31A3}
+		{6EBCC0E8-0784-4120-995E-EED4B649A9EE} = {2668C9EE-BF05-448D-BACC-DE422A34F2D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23FEDCED-81B1-4A5D-AEEE-47E863A53316}
